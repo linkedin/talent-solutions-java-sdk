@@ -27,6 +27,21 @@
       <version>2.14.1</version>
     </dependency>
 
+    <!-- Mockito inline (for mocking static methods) -->
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-inline</artifactId>
+      <version>3.12.4</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.13.2</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -50,6 +65,14 @@
                 <relocation>
                   <pattern>com.fasterxml.jackson.core</pattern>
                   <shadedPattern>com.linkedin.lts.client.internal.jackson</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>org.mockito</pattern>
+                  <shadedPattern>com.linkedin.lts.client.internal.mockito</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>junit</pattern>
+                  <shadedPattern>com.linkedin.lts.client.internal.junit</shadedPattern>
                 </relocation>
                 <!-- Add other dependencies as needed -->
               </relocations>

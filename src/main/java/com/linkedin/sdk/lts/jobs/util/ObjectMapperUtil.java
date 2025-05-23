@@ -1,0 +1,68 @@
+package com.linkedin.sdk.lts.jobs.util;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
+import java.io.IOException;
+
+/**
+ * Utility class for JSON serialization and deserialization operations using Jackson.
+ * This class provides a singleton ObjectMapper instance with standardized configuration
+ * for consistent JSON handling throughout the API client.
+ */
+public class ObjectMapperUtil {
+
+  private static final ObjectMapper objectMapper = createObjectMapper();
+
+  /**
+   * Creates and configures an ObjectMapper with standardized settings.
+   *
+   * @return A configured ObjectMapper instance
+   */
+  private static ObjectMapper createObjectMapper() {
+    ObjectMapper mapper = new ObjectMapper();
+
+    // Configure serialization settings
+    mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+    // Configure deserialization settings
+    mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+    return mapper;
+  }
+
+  /**
+   * Converts an object to its JSON string representation.
+   *
+   * @param value The object to convert to JSON
+   * @return The JSON string representation of the object
+   * @throws RuntimeException If serialization fails
+   */
+  public static String toJson(Object value) {
+    try {
+      return objectMapper.writeValueAsString(value);
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException("Failed to serialize object to JSON", e);
+    }
+  }
+
+  /**
+   * Converts a JSON string to an object of the specified class.
+   *
+   * @param json The JSON string to convert
+   * @param clazz The class to convert the JSON to
+   * @param <T> The type of the class
+   * @return The object deserialized from the JSON string
+   * @throws RuntimeException If deserialization fails
+   */
+  public static <T> T fromJson(String json, Class<T> clazz) {
+    try {
+      return objectMapper.readValue(json, clazz);
+    } catch (IOException e) {
+      throw new RuntimeException("Failed to deserialize JSON to object", e);
+    }
+  }
+}
