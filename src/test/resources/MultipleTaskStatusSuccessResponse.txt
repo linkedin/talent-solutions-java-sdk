@@ -1,0 +1,20 @@
+{
+    "results": {
+        "urn:li:simpleJobPostingTask:c85fc9e7-b434-44d2-b9c1-a5ac688a1fe1": {
+            "externalJobPostingId": "111222333",
+            "location": "Sunnyvale, California",
+            "jobPosting": "urn:li:jobPosting:4217555213",
+            "id": "urn:li:simpleJobPostingTask:c85fc9e7-b434-44d2-b9c1-a5ac688a1fe1",
+            "status": "SUCCEEDED"
+        },
+        "urn:li:simpleJobPostingTask:d958f4d2-3079-4290-8891-3a73e4fb70d7": {
+            "externalJobPostingId": "111222344",
+            "location": "Sunnyvale, California",
+            "jobPosting": "urn:li:jobPosting:4217555214",
+            "id": "urn:li:simpleJobPostingTask:d958f4d2-3079-4290-8891-3a73e4fb70d7",
+            "status": "IN_PROGRESS"
+        }
+    },
+    "statuses": {},
+    "errors": {}
+}

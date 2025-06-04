@@ -3,6 +3,8 @@ package com.linkedin.sdk.lts.jobs.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.linkedin.sdk.lts.jobs.auth.TokenInfo;
+import com.linkedin.sdk.lts.jobs.exception.JsonDeserializationException;
+import com.linkedin.sdk.lts.jobs.exception.JsonSerializationException;
 import org.junit.Test;
 import org.mockito.MockedConstruction;
 
@@ -13,7 +15,7 @@ import static org.mockito.Mockito.*;
 public class ObjectMapperUtilTest {
 
     @Test
-    public void testToJson_ValidObject_ReturnsJsonString() {
+    public void testToJson_ValidObject_ReturnsJsonString() throws JsonSerializationException {
       TokenInfo tokenInfo = new TokenInfo("abc123", new Long(3600));
       String json = ObjectMapperUtil.toJson(tokenInfo);
       assertNotNull(json);
@@ -22,7 +24,7 @@ public class ObjectMapperUtilTest {
     }
 
   @Test
-  public void testToJson_ThrowsRuntimeException_WhenJsonProcessingExceptionOccurs() {
+  public void testToJson_ThrowsJsonProcessingException_WhenJsonProcessingExceptionOccurs() {
     try (MockedConstruction<ObjectMapper> mockedConstruction = mockConstruction(ObjectMapper.class,
         (mock, context) -> {
           // Configure the mock ObjectMapper to throw JsonProcessingException
@@ -30,18 +32,18 @@ public class ObjectMapperUtilTest {
               .thenThrow(new JsonProcessingException("Mock serialization error") {});
         })) {
 
-      // Test that RuntimeException is thrown when ObjectMapper fails
-      RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+      // Test that JsonSerializationException is thrown when ObjectMapper fails
+      JsonSerializationException exception = assertThrows(JsonSerializationException.class, () -> {
         ObjectMapperUtil.toJson("test");
       });
 
-      assertEquals("Failed to serialize object to JSON", exception.getMessage());
+      assertEquals("Failed to serialize object of type String to JSON: Mock serialization error", exception.getMessage());
       assertEquals("Mock serialization error", exception.getCause().getMessage());
     }
   }
 
     @Test
-    public void testFromJson_ValidJson_ReturnsObject() {
+    public void testFromJson_ValidJson_ReturnsObject() throws JsonDeserializationException {
       String json = "{\"access_token\":\"xyz789\",\"expires_in\":1800}";
       TokenInfo tokenInfo = ObjectMapperUtil.fromJson(json, TokenInfo.class);
       assertNotNull(tokenInfo);
@@ -49,8 +51,8 @@ public class ObjectMapperUtilTest {
       assertEquals(new Long(1800), tokenInfo.getExpiresIn());
     }
 
-    @Test(expected = RuntimeException.class)
-    public void testFromJson_InvalidJson_ThrowsException() {
+    @Test(expected = JsonDeserializationException.class)
+    public void testFromJson_InvalidJson_ThrowsException() throws JsonDeserializationException {
       String invalidJson = "{access_token:}";
       ObjectMapperUtil.fromJson(invalidJson, TokenInfo.class);
     }

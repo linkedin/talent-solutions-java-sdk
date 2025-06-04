@@ -1,0 +1,62 @@
+{
+    "results": {
+        "112233445566": {
+           "externalJobPostingId": 112233445566,
+           "jobPostingInfo" : {
+                "expireAt":1762010139000,
+                "listedAt":1746458138000,
+                "location":"Sunnyvale, California, United States",
+                "alternateLocations":null,
+                "companyDetails": {
+                    "name":null,
+                    "pageUrl":null
+                },
+                "visibilityTag":null
+           },
+           "jobPostingUrl":"https://www.linkedin.com/jobs/view/4222328777",
+           "linkedInApplyStatus":"NOT_ENABLED",
+           "linkedInApplyStatusDetail": {
+                  "errorCode":null,
+                  "errorType":"PARTNER_ERROR",
+                  "statusMessage":"No attempt to enable LinkedInApply was found for this job."
+           },
+           "listingStatus":"LISTED",
+           "listingStatusDetail":null,
+           "promotionStatus":"NOT_PROMOTED",
+           "promotionStatusDetail":null,
+           "jobCampaign":null,
+           "partnerJobCampaign":null,
+           "rawLocation":"Sunnyvale, California"
+        },
+        "112233445577": {
+                   "externalJobPostingId": 112233445577,
+                   "jobPostingInfo" : {
+                        "expireAt":1762010139000,
+                        "listedAt":1746458138000,
+                        "location":"Sunnyvale, California, United States",
+                        "alternateLocations":null,
+                        "companyDetails": {
+                            "name":null,
+                            "pageUrl":null
+                        },
+                        "visibilityTag":null
+                   },
+                   "jobPostingUrl":"https://www.linkedin.com/jobs/view/4222328888",
+                   "linkedInApplyStatus":"NOT_ENABLED",
+                   "linkedInApplyStatusDetail": {
+                          "errorCode":null,
+                          "errorType":"PARTNER_ERROR",
+                          "statusMessage":"No attempt to enable LinkedInApply was found for this job."
+                   },
+                   "listingStatus":"NOT_LISTED",
+                   "listingStatusDetail":null,
+                   "promotionStatus":"NOT_PROMOTED",
+                   "promotionStatusDetail":null,
+                   "jobCampaign":null,
+                   "partnerJobCampaign":null,
+                   "rawLocation":"Sunnyvale, California"
+                }
+    },
+    "statuses":{},
+    "errors":{}
+}

@@ -1,6 +1,8 @@
 package com.linkedin.sdk.lts.jobs.auth;
 
 import com.linkedin.sdk.lts.jobs.exception.AuthenticationException;
+import com.linkedin.sdk.lts.jobs.exception.JsonDeserializationException;
+import com.linkedin.sdk.lts.jobs.model.response.common.HttpStatusCategory;
 import com.linkedin.sdk.lts.jobs.util.ObjectMapperUtil;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -136,7 +138,7 @@ public class OAuth2Provider implements AuthenticationProvider {
       connection.setDoOutput(true);
 
       String formBody = String.format(
-          "grant_type=client_credentials&client_id=%s&client_secret=%s",
+          "grant_type=client_credentials" + QUERY_PARAM_SEPARATOR+ "client_id=%s" +  QUERY_PARAM_SEPARATOR + "client_secret=%s",
           encodeURIComponent(config.getClientId()),
           encodeURIComponent(config.getClientSecret())
       );
@@ -148,7 +150,7 @@ public class OAuth2Provider implements AuthenticationProvider {
 
       // Read response
       int responseCode = connection.getResponseCode();
-      if (responseCode != HttpURLConnection.HTTP_OK) {
+      if (!HttpStatusCategory.SUCCESS.matches(responseCode)) {
 
         String errorMessage = String.format(
             "Failed to authenticate with LinkedIn API. Client ID: %s, Response Code: %d, Response: %s",
@@ -165,8 +167,14 @@ public class OAuth2Provider implements AuthenticationProvider {
       String errorMessage = String.format(
           "Failed to authenticate with LinkedIn API. Client ID: %s, Error: %s", config.getClientId(), e.getMessage());
       LOGGER.log(Level.SEVERE, errorMessage, e);
-      throw new AuthenticationException("Failed to authenticate", e);
-    }  finally {
+      throw new AuthenticationException(errorMessage, e);
+    } catch (JsonDeserializationException e) {
+      String errorMessage = String.format(
+          "Failed to deserialize authentication response. Client ID: %s, Response: %s",
+          config.getClientId(), e.getMessage());
+      LOGGER.log(Level.SEVERE, errorMessage, e);
+      throw new AuthenticationException(errorMessage, e);
+    } finally {
       if (connection != null) {
         connection.disconnect();
       }

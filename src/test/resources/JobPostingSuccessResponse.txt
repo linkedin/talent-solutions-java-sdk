@@ -1,0 +1,9 @@
+{
+    "elements": [
+        {
+            "location": "/simpleJobPostings/urn%3Ali%3AsimpleJobPostingTask%3Ad958f4d2-3079-4290-8891-3a73e4fb70d7",
+            "status": 202,
+            "id": "urn:li:simpleJobPostingTask:d958f4d2-3079-4290-8891-3a73e4fb70d7"
+        }
+    ]
+}

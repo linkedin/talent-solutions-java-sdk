@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import com.linkedin.sdk.lts.jobs.exception.JsonDeserializationException;
+import com.linkedin.sdk.lts.jobs.exception.JsonSerializationException;
 import java.io.IOException;
 
 /**
@@ -41,11 +43,13 @@ public class ObjectMapperUtil {
    * @return The JSON string representation of the object
    * @throws RuntimeException If serialization fails
    */
-  public static String toJson(Object value) {
+  public static String toJson(Object value) throws JsonSerializationException {
     try {
       return objectMapper.writeValueAsString(value);
     } catch (JsonProcessingException e) {
-      throw new RuntimeException("Failed to serialize object to JSON", e);
+      String errorMessage = String.format("Failed to serialize object of type %s to JSON: %s",
+          value.getClass().getSimpleName(), e.getMessage());
+      throw new JsonSerializationException(errorMessage, e);
     }
   }
 
@@ -58,11 +62,13 @@ public class ObjectMapperUtil {
    * @return The object deserialized from the JSON string
    * @throws RuntimeException If deserialization fails
    */
-  public static <T> T fromJson(String json, Class<T> clazz) {
+  public static <T> T fromJson(String json, Class<T> clazz) throws JsonDeserializationException {
     try {
       return objectMapper.readValue(json, clazz);
     } catch (IOException e) {
-      throw new RuntimeException("Failed to deserialize JSON to object", e);
+      String errorMessage = String.format("Failed to deserialize JSON to %s: %s",
+          clazz.getSimpleName(), e.getMessage());
+      throw new JsonDeserializationException(errorMessage, e);
     }
   }
 }
