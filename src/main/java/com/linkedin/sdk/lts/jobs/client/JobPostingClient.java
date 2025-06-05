@@ -105,6 +105,7 @@ public class JobPostingClient {
       connection.setRequestProperty(CONTENT_TYPE, APPLICATION_JSON);
       connection.setRequestProperty(AUTHORIZATION, BEARER + SPACE_SEPARATOR + getAccessToken());
       connection.setRequestProperty(X_REST_LI_METHOD, BATCH_CREATE);
+      connection.setRequestProperty(LINKEDIN_VERSION, API_VERSION_2025_04);
       connection.setDoOutput(true);
 
       OutputStream os = connection.getOutputStream();
@@ -178,6 +179,7 @@ public class JobPostingClient {
       connection.setRequestMethod(GET);
       connection.setRequestProperty(CONTENT_TYPE, APPLICATION_JSON);
       connection.setRequestProperty(AUTHORIZATION, BEARER + SPACE_SEPARATOR + getAccessToken());
+      connection.setRequestProperty(LINKEDIN_VERSION, API_VERSION_2025_04);
       connection.setDoOutput(false);
 
       String response = getResponseBody(connection);
@@ -242,6 +244,7 @@ public class JobPostingClient {
       connection.setRequestMethod(GET);
       connection.setRequestProperty(CONTENT_TYPE, APPLICATION_JSON);
       connection.setRequestProperty(AUTHORIZATION, BEARER + SPACE_SEPARATOR + getAccessToken());
+      connection.setRequestProperty(LINKEDIN_VERSION, API_VERSION_2025_04);
       connection.setDoOutput(false);
 
       String response = getResponseBody(connection);
