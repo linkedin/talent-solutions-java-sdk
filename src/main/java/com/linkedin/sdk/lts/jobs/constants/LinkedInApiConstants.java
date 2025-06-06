@@ -3,7 +3,7 @@ package com.linkedin.sdk.lts.jobs.constants;
 public class LinkedInApiConstants {
 
   /**
-   * API VERSION 2024_04 for LinkedIn's Job Posting APIs.
+   * API VERSION 2025_04 for LinkedIn's Job Posting APIs.
    */
   public static final String API_VERSION_2025_04 = "202504";
 

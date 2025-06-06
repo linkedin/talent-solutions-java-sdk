@@ -9,6 +9,9 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.linkedin.sdk.lts.jobs.exception.JsonDeserializationException;
 import com.linkedin.sdk.lts.jobs.exception.JsonSerializationException;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 
 /**
  * Utility class for JSON serialization and deserialization operations using Jackson.
@@ -18,6 +21,7 @@ import java.io.IOException;
 public class ObjectMapperUtil {
 
   private static final ObjectMapper objectMapper = createObjectMapper();
+  private static final Logger LOGGER = Logger.getLogger(ObjectMapperUtil.class.getName());
 
   /**
    * Creates and configures an ObjectMapper with standardized settings.
@@ -49,6 +53,7 @@ public class ObjectMapperUtil {
     } catch (JsonProcessingException e) {
       String errorMessage = String.format("Failed to serialize object of type %s to JSON: %s",
           value.getClass().getSimpleName(), e.getMessage());
+      LOGGER.log(Level.SEVERE, errorMessage, e);
       throw new JsonSerializationException(errorMessage, e);
     }
   }
@@ -68,6 +73,7 @@ public class ObjectMapperUtil {
     } catch (IOException e) {
       String errorMessage = String.format("Failed to deserialize JSON to %s: %s",
           clazz.getSimpleName(), e.getMessage());
+      LOGGER.log(Level.SEVERE, errorMessage, e);
       throw new JsonDeserializationException(errorMessage, e);
     }
   }

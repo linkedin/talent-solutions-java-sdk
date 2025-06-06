@@ -1,10 +1,14 @@
 package com.linkedin.sdk.lts.jobs.model.request.jobposting;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
-import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import static com.linkedin.sdk.lts.jobs.constants.LinkedInCommonConstants.*;
 
 
 /**
@@ -16,21 +20,29 @@ import lombok.NoArgsConstructor;
  * <ul>
  *   <li>{@code @Data} - Generates getters, setters, equals, hashCode, and toString</li>
  *   <li>{@code @Builder} - Implements the Builder pattern for object creation</li>
- *   <li>{@code @AllArgsConstructor} - Generates a constructor with all fields</li>
  * </ul>
  *
  * @See <a href="https://learn.microsoft.com/en-us/linkedin/talent/job-postings/api/job-posting-api-schema?view=li-lts-2025-01">LinkedIn Job Posting Documentation</a>
  */
 @Data
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
 public class JobPosting {
 
   /**
+   * CompanyId for the job posting without the "urn:li:organization:" prefix
+   * This field is used to set the integrationContext automatically.
+   * This field is not present in the actual request schema.
+   * This field will be ignored during serialization in favour of integrationContext.
+   */
+  @JsonIgnore
+  private String companyId;
+
+  /**
    * Client-specific integration context for the job posting.
    * Must be in the format "urn:li:organization:{company_id}".
+   * This field is set automatically when companyId is set. Can't set manually.
    */
+  @Setter(AccessLevel.NONE)
   private String integrationContext;
 
   /**
@@ -204,5 +216,97 @@ public class JobPosting {
    * can be associated to a contract seat holder
    */
   private boolean showPosterInfo;
+
+  /**
+   * Sets the companyId and updates the integrationContext accordingly.
+   */
+  public void setCompanyId(String companyId) {
+    this.companyId = companyId;
+    if (companyId != null && !companyId.isEmpty()) {
+      this.integrationContext = LINKEDIN_URN_FORMAT + companyId;
+    } else {
+      this.integrationContext = null;
+    }
+  }
+
+  /**
+   * Constructs a JobPosting instance with the provided parameters.
+   * This constructor is private to enforce the use of the Builder pattern.
+   *
+   * @param companyId The ID of the company posting the job.
+   * @param companyApplyUrl The URL where candidates can apply for the job.
+   * @param externalJobPostingId The client's unique identifier for the job posting.
+   * @param jobPostingOperationType The type of operation being performed on the job posting.
+   * @param title The title of the job posting.
+   * @param description The detailed description of the job posting.
+   * @param listedAt The timestamp when the job was listed.
+   * @param location The primary location of the job.
+   * @param alternateLocations Additional locations for the job.
+   * @param categories Job categories relevant to the position.
+   * @param skillsDescription Description of required and desired skills.
+   * @param companyJobCode Company's internal job code or reference number.
+   * @param workplaceTypes Types of workplace arrangements available for this position.
+   * @param industries Industry categories relevant to the position.
+   * @param employmentStatus Employment status for the position.
+   * @param experienceLevel Required experience level for the position.
+   * @param trackingPixelUrl URL for tracking pixel to monitor job posting performance.
+   * @param companyName Name of the company posting the job.
+   * @param companyPageUrl URL of the company's LinkedIn page or website.
+   * @param compensation Compensation information for the position.
+   * @param expireAt Expiration date for the job posting in epoch milliseconds.
+   * @param listingType Type of job posting (BASIC or PREMIUM).
+   * @param availability Availability status (PUBLIC or INTERNAL).
+   * @param posterEmail Email associated with the owner of the job posting.
+   * @param partnerRequisitionId Unique ID of job requisition linked to this posting.
+   * @param contract Contract information for LinkedIn Recruiter services.
+   * @param showPosterInfo Whether to display poster information on job description page.
+   */
+  @Builder
+  private JobPosting(
+      String companyId, String companyApplyUrl, String externalJobPostingId,
+      JobPostingOperationType jobPostingOperationType, String title, String description,
+      Long listedAt, String location, List<String> alternateLocations,
+      List<String> categories, String skillsDescription, String companyJobCode,
+      List<WorkplaceTypes> workplaceTypes, List<String> industries,
+      EmploymentStatus employmentStatus, ExperienceLevel experienceLevel,
+      String trackingPixelUrl, String companyName, String companyPageUrl,
+      PosterProvidedCompensation compensation, Long expireAt,
+      ListingType listingType, Availability availability,
+      String posterEmail, String partnerRequisitionId,
+      String contract, boolean showPosterInfo) {
+
+    this.companyId = companyId;
+    this.companyApplyUrl = companyApplyUrl;
+    this.externalJobPostingId = externalJobPostingId;
+    this.jobPostingOperationType = jobPostingOperationType;
+    this.title = title;
+    this.description = description;
+    this.listedAt = listedAt;
+    this.location = location;
+    this.alternateLocations = alternateLocations;
+    this.categories = categories;
+    this.skillsDescription = skillsDescription;
+    this.companyJobCode = companyJobCode;
+    this.workplaceTypes = workplaceTypes;
+    this.industries = industries;
+    this.employmentStatus = employmentStatus;
+    this.experienceLevel = experienceLevel;
+    this.trackingPixelUrl = trackingPixelUrl;
+    this.companyName = companyName;
+    this.companyPageUrl = companyPageUrl;
+    this.compensation = compensation;
+    this.expireAt = expireAt;
+    this.listingType = listingType;
+    this.availability = availability;
+    this.posterEmail = posterEmail;
+    this.partnerRequisitionId = partnerRequisitionId;
+    this.contract = contract;
+    this.showPosterInfo = showPosterInfo;
+
+    // Set integrationContext based on companyId
+    if (companyId != null || !companyId.isEmpty()) {
+      this.integrationContext = LINKEDIN_URN_FORMAT + companyId;
+    }
+  }
 
 }

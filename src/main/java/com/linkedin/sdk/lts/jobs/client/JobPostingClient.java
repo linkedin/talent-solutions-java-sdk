@@ -19,6 +19,7 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.net.ssl.HttpsURLConnection;
@@ -126,7 +127,7 @@ public class JobPostingClient {
           errorMessage);
     } catch (IOException e) {
       String errorMessage = "Network error while communicating with LinkedIn API: " + e.getMessage();
-      LOGGER.severe(errorMessage);
+      LOGGER.log(Level.SEVERE, errorMessage, e);
       throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Network error",
           errorMessage);
     }
@@ -186,12 +187,12 @@ public class JobPostingClient {
       return ObjectMapperUtil.fromJson(response, JobTaskStatusResponse.class);
     } catch (JsonDeserializationException e) {
       String errorMessage = "Failed to parse LinkedIn API response: " + e.getMessage();
-    LOGGER.severe(errorMessage);
+      LOGGER.severe(errorMessage);
       throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Response parsing error",
           errorMessage);
     } catch (IOException e) {
       String errorMessage = "Network error while communicating with LinkedIn API: " + e.getMessage();
-      LOGGER.severe(errorMessage);
+      LOGGER.log(Level.SEVERE, errorMessage, e);
       throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Network error",
           errorMessage);
     }
@@ -255,7 +256,7 @@ public class JobPostingClient {
       throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Response parsing error", errorMessage);
     } catch (IOException e) {
       String errorMessage = "Network error while communicating with LinkedIn API: " + e.getMessage();
-      LOGGER.severe(errorMessage);
+      LOGGER.log(Level.SEVERE, errorMessage, e);
       throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Network error", errorMessage);
     }
   }
