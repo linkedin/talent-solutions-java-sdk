@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Enum representing the promotion status of a job listing.
  * Uses Jackson annotations to handle serialization/deserialization.
  *
- * @see <a href="https://learn.microsoft.com/en-us/linkedin/talent/job-postings/api/check-job-posting-status?view=li-lts-2025-01">LinkedIn Job Posting Status Documentation</a>
+ * @see <a href="https://learn.microsoft.com/en-us/linkedin/talent/job-postings/api/check-job-posting-status?view=li-lts-2025-04">LinkedIn Job Posting Status Documentation</a>
  */
 public enum PromotionStatus {
   /**

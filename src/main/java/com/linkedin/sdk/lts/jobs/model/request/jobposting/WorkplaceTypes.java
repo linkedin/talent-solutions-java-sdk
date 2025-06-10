@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * <p>Each workplace type has an associated display string value. The enum provides
  * methods to convert between enum constants and their string representations.</p>
  *
- * @See <a href="https://learn.microsoft.com/en-us/linkedin/talent/job-postings/api/job-posting-api-schema?view=li-lts-2025-01">LinkedIn Job Posting Documentation</a>
+ * @See <a href="https://learn.microsoft.com/en-us/linkedin/talent/job-postings/api/job-posting-api-schema?view=li-lts-2025-04">LinkedIn Job Posting Documentation</a>
  */
 public enum WorkplaceTypes {
   /**

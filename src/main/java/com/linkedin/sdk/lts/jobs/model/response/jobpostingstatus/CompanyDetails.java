@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
  *   <li>{@code @NoArgsConstructor} - Generates a no-args constructor</li>
  * </ul>
  *
- * @See <a href="https://learn.microsoft.com/en-us/linkedin/talent/job-postings/api/check-job-posting-status?view=li-lts-2025-01#companydetails-field-schema">LinkedIn Job Posting Status Documentation</>
+ * @See <a href="https://learn.microsoft.com/en-us/linkedin/talent/job-postings/api/check-job-posting-status?view=li-lts-2025-04#companydetails-field-schema">LinkedIn Job Posting Status Documentation</>
  */
 @Data
 @Builder

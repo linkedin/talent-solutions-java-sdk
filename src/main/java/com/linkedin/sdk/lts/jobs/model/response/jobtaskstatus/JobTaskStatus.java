@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Enum representing the possible status values for a job posting task status.
  * Uses Jackson annotations to handle serialization/deserialization.
  *
- * <a href = "https://learn.microsoft.com/en-us/linkedin/talent/job-postings/api/check-job-taskstatus?view=li-lts-2025-01">LinkedIn Job Task Status Documentation</a>
+ * <a href = "https://learn.microsoft.com/en-us/linkedin/talent/job-postings/api/check-job-taskstatus?view=li-lts-2025-04">LinkedIn Job Task Status Documentation</a>
  */
 public enum JobTaskStatus {
   /**

@@ -22,7 +22,7 @@ import static com.linkedin.sdk.lts.jobs.constants.LinkedInCommonConstants.*;
  *   <li>{@code @Builder} - Implements the Builder pattern for object creation</li>
  * </ul>
  *
- * @See <a href="https://learn.microsoft.com/en-us/linkedin/talent/job-postings/api/job-posting-api-schema?view=li-lts-2025-01">LinkedIn Job Posting Documentation</a>
+ * @See <a href="https://learn.microsoft.com/en-us/linkedin/talent/job-postings/api/job-posting-api-schema?view=li-lts-2025-04">LinkedIn Job Posting Documentation</a>
  */
 @Data
 @NoArgsConstructor
@@ -38,12 +38,12 @@ public class JobPosting {
   private String companyId;
 
   /**
-   * Client-specific integration context for the job posting.
+   * Company URN of the this job, previously referred via integrationcontext field
    * Must be in the format "urn:li:organization:{company_id}".
    * This field is set automatically when companyId is set. Can't set manually.
    */
   @Setter(AccessLevel.NONE)
-  private String integrationContext;
+  private String company;
 
   /**
    * URL where candidates can apply for the job on the company's website.
@@ -223,9 +223,9 @@ public class JobPosting {
   public void setCompanyId(String companyId) {
     this.companyId = companyId;
     if (companyId != null && !companyId.isEmpty()) {
-      this.integrationContext = LINKEDIN_URN_FORMAT + companyId;
+      this.company = LINKEDIN_URN_FORMAT + companyId;
     } else {
-      this.integrationContext = null;
+      this.company = null;
     }
   }
 
@@ -305,7 +305,7 @@ public class JobPosting {
 
     // Set integrationContext based on companyId
     if (companyId != null || !companyId.isEmpty()) {
-      this.integrationContext = LINKEDIN_URN_FORMAT + companyId;
+      this.company = LINKEDIN_URN_FORMAT + companyId;
     }
   }
 

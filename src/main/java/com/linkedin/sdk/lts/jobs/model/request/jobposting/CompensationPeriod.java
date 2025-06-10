@@ -5,7 +5,7 @@ package com.linkedin.sdk.lts.jobs.model.request.jobposting;
  * These values indicate the frequency at which compensation is provided
  * and are used to clearly communicate payment schedules in job postings.
  *
- * @See <a href="https://learn.microsoft.com/en-us/linkedin/talent/job-postings/api/job-posting-api-schema?view=li-lts-2025-01">LinkedIn Job Posting Documentation</a>
+ * @See <a href="https://learn.microsoft.com/en-us/linkedin/talent/job-postings/api/job-posting-api-schema?view=li-lts-2025-04">LinkedIn Job Posting Documentation</a>
  */
 public enum CompensationPeriod {
   YEARLY,

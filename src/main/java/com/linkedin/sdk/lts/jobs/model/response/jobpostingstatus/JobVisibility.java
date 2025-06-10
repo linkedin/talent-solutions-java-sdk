@@ -16,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  *   <li>PUBLIC - By default job will be visible across the platform in all channels.</li>
  * </ul>
  *
- * @see <a href="https://learn.microsoft.com/en-us/linkedin/talent/job-postings/api/check-job-posting-status?view=li-lts-2025-01">LinkedIn Job Posting Status Documentation</a>
+ * @see <a href="https://learn.microsoft.com/en-us/linkedin/talent/job-postings/api/check-job-posting-status?view=li-lts-2025-04">LinkedIn Job Posting Status Documentation</a>
  */
 public enum JobVisibility {
 

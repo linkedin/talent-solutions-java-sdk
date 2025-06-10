@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
  *   <li>The amount field is optional but must follow valid money amount format if provided</li>
  * </ul>
  *
- * @See <a href="https://learn.microsoft.com/en-us/linkedin/talent/job-postings/api/job-posting-api-schema?view=li-lts-2025-01">LinkedIn Job Posting Documentation</a>
+ * @See <a href="https://learn.microsoft.com/en-us/linkedin/talent/job-postings/api/job-posting-api-schema?view=li-lts-2025-04">LinkedIn Job Posting Documentation</a>
  */
 @Data
 @Builder

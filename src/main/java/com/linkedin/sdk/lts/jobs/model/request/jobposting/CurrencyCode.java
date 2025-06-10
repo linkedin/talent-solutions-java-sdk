@@ -2,7 +2,7 @@ package com.linkedin.sdk.lts.jobs.model.request.jobposting;
 
 /**
  * Enum class representing 3 digit ISO currency code
- * @see <a href="https://learn.microsoft.com/en-us/linkedin/shared/references/reference-tables/currency-codes?view=li-lts-2025-01">Currency Codes</a>
+ * @see <a href="https://learn.microsoft.com/en-us/linkedin/shared/references/reference-tables/currency-codes?view=li-lts-2025-04">Currency Codes</a>
  */
 public enum CurrencyCode {
   AED, // United Arab Emirates Dirham
