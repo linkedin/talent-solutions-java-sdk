@@ -73,13 +73,20 @@ public class JobPostingClient {
    * Factory method to obtain a BasicJobPostingClient instance for a given configuration.
    * If an instance already exists for the provided configuration, it will be returned.
    * Otherwise, a new instance will be created.
-   *
+   * Use LinkedInClientFactory to get JobPostingClient Instance
    * @param config the OAuth 2.0 configuration to use
    * @return JobPostingClient instance for the given configuration
    * @throws NullPointerException if config is null
    */
-  public static synchronized JobPostingClient getInstance(OAuth2Config config) {
+  protected static synchronized JobPostingClient getInstance(OAuth2Config config) {
     return INSTANCES.computeIfAbsent(config, JobPostingClient::new);
+  }
+
+  /**
+   * Method to clear all cached instances.
+   */
+  protected static synchronized void clearInstances() {
+    INSTANCES.clear();
   }
 
   /**

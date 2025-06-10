@@ -26,16 +26,16 @@ public class JobPostingTest {
         .build();
 
     // Verify initial integrationContext
-    assertEquals(jobPosting.getIntegrationContext(), LINKEDIN_URN_FORMAT + COMPANY_ID);
+    assertEquals(jobPosting.getCompany(), LINKEDIN_URN_FORMAT + COMPANY_ID);
 
     // Update companyId and verify integrationContext
     jobPosting.setCompanyId(COMPANY_ID_NEW);
-    assertEquals(jobPosting.getIntegrationContext(), LINKEDIN_URN_FORMAT + COMPANY_ID_NEW);
+    assertEquals(jobPosting.getCompany(), LINKEDIN_URN_FORMAT + COMPANY_ID_NEW);
 
     jobPosting.setCompanyId(null);
-    assertEquals(jobPosting.getIntegrationContext(), null);
+    assertEquals(jobPosting.getCompany(), null);
 
     jobPosting.setCompanyId("");
-    assertEquals(jobPosting.getIntegrationContext(), null);
+    assertEquals(jobPosting.getCompany(), null);
   }
 }

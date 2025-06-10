@@ -28,6 +28,11 @@ public class LinkedInApiConstants {
   public static final String JOB_STATUS_BASE_URL = BASE_URL + "jobPostingStatus";
 
   /**
+   * The URL for LinkedIn's OAuth 2.0 authorization endpoint.
+   */
+  public static final String LINKEDIN_ACCESS_TOKEN_URL = "https://www.linkedin.com/oauth/v2/accessToken";
+
+  /**
    *  The header for LinkedIn API versioning.
    */
   public static final String LINKEDIN_VERSION = "LinkedIn-Version";

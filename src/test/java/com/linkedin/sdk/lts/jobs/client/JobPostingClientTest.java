@@ -76,8 +76,8 @@ public class JobPostingClientTest {
 
   @Test
   public void testSingletonBehavior() throws Exception {
-    JobPostingClient client1 = JobPostingClient.getInstance(config);
-    JobPostingClient client2 = JobPostingClient.getInstance(config);
+    JobPostingClient client1 = LinkedInClientFactory.getInstance().getJobPostingClient(TEST_CLIENT_ID, TEST_CLIENT_SECRET);
+    JobPostingClient client2 = LinkedInClientFactory.getInstance().getJobPostingClient(TEST_CLIENT_ID, TEST_CLIENT_SECRET);
     assertSame(client1, client2);
   }
 
