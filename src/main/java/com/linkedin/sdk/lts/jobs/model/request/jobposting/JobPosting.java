@@ -1,6 +1,7 @@
 package com.linkedin.sdk.lts.jobs.model.request.jobposting;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.linkedin.sdk.lts.jobs.model.request.p4pjobposting.P4PBudget;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -30,9 +31,9 @@ public class JobPosting {
 
   /**
    * CompanyId for the job posting without the "urn:li:organization:" prefix
-   * This field is used to set the integrationContext automatically.
+   * This field is used to set the company automatically.
    * This field is not present in the actual request schema.
-   * This field will be ignored during serialization in favour of integrationContext.
+   * This field will be ignored during serialization in favour of company.
    */
   @JsonIgnore
   private String companyId;
@@ -218,7 +219,13 @@ public class JobPosting {
   private boolean showPosterInfo;
 
   /**
-   * Sets the companyId and updates the integrationContext accordingly.
+   * The budget for the job posting.
+   * This field is used for P4P Jobs (Pay for Performance Jobs).
+   */
+  private P4PBudget p4PBudget;
+
+  /**
+   * Sets the companyId and updates the company accordingly.
    */
   public void setCompanyId(String companyId) {
     this.companyId = companyId;
@@ -273,7 +280,7 @@ public class JobPosting {
       PosterProvidedCompensation compensation, Long expireAt,
       ListingType listingType, Availability availability,
       String posterEmail, String partnerRequisitionId,
-      String contract, boolean showPosterInfo) {
+      String contract, boolean showPosterInfo, P4PBudget p4PBudget){
 
     this.companyId = companyId;
     this.companyApplyUrl = companyApplyUrl;
@@ -302,8 +309,9 @@ public class JobPosting {
     this.partnerRequisitionId = partnerRequisitionId;
     this.contract = contract;
     this.showPosterInfo = showPosterInfo;
+    this.p4PBudget = p4PBudget;
 
-    // Set integrationContext based on companyId
+    // Set company based on companyId
     if (companyId != null || !companyId.isEmpty()) {
       this.company = LINKEDIN_URN_FORMAT + companyId;
     }
