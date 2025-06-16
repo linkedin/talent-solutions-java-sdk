@@ -1,0 +1,166 @@
+{
+  "paging": {
+    "start": 0,
+    "count": 50,
+    "total": 13,
+    "links": []
+  },
+  "elements": [
+    {
+      "jobPostingInfo": {
+        "externalJobPostingId": "your-unique_job-id-8",
+        "linkedInJobPostingId": 4219858473,
+        "closeAt": 1748628480000,
+        "companyDetails": {
+          "companyName": "DevTestSchool"
+        },
+        "companyApplyUrl": "https://careers.customer-company.com",
+        "jobTitle": "Partner P4P Test Job <Test Job Visible to LinkedIn Employees Only>"
+      }
+    },
+    {
+      "jobPostingInfo": {
+        "externalJobPostingId": "sowang-rc-p4p-sjp-test-05-08-25-01",
+        "linkedInJobPostingId": 4226603420,
+        "closeAt": 1749358252000,
+        "companyDetails": {
+          "companyName": "GSOBAA_1"
+        },
+        "companyApplyUrl": "http://www.linkedin.com/company/97188706",
+        "jobTitle": "Software Engineer <Test Job Visible to LinkedIn Employees Only>"
+      }
+    },
+    {
+      "jobPostingInfo": {
+        "externalJobPostingId": "your-unique_job-id-9",
+        "linkedInJobPostingId": 4219857670,
+        "closeAt": 1748628609000,
+        "companyDetails": {
+          "companyName": "DevTestSchool"
+        },
+        "companyApplyUrl": "https://careers.customer-company.com",
+        "jobTitle": "Partner P4P Test Job <Test Job Visible to LinkedIn Employees Only>"
+      }
+    },
+    {
+      "jobPostingInfo": {
+        "externalJobPostingId": "your-unique_job-id-6",
+        "linkedInJobPostingId": 4219393694,
+        "closeAt": 1748562493000,
+        "companyDetails": {
+          "companyName": "DevTestSchool"
+        },
+        "companyApplyUrl": "https://careers.customer-company.com",
+        "jobTitle": "Partner P4P Test Job <Test Job Visible to LinkedIn Employees Only>"
+      }
+    },
+    {
+      "jobPostingInfo": {
+        "externalJobPostingId": "sowang-rc-p4p-sjp-test-05-01-25-01",
+        "linkedInJobPostingId": 4220615098,
+        "closeAt": 1748713561000,
+        "companyDetails": {
+          "companyName": "GSOBAA_1"
+        },
+        "companyApplyUrl": "http://www.linkedin.com/company/97188706",
+        "jobTitle": "Social Media Management <Test Job Visible to LinkedIn Employees Only>"
+      }
+    },
+    {
+      "jobPostingInfo": {
+        "externalJobPostingId": "your-unique_job-id-7",
+        "linkedInJobPostingId": 4219858413,
+        "closeAt": 1748628382000,
+        "companyDetails": {
+          "companyName": "DevTestSchool"
+        },
+        "companyApplyUrl": "https://careers.customer-company.com",
+        "jobTitle": "Partner P4P Test Job <Test Job Visible to LinkedIn Employees Only>"
+      }
+    },
+    {
+      "jobPostingInfo": {
+        "externalJobPostingId": "sowang-rc-p4p-sjp-test-05-07-25-01",
+        "linkedInJobPostingId": 4225743037,
+        "closeAt": 1749240840000,
+        "companyDetails": {
+          "companyName": "GSOBAA_1"
+        },
+        "companyApplyUrl": "http://www.linkedin.com/company/97188706",
+        "jobTitle": "Software Engineer <Test Job Visible to LinkedIn Employees Only>"
+      }
+    },
+    {
+      "jobPostingInfo": {
+        "externalJobPostingId": "your-unique_job-id-1",
+        "linkedInJobPostingId": 4219380683,
+        "closeAt": 1748560092000,
+        "companyDetails": {
+          "companyName": "DevTestSchool"
+        },
+        "companyApplyUrl": "https://careers.customer-company.com",
+        "jobTitle": "Partner P4P Test Job <Test Job Visible to LinkedIn Employees Only>"
+      }
+    },
+    {
+      "jobPostingInfo": {
+        "externalJobPostingId": "your-unique_job-id-4",
+        "linkedInJobPostingId": 4219386797,
+        "closeAt": 1748561171000,
+        "companyDetails": {
+          "companyName": "DevTestSchool"
+        },
+        "companyApplyUrl": "https://careers.customer-company.com",
+        "jobTitle": "Partner P4P Test Job <Test Job Visible to LinkedIn Employees Only>"
+      }
+    },
+    {
+      "jobPostingInfo": {
+        "externalJobPostingId": "your-unique_job-id-5",
+        "linkedInJobPostingId": 4219390037,
+        "closeAt": 1748561289000,
+        "companyDetails": {
+          "companyName": "DevTestSchool"
+        },
+        "companyApplyUrl": "https://careers.customer-company.com",
+        "jobTitle": "Partner P4P Test Job <Test Job Visible to LinkedIn Employees Only>"
+      }
+    },
+    {
+      "jobPostingInfo": {
+        "externalJobPostingId": "your-unique_job-id-2",
+        "linkedInJobPostingId": 4219387417,
+        "closeAt": 1748560204000,
+        "companyDetails": {
+          "companyName": "DevTestSchool"
+        },
+        "companyApplyUrl": "https://careers.customer-company.com",
+        "jobTitle": "Partner P4P Test Job <Test Job Visible to LinkedIn Employees Only>"
+      }
+    },
+    {
+      "jobPostingInfo": {
+        "externalJobPostingId": "your-unique_job-id-3",
+        "linkedInJobPostingId": 4219387747,
+        "closeAt": 1748560808000,
+        "companyDetails": {
+          "companyName": "DevTestSchool"
+        },
+        "companyApplyUrl": "https://careers.customer-company.com",
+        "jobTitle": "Partner P4P Test Job <Test Job Visible to LinkedIn Employees Only>"
+      }
+    },
+    {
+      "jobPostingInfo": {
+        "externalJobPostingId": "sowang-rc-p4p-sjp-test-05-05-25-01",
+        "linkedInJobPostingId": 4224039900,
+        "closeAt": 1749078240000,
+        "companyDetails": {
+          "companyName": "GSOBAA_1"
+        },
+        "companyApplyUrl": "http://www.linkedin.com/company/97188706",
+        "jobTitle": "Social Media Management <Test Job Visible to LinkedIn Employees Only>"
+      }
+    }
+  ]
+}

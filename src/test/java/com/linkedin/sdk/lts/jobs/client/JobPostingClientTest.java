@@ -1,6 +1,5 @@
 package com.linkedin.sdk.lts.jobs.client;
 
-import com.linkedin.sdk.lts.jobs.auth.AuthenticationProvider;
 import com.linkedin.sdk.lts.jobs.auth.OAuth2Config;
 import com.linkedin.sdk.lts.jobs.constants.HttpConstants;
 import com.linkedin.sdk.lts.jobs.model.request.jobposting.JobPostingRequest;
@@ -18,26 +17,19 @@ import java.net.URL;
 import org.junit.Before;
 import org.junit.Test;
 
+import static com.linkedin.sdk.lts.jobs.client.TestingCommonConstants.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 
 public class JobPostingClientTest {
 
-  private AuthenticationProvider mockAuthProvider;
   private JobPostingClient client;
   private JobPostingClient clientSpy;
   private JobPostingRequest mockRequest;
   private HttpsURLConnection mockConnection;
   private OAuth2Config config;
 
-  private static final String TEST_CLIENT_ID = "test-client-id";
-  private static final String TEST_CLIENT_SECRET = "test-client-secret";
-  private static final String TEST_TOKEN_URL = "https://www.linkedin.com/oauth/v2/accessToken";
-  private static final String TEST_JOB_POSTING_ID_1 = "urn:li:simpleJobPostingTask:c85fc9e7-b434-44d2-b9c1-a5ac688a1fe1";
-  private static final String TEST_JOB_POSTING_ID_2 = "urn:li:simpleJobPostingTask:d958f4d2-3079-4290-8891-3a73e4fb70d7";
-  private static final String TEST_EXTERNAL_JOB_POSTING_ID_1 = "112233445566";
-  private static final String TEST_EXTERNAL_JOB_POSTING_ID_2 = "112233445577";
   private static final String HTTP_400_MESSAGE = "HTTP error 400";
 
   @Before
@@ -65,12 +57,12 @@ public class JobPostingClientTest {
     when(mockConnection.getOutputStream()).thenReturn(mockOutput);
     when(mockConnection.getResponseCode()).thenReturn(201);
     when(mockConnection.getInputStream()).thenReturn(
-        new ByteArrayInputStream(JobPostingTestingUtility.getSuccessJobPostingResponse().getBytes()));
+        new ByteArrayInputStream(TestingResourceUtility.getSuccessJobPostingResponse().getBytes()));
 
     JobPostingResponse response = clientSpy.post(mockRequest);
 
     assertEquals(response.getElements().get(0).getStatus(), 202);
-    assertEquals(response.getElements().get(0).getId(), TEST_JOB_POSTING_ID_2);
+    assertEquals(response.getElements().get(0).getId(), TEST_JOB_POSTING_TASK_ID_2);
     assertNull(response.getElements().get(0).getJobPostingError());
   }
 
@@ -107,12 +99,12 @@ public class JobPostingClientTest {
     doNothing().when(mockConnection).setDoOutput(false);
     when(mockConnection.getResponseCode()).thenReturn(200);
     when(mockConnection.getInputStream()).thenReturn(
-        new ByteArrayInputStream(JobPostingTestingUtility.getSuccessTaskStatusResponse().getBytes()));
+        new ByteArrayInputStream(TestingResourceUtility.getSuccessTaskStatusResponse().getBytes()));
 
-    JobTaskStatusResponse response = clientSpy.getTaskStatus(TEST_JOB_POSTING_ID_1);
+    JobTaskStatusResponse response = clientSpy.getTaskStatus(TEST_JOB_POSTING_TASK_ID_1);
 
     assertNotNull(response);
-    assertEquals(response.getResults().get(TEST_JOB_POSTING_ID_1).getStatus().toValue(), JobTaskStatus.SUCCEEDED.toValue());
+    assertEquals(response.getResults().get(TEST_JOB_POSTING_TASK_ID_1).getStatus().toValue(), JobTaskStatus.SUCCEEDED.toValue());
     assertTrue(response.getErrors().isEmpty());
     assertTrue(response.getStatuses().isEmpty());
   }
@@ -159,14 +151,14 @@ public class JobPostingClientTest {
     doNothing().when(mockConnection).setDoOutput(false);
     when(mockConnection.getResponseCode()).thenReturn(200);
     when(mockConnection.getInputStream()).thenReturn(
-        new ByteArrayInputStream(JobPostingTestingUtility.getMultipleSuccessTaskStatusResponse().getBytes()));
+        new ByteArrayInputStream(TestingResourceUtility.getMultipleSuccessTaskStatusResponse().getBytes()));
 
-    List<String> taskIds = Arrays.asList(TEST_JOB_POSTING_ID_1, TEST_JOB_POSTING_ID_2);
+    List<String> taskIds = Arrays.asList(TEST_JOB_POSTING_TASK_ID_1, TEST_JOB_POSTING_TASK_ID_2);
     JobTaskStatusResponse response = clientSpy.getTaskStatus(taskIds);
 
     assertNotNull(response);
-    assertEquals(response.getResults().get(TEST_JOB_POSTING_ID_1).getStatus().toString(), JobTaskStatus.SUCCEEDED.toString());
-    assertEquals(response.getResults().get(TEST_JOB_POSTING_ID_2).getStatus().toString(), JobTaskStatus.IN_PROGRESS.toString());
+    assertEquals(response.getResults().get(TEST_JOB_POSTING_TASK_ID_1).getStatus().toString(), JobTaskStatus.SUCCEEDED.toString());
+    assertEquals(response.getResults().get(TEST_JOB_POSTING_TASK_ID_2).getStatus().toString(), JobTaskStatus.IN_PROGRESS.toString());
     assertTrue(response.getErrors().isEmpty());
     assertTrue(response.getStatuses().isEmpty());
   }
@@ -212,7 +204,7 @@ public class JobPostingClientTest {
     doNothing().when(mockConnection).setDoOutput(false);
     when(mockConnection.getResponseCode()).thenReturn(200);
     when(mockConnection.getInputStream()).thenReturn(
-        new ByteArrayInputStream(JobPostingTestingUtility.getSuccessJobPostingStatusResponse().getBytes()));
+        new ByteArrayInputStream(TestingResourceUtility.getSuccessJobPostingStatusResponse().getBytes()));
 
     JobPostingStatusResponse response = clientSpy.getJobPostingStatus(TEST_EXTERNAL_JOB_POSTING_ID_1);
     assertNotNull(response);
@@ -247,7 +239,7 @@ public class JobPostingClientTest {
     when(mockConnection.getErrorStream()).thenReturn(errorInput);
 
     Exception exception = assertThrows(Exception.class, () -> {
-      clientSpy.getJobPostingStatus(TEST_JOB_POSTING_ID_1);
+      clientSpy.getJobPostingStatus(TEST_JOB_POSTING_TASK_ID_1);
     });
 
     assertTrue(exception.getMessage().contains(HTTP_400_MESSAGE));
@@ -260,7 +252,7 @@ public class JobPostingClientTest {
     doNothing().when(mockConnection).setDoOutput(false);
     when(mockConnection.getResponseCode()).thenReturn(200);
     when(mockConnection.getInputStream()).thenReturn(
-        new ByteArrayInputStream(JobPostingTestingUtility.getMultipleSuccessJobPostingStatusResponse().getBytes()));
+        new ByteArrayInputStream(TestingResourceUtility.getMultipleSuccessJobPostingStatusResponse().getBytes()));
 
     List<String> jobIds = Arrays.asList(TEST_EXTERNAL_JOB_POSTING_ID_1, TEST_EXTERNAL_JOB_POSTING_ID_2);
     JobPostingStatusResponse response = clientSpy.getJobPostingStatus(jobIds);
@@ -297,7 +289,7 @@ public class JobPostingClientTest {
     when(mockConnection.getErrorStream()).thenReturn(errorInput);
 
     Exception exception = assertThrows(Exception.class, () -> {
-      clientSpy.getJobPostingStatus(Arrays.asList(TEST_JOB_POSTING_ID_1, TEST_JOB_POSTING_ID_2));
+      clientSpy.getJobPostingStatus(Arrays.asList(TEST_JOB_POSTING_TASK_ID_1, TEST_JOB_POSTING_TASK_ID_2));
     });
 
     assertTrue(exception.getMessage().contains(HTTP_400_MESSAGE));

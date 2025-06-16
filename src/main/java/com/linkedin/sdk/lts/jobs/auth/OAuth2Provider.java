@@ -198,6 +198,7 @@ public class OAuth2Provider implements AuthenticationProvider {
 
   // Separated for testability
   protected HttpsURLConnection openConnection(URL url) throws IOException {
+    LOGGER.info(String.format("Sending request to %s", url));
     return (HttpsURLConnection) url.openConnection();
   }
 

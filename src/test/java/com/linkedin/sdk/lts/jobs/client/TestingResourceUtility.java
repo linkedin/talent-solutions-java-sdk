@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.stream.Collectors;
 
-public class JobPostingTestingUtility {
+public class TestingResourceUtility {
 
   public static String getSuccessJobPostingResponse(){
     return readJsonFromFile("JobPostingSuccessResponse.txt");
@@ -25,6 +25,18 @@ public class JobPostingTestingUtility {
 
   public static String getMultipleSuccessJobPostingStatusResponse() {
     return readJsonFromFile("MultipleJobPostingStatusSuccessResponse.txt");
+  }
+
+  public static String getSuccessP4PJobPerformanceReportsByIdsResponse(){
+    return readJsonFromFile("P4PJobPerformanceReportsByIdsSuccessResponse.txt");
+  }
+
+  public static String getSuccessP4PJobPerformanceReportsByDateResponse(){
+    return readJsonFromFile("P4PJobPerformanceReportsByDateSuccessResponse.txt");
+  }
+
+  public static String getSuccessP4PPartnerBudgetReportResponse(){
+    return readJsonFromFile("P4PPartnerBudgetReportResponse.txt");
   }
 
   private static String readJsonFromFile(String filePath) {

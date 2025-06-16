@@ -1,5 +1,6 @@
 package com.linkedin.sdk.lts.jobs.auth;
 
+import static com.linkedin.sdk.lts.jobs.client.TestingCommonConstants.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -8,9 +9,6 @@ import org.junit.Test;
 
 
 public class OAuth2TokenTest {
-
-  private static final String TEST_TOKEN = "test-access-token";
-  private static final long EXPIRY_SECONDS = 3600; // 1 hour
 
   @Test
   public void testIsExpired_WithValidToken_ReturnsFalse() {

@@ -1,0 +1,17 @@
+{
+  "results": {
+    "112233445566": {
+      "jobPostingInfo": {
+        "externalJobPostingId": "112233445566",
+        "linkedInJobPostingId": 4249477487,
+        "companyDetails": {
+          "companyName": "DevTestSchool"
+        },
+        "companyApplyUrl": "https://careers.yourcompany.com",
+        "jobTitle": "Software Developer in Test <Test Job Visible to LinkedIn Employees Only>"
+      },
+      "lifetimeJobBudgetInfo": {}
+    }
+  },
+  "errors": {}
+}

@@ -65,7 +65,7 @@ public class JobPostingClient {
    *
    * @param config the OAuth 2.0 configuration for this provider
    */
-  private JobPostingClient(OAuth2Config config) {
+  protected JobPostingClient(OAuth2Config config) {
     this.oAuth2Config = config;
   }
 
@@ -105,6 +105,7 @@ public class JobPostingClient {
         throw new IllegalArgumentException("Job Posting Request cannot be null");
       }
       String requestBody = ObjectMapperUtil.toJson(jobPostingRequest);
+      LOGGER.info(String.format("Sending request to %s with body: %s", JOB_POSTING_BASE_URL, requestBody));
 
       URL url = new URL(JOB_POSTING_BASE_URL);
       HttpsURLConnection connection = openConnection(url);
@@ -277,6 +278,7 @@ public class JobPostingClient {
    * @throws IOException if an I/O error occurs while opening the connection
    */
   protected HttpsURLConnection openConnection(URL url) throws IOException {
+    LOGGER.info(String.format("Sending request to %s", url));
     return (HttpsURLConnection) url.openConnection();
   }
 
@@ -298,7 +300,7 @@ public class JobPostingClient {
    * @throws LinkedInApiException if the response code indicates an error
    * @throws IOException if an I/O error occurs while reading the response
    */
-  private String getResponseBody(HttpsURLConnection connection) throws LinkedInApiException, IOException {
+  protected String getResponseBody(HttpsURLConnection connection) throws LinkedInApiException, IOException {
     int responseCode = connection.getResponseCode();
     InputStream inputStream = isSuccessResponse(responseCode)
         ? connection.getInputStream()

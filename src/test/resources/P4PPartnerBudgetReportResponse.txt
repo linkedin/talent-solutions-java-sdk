@@ -1,0 +1,16 @@
+{
+  "serviceTermStartAt": 1738726722577,
+  "serviceTermEndAt": 1770262712000,
+  "partnerBudgetDetails": [
+    {
+      "serviceTermBudgetSpent": {
+        "currencyCode": "USD",
+        "amount": "21.84"
+      },
+      "serviceTermBudgetLimit": {
+        "currencyCode": "USD",
+        "amount": "100000"
+      }
+    }
+  ]
+}
