@@ -1,6 +1,7 @@
 package com.linkedin.sdk.lts.jobs.model.request.jobposting;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.linkedin.sdk.lts.jobs.model.request.applyconnect.applyConfiguration.OnsiteApplyConfiguration;
 import com.linkedin.sdk.lts.jobs.model.request.p4pjobposting.P4PBudget;
 import java.util.List;
 import lombok.AccessLevel;
@@ -225,6 +226,12 @@ public class JobPosting {
   private P4PBudget p4PBudget;
 
   /**
+   * Onsite apply configuration for the job posting.
+   * This field is used to specify the onsite apply configuration details.
+   */
+  private OnsiteApplyConfiguration onsiteApplyConfiguration;
+
+  /**
    * Sets the companyId and updates the company accordingly.
    */
   public void setCompanyId(String companyId) {
@@ -267,6 +274,8 @@ public class JobPosting {
    * @param partnerRequisitionId Unique ID of job requisition linked to this posting.
    * @param contract Contract information for LinkedIn Recruiter services.
    * @param showPosterInfo Whether to display poster information on job description page.
+   * @param p4PBudget The budget for the job posting, used for P4P Jobs.
+   * @param onsiteApplyConfiguration Onsite apply configuration for the job posting.
    */
   @Builder
   private JobPosting(
@@ -280,7 +289,8 @@ public class JobPosting {
       PosterProvidedCompensation compensation, Long expireAt,
       ListingType listingType, Availability availability,
       String posterEmail, String partnerRequisitionId,
-      String contract, boolean showPosterInfo, P4PBudget p4PBudget){
+      String contract, boolean showPosterInfo, P4PBudget p4PBudget,
+      OnsiteApplyConfiguration onsiteApplyConfiguration){
 
     this.companyId = companyId;
     this.companyApplyUrl = companyApplyUrl;
@@ -310,6 +320,7 @@ public class JobPosting {
     this.contract = contract;
     this.showPosterInfo = showPosterInfo;
     this.p4PBudget = p4PBudget;
+    this.onsiteApplyConfiguration = onsiteApplyConfiguration;
 
     // Set company based on companyId
     if (companyId != null || !companyId.isEmpty()) {
