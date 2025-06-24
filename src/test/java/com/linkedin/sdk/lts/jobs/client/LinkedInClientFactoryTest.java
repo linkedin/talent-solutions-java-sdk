@@ -45,11 +45,55 @@ public class LinkedInClientFactoryTest {
   }
 
   @Test
+  public void testGetP4PJobPostingClient_returnsSameInstanceForSameCredentials() {
+    LinkedInClientFactory factory = LinkedInClientFactory.getInstance();
+
+    P4PJobPostingClient client1 = factory.getP4PJobPostingClient(TEST_CLIENT_ID, TEST_CLIENT_SECRET);
+    P4PJobPostingClient client2 = factory.getP4PJobPostingClient(TEST_CLIENT_ID, TEST_CLIENT_SECRET);
+
+    assertNotNull("P4PJobPostingClient should not be null", client1);
+    assertNotNull("P4PJobPostingClient should not be null", client2);
+    assertSame("Same credentials should return same client instance", client1, client2);
+  }
+
+  @Test
+  public void testGetApplyConnectJobPostingClient_returnsSameInstanceForSameCredentials() {
+    LinkedInClientFactory factory = LinkedInClientFactory.getInstance();
+
+    ApplyConnectJobPostingClient client1 = factory.getApplyConnectJobPostingClient(TEST_CLIENT_ID, TEST_CLIENT_SECRET);
+    ApplyConnectJobPostingClient client2 = factory.getApplyConnectJobPostingClient(TEST_CLIENT_ID, TEST_CLIENT_SECRET);
+
+    assertNotNull("ApplyConnectJobPostingClient should not be null", client1);
+    assertNotNull("ApplyConnectJobPostingClient should not be null", client2);
+    assertSame("Same credentials should return same client instance", client1, client2);
+  }
+
+  @Test
   public void testGetJobPostingClient_returnsDifferentInstancesForDifferentCredentials() {
     LinkedInClientFactory factory = LinkedInClientFactory.getInstance();
 
     JobPostingClient client1 = factory.getJobPostingClient(TEST_CLIENT_ID, TEST_CLIENT_SECRET);
     JobPostingClient client2 = factory.getJobPostingClient(ALTERNATE_CLIENT_ID, ALTERNATE_CLIENT_SECRET);
+
+    assertNotSame("Different credentials should return different client instances", client1, client2);
+  }
+
+  @Test
+  public void testGetP4PJobPostingClient_returnsDifferentInstancesForDifferentCredentials() {
+    LinkedInClientFactory factory = LinkedInClientFactory.getInstance();
+
+    P4PJobPostingClient client1 = factory.getP4PJobPostingClient(TEST_CLIENT_ID, TEST_CLIENT_SECRET);
+    P4PJobPostingClient client2 = factory.getP4PJobPostingClient(ALTERNATE_CLIENT_ID, ALTERNATE_CLIENT_SECRET);
+
+    assertNotSame("Different credentials should return different client instances", client1, client2);
+  }
+
+  @Test
+  public void testGetApplyConnectJobPostingClient_returnsDifferentInstancesForDifferentCredentials() {
+    LinkedInClientFactory factory = LinkedInClientFactory.getInstance();
+
+    ApplyConnectJobPostingClient client1 = factory.getApplyConnectJobPostingClient(TEST_CLIENT_ID, TEST_CLIENT_SECRET);
+    ApplyConnectJobPostingClient client2 = factory.getApplyConnectJobPostingClient(ALTERNATE_CLIENT_ID, ALTERNATE_CLIENT_SECRET);
 
     assertNotSame("Different credentials should return different client instances", client1, client2);
   }
@@ -66,23 +110,57 @@ public class LinkedInClientFactoryTest {
     factory.getJobPostingClient(TEST_CLIENT_ID, null);
   }
 
+  @Test(expected = IllegalArgumentException.class)
+  public void testGetP4PJobPostingClient_emptyClientId() {
+    LinkedInClientFactory factory = LinkedInClientFactory.getInstance();
+    factory.getP4PJobPostingClient("", TEST_CLIENT_SECRET);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testGetP4PJobPostingClient_nullClientSecret() {
+    LinkedInClientFactory factory = LinkedInClientFactory.getInstance();
+    factory.getP4PJobPostingClient(TEST_CLIENT_ID, null);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testGetApplyConnectJobPostingClient_emptyClientId() {
+    LinkedInClientFactory factory = LinkedInClientFactory.getInstance();
+    factory.getApplyConnectJobPostingClient("", TEST_CLIENT_SECRET);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testGetApplyConnectJobPostingClient_nullClientSecret() {
+    LinkedInClientFactory factory = LinkedInClientFactory.getInstance();
+    factory.getApplyConnectJobPostingClient(TEST_CLIENT_ID, null);
+  }
+
   @Test
   public void testClearInstances() throws Exception {
     LinkedInClientFactory factory = LinkedInClientFactory.getInstance();
 
     // Create a client to populate the cache
     factory.getJobPostingClient(TEST_CLIENT_ID, TEST_CLIENT_SECRET);
+    factory.getP4PJobPostingClient(TEST_CLIENT_ID, TEST_CLIENT_SECRET);
+    factory.getApplyConnectJobPostingClient(TEST_CLIENT_ID, TEST_CLIENT_SECRET);
 
     // Verify cache has an entry
-    int sizeBefore = getJobPostingClientInstancesSize(factory);
-    assertTrue("Cache should contain at least one entry", sizeBefore > 0);
+    int jobPostingClientInstancesSizeBefore = getJobPostingClientInstancesSize(factory);
+    int p4PJobPostingClientInstancesSizeBefore = getP4PJobPostingClientInstancesSize(factory);
+    int applyConnectJobPostingClientInstancesSizeBefore = getApplyConnectJobPostingClientInstancesSize(factory);
+    assertTrue("Cache should contain at least one entry", jobPostingClientInstancesSizeBefore > 0);
+    assertTrue("Cache should contain at least one entry", p4PJobPostingClientInstancesSizeBefore > 0);
+    assertTrue("Cache should contain at least one entry", applyConnectJobPostingClientInstancesSizeBefore > 0);
 
     // Clear the cache
     factory.clearInstances();
 
     // Verify cache is empty
-    int sizeAfter = getJobPostingClientInstancesSize(factory);
-    assertEquals("Cache should be empty after clearing", 0, sizeAfter);
+    int jobPostingClientInstancesSizeAfter = getJobPostingClientInstancesSize(factory);
+    int p4PJobPostingClientInstancesSizeAfter = getP4PJobPostingClientInstancesSize(factory);
+    int applyConnectJobPostingClientInstancesSizeAfter = getApplyConnectJobPostingClientInstancesSize(factory);
+    assertEquals("Cache should be empty after clearing", 0, jobPostingClientInstancesSizeAfter);
+    assertEquals("Cache should be empty after clearing", 0, p4PJobPostingClientInstancesSizeAfter);
+    assertEquals("Cache should be empty after clearing", 0, applyConnectJobPostingClientInstancesSizeAfter);
   }
 
   // Helper method to access the private jobPostingClientInstances field for verification
@@ -91,6 +169,24 @@ public class LinkedInClientFactoryTest {
     field.setAccessible(true);
     ConcurrentHashMap<OAuth2Config, JobPostingClient> map =
         (ConcurrentHashMap<OAuth2Config, JobPostingClient>) field.get(factory);
+    return map.size();
+  }
+
+  // Helper method to access the private jobPostingClientInstances field for verification
+  private int getP4PJobPostingClientInstancesSize(LinkedInClientFactory factory) throws Exception {
+    Field field = P4PJobPostingClient.class.getDeclaredField("INSTANCES");
+    field.setAccessible(true);
+    ConcurrentHashMap<OAuth2Config, P4PJobPostingClient> map =
+        (ConcurrentHashMap<OAuth2Config, P4PJobPostingClient>) field.get(factory);
+    return map.size();
+  }
+
+  // Helper method to access the private jobPostingClientInstances field for verification
+  private int getApplyConnectJobPostingClientInstancesSize(LinkedInClientFactory factory) throws Exception {
+    Field field = ApplyConnectJobPostingClient.class.getDeclaredField("INSTANCES");
+    field.setAccessible(true);
+    ConcurrentHashMap<OAuth2Config, ApplyConnectJobPostingClient> map =
+        (ConcurrentHashMap<OAuth2Config, ApplyConnectJobPostingClient>) field.get(factory);
     return map.size();
   }
 }

@@ -83,11 +83,38 @@ public class LinkedInClientFactory {
   }
 
   /**
+   * Gets or creates a ApplyConnectJobPostingClient for the given credentials.
+   *
+   * @param clientId the OAuth 2.0 client ID
+   * @param clientSecret the OAuth 2.0 client secret
+   * @return JobPostingClient instance for the given credentials
+   * @throws IllegalArgumentException if clientId or clientSecret is null or empty
+   */
+  @SuppressWarnings("unchecked")
+  public synchronized ApplyConnectJobPostingClient getApplyConnectJobPostingClient(String clientId, String clientSecret) {
+    if (clientId == null || clientId.isEmpty()) {
+      throw new IllegalArgumentException("Client ID cannot be null or empty");
+    }
+    if (clientSecret == null || clientSecret.isEmpty()) {
+      throw new IllegalArgumentException("Client Secret cannot be null or empty");
+    }
+
+    OAuth2Config config = OAuth2Config.builder()
+        .clientId(clientId)
+        .clientSecret(clientSecret)
+        .tokenUrl(LINKEDIN_ACCESS_TOKEN_URL)
+        .build();
+
+    return ApplyConnectJobPostingClient.getInstance(config);
+  }
+
+  /**
    * Clears all cached client instances.
    */
   protected synchronized void clearInstances() {
     JobPostingClient.clearInstances();
     P4PJobPostingClient.clearInstances();
+    ApplyConnectJobPostingClient.clearInstances();
   }
 
 }
