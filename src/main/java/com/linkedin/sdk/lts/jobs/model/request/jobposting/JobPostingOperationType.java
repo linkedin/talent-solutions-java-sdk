@@ -9,16 +9,38 @@ package com.linkedin.sdk.lts.jobs.model.request.jobposting;
  * the expected API payload format. The enum provides methods to convert
  * between enum constants and their string representations.</p>
  *
- * TODO: Update documentation for each enum - https://jira01.corp.linkedin.com:8443/browse/JOBS-81461
- *
  * @See <a href="https://learn.microsoft.com/en-us/linkedin/talent/job-postings/api/job-posting-api-schema?view=li-lts-2025-04">LinkedIn Job Posting Documentation</a>
  */
 public enum JobPostingOperationType {
+
+  /**
+   * Represents the creation of a new job posting.
+   */
   CREATE("CREATE"),
+
+  /**
+   * Represents an update to an existing job posting.
+   */
   UPDATE("UPDATE"),
+
+  /**
+   * Represents the renewal of an existing job posting, typically extending its visibility or validity.
+   */
   RENEW("RENEW"),
+
+  /**
+   * Represents the closure of a job posting, indicating that it is no longer active or accepting applications.
+   */
   CLOSE("CLOSE"),
+
+  /**
+   * Represents an upgrade operation on a job posting, which may involve enhancing its features or visibility.
+   */
   UPGRADE("UPGRADE"),
+
+  /**
+   * Represents a downgrade operation on a job posting, which may involve reducing its features or visibility.
+   */
   DOWNGRADE("DOWNGRADE");
 
   private final String value;
