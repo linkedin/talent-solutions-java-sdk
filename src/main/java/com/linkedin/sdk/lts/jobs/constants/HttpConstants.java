@@ -11,6 +11,7 @@ public class HttpConstants {
   public static final String COLON_SEPARATOR = ":";
   public static final String COMMA_SEPARATOR = ",";
   public static final String CONTENT_TYPE = "content-type";
+  public static final String CONTENT_LENGTH = "Content-Length";
   public static final String EQUALS_SEPARATOR = "=";
   public static final String GET = "GET";
   public static final String OPENING_BRACKET = "(";
