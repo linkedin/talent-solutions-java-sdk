@@ -16,13 +16,6 @@ public class LinkedInClientFactoryTest {
   private static final String ALTERNATE_CLIENT_ID = "alternate-client-id";
   private static final String ALTERNATE_CLIENT_SECRET = "alternate-client-secret";
 
-  @After
-  public void tearDown() throws Exception {
-    // Clear the cache after each test
-    LinkedInClientFactory factory = LinkedInClientFactory.getInstance();
-    factory.clearInstances();
-  }
-
   @Test
   public void testGetInstance_returnsSingletonInstance() {
     LinkedInClientFactory instance1 = LinkedInClientFactory.getInstance();
@@ -132,61 +125,5 @@ public class LinkedInClientFactoryTest {
   public void testGetApplyConnectJobPostingClient_nullClientSecret() {
     LinkedInClientFactory factory = LinkedInClientFactory.getInstance();
     factory.getApplyConnectJobPostingClient(TEST_CLIENT_ID, null);
-  }
-
-  @Test
-  public void testClearInstances() throws Exception {
-    LinkedInClientFactory factory = LinkedInClientFactory.getInstance();
-
-    // Create a client to populate the cache
-    factory.getJobPostingClient(TEST_CLIENT_ID, TEST_CLIENT_SECRET);
-    factory.getP4PJobPostingClient(TEST_CLIENT_ID, TEST_CLIENT_SECRET);
-    factory.getApplyConnectJobPostingClient(TEST_CLIENT_ID, TEST_CLIENT_SECRET);
-
-    // Verify cache has an entry
-    int jobPostingClientInstancesSizeBefore = getJobPostingClientInstancesSize(factory);
-    int p4PJobPostingClientInstancesSizeBefore = getP4PJobPostingClientInstancesSize(factory);
-    int applyConnectJobPostingClientInstancesSizeBefore = getApplyConnectJobPostingClientInstancesSize(factory);
-    assertTrue("Cache should contain at least one entry", jobPostingClientInstancesSizeBefore > 0);
-    assertTrue("Cache should contain at least one entry", p4PJobPostingClientInstancesSizeBefore > 0);
-    assertTrue("Cache should contain at least one entry", applyConnectJobPostingClientInstancesSizeBefore > 0);
-
-    // Clear the cache
-    factory.clearInstances();
-
-    // Verify cache is empty
-    int jobPostingClientInstancesSizeAfter = getJobPostingClientInstancesSize(factory);
-    int p4PJobPostingClientInstancesSizeAfter = getP4PJobPostingClientInstancesSize(factory);
-    int applyConnectJobPostingClientInstancesSizeAfter = getApplyConnectJobPostingClientInstancesSize(factory);
-    assertEquals("Cache should be empty after clearing", 0, jobPostingClientInstancesSizeAfter);
-    assertEquals("Cache should be empty after clearing", 0, p4PJobPostingClientInstancesSizeAfter);
-    assertEquals("Cache should be empty after clearing", 0, applyConnectJobPostingClientInstancesSizeAfter);
-  }
-
-  // Helper method to access the private jobPostingClientInstances field for verification
-  private int getJobPostingClientInstancesSize(LinkedInClientFactory factory) throws Exception {
-    Field field = JobPostingClient.class.getDeclaredField("INSTANCES");
-    field.setAccessible(true);
-    ConcurrentHashMap<OAuth2Config, JobPostingClient> map =
-        (ConcurrentHashMap<OAuth2Config, JobPostingClient>) field.get(factory);
-    return map.size();
-  }
-
-  // Helper method to access the private jobPostingClientInstances field for verification
-  private int getP4PJobPostingClientInstancesSize(LinkedInClientFactory factory) throws Exception {
-    Field field = P4PJobPostingClient.class.getDeclaredField("INSTANCES");
-    field.setAccessible(true);
-    ConcurrentHashMap<OAuth2Config, P4PJobPostingClient> map =
-        (ConcurrentHashMap<OAuth2Config, P4PJobPostingClient>) field.get(factory);
-    return map.size();
-  }
-
-  // Helper method to access the private jobPostingClientInstances field for verification
-  private int getApplyConnectJobPostingClientInstancesSize(LinkedInClientFactory factory) throws Exception {
-    Field field = ApplyConnectJobPostingClient.class.getDeclaredField("INSTANCES");
-    field.setAccessible(true);
-    ConcurrentHashMap<OAuth2Config, ApplyConnectJobPostingClient> map =
-        (ConcurrentHashMap<OAuth2Config, ApplyConnectJobPostingClient>) field.get(factory);
-    return map.size();
   }
 }

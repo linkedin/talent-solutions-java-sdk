@@ -5,6 +5,10 @@ import com.linkedin.sdk.lts.jobs.model.response.common.HttpMethod;
 import java.io.IOException;
 import java.util.Map;
 
+/**
+ * HttpClient is an interface for executing HTTP requests to LinkedIn's API endpoints.
+ * It abstracts the details of making HTTP requests and handling responses.
+ */
 public interface HttpClient {
   /**
    * Executes an HTTP request

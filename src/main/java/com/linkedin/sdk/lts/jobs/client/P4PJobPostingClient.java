@@ -1,12 +1,17 @@
 package com.linkedin.sdk.lts.jobs.client;
 
 import com.linkedin.sdk.lts.jobs.auth.OAuth2Config;
+import com.linkedin.sdk.lts.jobs.client.linkedinclient.HttpClient;
 import com.linkedin.sdk.lts.jobs.exception.AuthenticationException;
 import com.linkedin.sdk.lts.jobs.exception.JsonDeserializationException;
+import com.linkedin.sdk.lts.jobs.exception.JsonSerializationException;
 import com.linkedin.sdk.lts.jobs.exception.LinkedInApiException;
 import com.linkedin.sdk.lts.jobs.model.request.p4pjobposting.P4PJobReportsRequestByDate;
 import com.linkedin.sdk.lts.jobs.model.request.p4pjobposting.P4PJobReportsRequestByIds;
+import com.linkedin.sdk.lts.jobs.model.request.p4pjobposting.P4PProvisionCustomerHiringContractsRequest;
+import com.linkedin.sdk.lts.jobs.model.response.common.HttpMethod;
 import com.linkedin.sdk.lts.jobs.model.response.p4pjobposting.P4PBudgetReportResponse;
+import com.linkedin.sdk.lts.jobs.model.response.p4pjobposting.P4PProvisionCustomerHiringContractsResponse;
 import com.linkedin.sdk.lts.jobs.model.response.p4pjobposting.P4PReportResponseByDate;
 import com.linkedin.sdk.lts.jobs.model.response.p4pjobposting.P4PReportResponseByIds;
 import com.linkedin.sdk.lts.jobs.model.response.common.Date;
@@ -14,12 +19,11 @@ import com.linkedin.sdk.lts.jobs.model.response.common.DateRange;
 import com.linkedin.sdk.lts.jobs.model.response.common.HttpStatusCategory;
 import com.linkedin.sdk.lts.jobs.util.ObjectMapperUtil;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.net.ssl.HttpsURLConnection;
-import java.net.URL;
 import static com.linkedin.sdk.lts.jobs.constants.HttpConstants.*;
 import static com.linkedin.sdk.lts.jobs.constants.LinkedInApiConstants.*;
 import static com.linkedin.sdk.lts.jobs.constants.LinkedInApiConstants.P4P_REPORTS_API_CONSTANTS.*;
@@ -27,16 +31,6 @@ import static com.linkedin.sdk.lts.jobs.constants.LinkedInApiConstants.P4P_REPOR
 
 /**
  * A client for interacting with LinkedIn's PayForPerformance Job Posting API.
- *
- *
- * <p>This class implements the Singleton pattern per configuration, ensuring only one instance
- * exists per unique {@link OAuth2Config}. Instances should be obtained using the
- * {@link #getInstance(OAuth2Config)} factory method.</p>
- *
- * <p>Thread Safety: This class is thread-safe. It maintains no mutable state and uses
- * {@link ConcurrentHashMap} for instance management. Each operation creates its own
- * connection and performs request validation independently.</p>
- *
  * </pre>
  */
 public class P4PJobPostingClient extends JobPostingClient {
@@ -44,39 +38,13 @@ public class P4PJobPostingClient extends JobPostingClient {
   private static final Logger LOGGER = Logger.getLogger(P4PJobPostingClient.class.getName());
 
   /**
-   * Cache of client instances keyed by their OAuth configurations.
-   * Uses ConcurrentHashMap to ensure thread-safe access to client instances.
-   */
-  private static final ConcurrentHashMap<OAuth2Config, P4PJobPostingClient> INSTANCES = new ConcurrentHashMap<>();
-
-
-  /**
-   * Private constructor enforcing singleton pattern per configuration.
+   * Constructs a new P4PJobPostingClient with the specified OAuth 2.0 configuration and HTTP client.
    *
    * @param config the OAuth 2.0 configuration for this provider
+   * @param httpClient the HTTP client to use for making requests
    */
-  private P4PJobPostingClient(OAuth2Config config) {
-    super(config);
-  }
-
-  /**
-   * Factory method to obtain a P4PJobPostingClient instance for a given configuration.
-   * If an instance already exists for the provided configuration, it will be returned.
-   * Otherwise, a new instance will be created.
-   * Use LinkedInClientFactory to get P4PJobPostingClient Instance
-   * @param config the OAuth 2.0 configuration to use
-   * @return JobPostingClient instance for the given configuration
-   * @throws NullPointerException if config is null
-   */
-  protected static synchronized P4PJobPostingClient getInstance(OAuth2Config config) {
-    return INSTANCES.computeIfAbsent(config, P4PJobPostingClient::new);
-  }
-
-  /**
-   * Method to clear all cached instances.
-   */
-  protected static synchronized void clearInstances() {
-    INSTANCES.clear();
+  protected P4PJobPostingClient(OAuth2Config config, HttpClient httpClient) {
+    super(config, httpClient);
   }
 
   /**
@@ -90,7 +58,6 @@ public class P4PJobPostingClient extends JobPostingClient {
   public P4PReportResponseByIds getP4PReportByIds(P4PJobReportsRequestByIds p4PJobReportsRequestByIds)
       throws AuthenticationException, LinkedInApiException, IllegalArgumentException {
     try {
-
       if(p4PJobReportsRequestByIds == null) {
         throw new IllegalArgumentException("P4PJobReportsRequestByIds cannot be null");
       }
@@ -114,8 +81,9 @@ public class P4PJobPostingClient extends JobPostingClient {
       if(partnerContractId != null) {
         queryParams += QUERY_PARAM_SEPARATOR + PARTNER_CONTRACT_ID + EQUALS_SEPARATOR + partnerContractId;
       }
+      String url = PARTNER_JOB_REPORTS_BASE_URL + QUERY_SEPARATOR + queryParams;
 
-      String response = getResponseForGivenQueryParams(PARTNER_JOB_REPORTS_BASE_URL, queryParams);
+      String response = this.httpClient.executeRequest(url, HttpMethod.GET, getHeadersForAPI(), null);
       return ObjectMapperUtil.fromJson(response, P4PReportResponseByIds.class);
     } catch (JsonDeserializationException e) {
       String errorMessage = "Failed to parse LinkedIn API response: " + e.getMessage();
@@ -168,7 +136,9 @@ public class P4PJobPostingClient extends JobPostingClient {
       queryParams += QUERY_PARAM_SEPARATOR + START + EQUALS_SEPARATOR + paginationStart + QUERY_PARAM_SEPARATOR
           + COUNT + EQUALS_SEPARATOR + paginationCount;
 
-      String response = getResponseForGivenQueryParams(PARTNER_JOB_REPORTS_BASE_URL, queryParams);
+      String url = PARTNER_JOB_REPORTS_BASE_URL + QUERY_SEPARATOR + queryParams;
+
+      String response = this.httpClient.executeRequest(url, HttpMethod.GET, getHeadersForAPI(), null);
       return ObjectMapperUtil.fromJson(response, P4PReportResponseByDate.class);
     } catch (JsonDeserializationException e) {
       String errorMessage = "Failed to parse LinkedIn API response: " + e.getMessage();
@@ -200,8 +170,9 @@ public class P4PJobPostingClient extends JobPostingClient {
       }
       // Build the URL with query parameters
       String queryParams = PARTNER_CONTRACT_ID + EQUALS_SEPARATOR + partnerContractId;
+      String url = PARTNER_BUDGET_REPORTS_BASE_URL + QUERY_SEPARATOR + queryParams;
 
-      String response = getResponseForGivenQueryParams(PARTNER_BUDGET_REPORTS_BASE_URL, queryParams);
+      String response = this.httpClient.executeRequest(url, HttpMethod.GET, getHeadersForAPI(), null);
       return ObjectMapperUtil.fromJson(response, P4PBudgetReportResponse.class);
     } catch (JsonDeserializationException e) {
       String errorMessage = "Failed to parse LinkedIn API response: " + e.getMessage();
@@ -217,19 +188,19 @@ public class P4PJobPostingClient extends JobPostingClient {
 
   }
 
-  private String getResponseForGivenQueryParams(String baseURL, String queryParams)
-      throws IOException, AuthenticationException, LinkedInApiException {
-    URL url = new URL(baseURL + QUERY_SEPARATOR + queryParams);
-    HttpsURLConnection connection = openConnection(url);
-
-    // Set up the connection
-    connection.setRequestMethod(GET);
-    connection.setRequestProperty(CONTENT_TYPE, APPLICATION_JSON);
-    connection.setRequestProperty(AUTHORIZATION, BEARER + SPACE_SEPARATOR + getAccessToken());
-    connection.setRequestProperty(LINKEDIN_VERSION, API_VERSION_2025_04);
-    connection.setRequestProperty(X_REST_LI_PROTOCOL_VERSION, X_REST_LI_PROTOCOL_VERSION_VALUE_2_0_0);
-    connection.setDoOutput(false);
-    return getResponseBody(connection);
+  /**
+   * Constructs the headers required for the P4P API requests.
+   *
+   * @return a map of headers to be used in the request
+   * @throws AuthenticationException if authentication fails
+   */
+  private Map<String, String> getHeadersForAPI() throws AuthenticationException {
+    Map<String, String> headers = new HashMap<>();
+    headers.put(CONTENT_TYPE, APPLICATION_JSON);
+    headers.put(AUTHORIZATION, BEARER + SPACE_SEPARATOR + getAccessToken());
+    headers.put(LINKEDIN_VERSION, API_VERSION_2025_04);
+    headers.put(X_REST_LI_PROTOCOL_VERSION, X_REST_LI_PROTOCOL_VERSION_VALUE_2_0_0);
+    return headers;
   }
 
   /**

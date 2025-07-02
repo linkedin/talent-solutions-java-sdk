@@ -1,6 +1,8 @@
 package com.linkedin.sdk.lts.jobs.client;
 
 import com.linkedin.sdk.lts.jobs.auth.OAuth2Config;
+import com.linkedin.sdk.lts.jobs.client.linkedinclient.HttpClient;
+import com.linkedin.sdk.lts.jobs.client.linkedinclient.LinkedInHttpClient;
 
 import static com.linkedin.sdk.lts.jobs.constants.LinkedInApiConstants.*;
 
@@ -12,13 +14,15 @@ import static com.linkedin.sdk.lts.jobs.constants.LinkedInApiConstants.*;
 public class LinkedInClientFactory {
 
   private static final LinkedInClientFactory INSTANCE = new LinkedInClientFactory();
+  private final HttpClient httpClient;
+
 
   /**
    * Private constructor to prevent instantiation.
    * Use getInstance() to obtain the singleton instance.
    */
   private LinkedInClientFactory() {
-    // Prevent instantiation
+    httpClient = new LinkedInHttpClient();
   }
 
   /**
@@ -53,7 +57,7 @@ public class LinkedInClientFactory {
         .tokenUrl(LINKEDIN_ACCESS_TOKEN_URL)
         .build();
 
-    return JobPostingClient.getInstance(config);
+    return new JobPostingClient(config, httpClient);
   }
 
   /**
@@ -79,7 +83,7 @@ public class LinkedInClientFactory {
         .tokenUrl(LINKEDIN_ACCESS_TOKEN_URL)
         .build();
 
-    return P4PJobPostingClient.getInstance(config);
+    return new P4PJobPostingClient(config, httpClient);
   }
 
   /**
@@ -105,16 +109,6 @@ public class LinkedInClientFactory {
         .tokenUrl(LINKEDIN_ACCESS_TOKEN_URL)
         .build();
 
-    return ApplyConnectJobPostingClient.getInstance(config);
+    return new ApplyConnectJobPostingClient(config, httpClient);
   }
-
-  /**
-   * Clears all cached client instances.
-   */
-  protected synchronized void clearInstances() {
-    JobPostingClient.clearInstances();
-    P4PJobPostingClient.clearInstances();
-    ApplyConnectJobPostingClient.clearInstances();
-  }
-
 }

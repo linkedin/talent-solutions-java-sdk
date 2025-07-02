@@ -10,10 +10,15 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.logging.Logger;
+import lombok.NonNull;
 
 import static com.linkedin.sdk.lts.jobs.constants.HttpConstants.*;
 
-
+/**
+ * LinkedInHttpClient is an implementation of HttpClient that handles HTTP requests
+ * to LinkedIn's API endpoints. It supports various HTTP methods and manages headers,
+ * request bodies, and response handling.
+ */
 public class LinkedInHttpClient implements HttpClient {
   private static final Logger LOGGER = Logger.getLogger(LinkedInHttpClient.class.getName());
   private static final int DEFAULT_CONNECT_TIMEOUT = 30000;
@@ -31,7 +36,7 @@ public class LinkedInHttpClient implements HttpClient {
    * @throws LinkedInApiException if the API returns an error response
    */
   @Override
-  public String executeRequest(String url, HttpMethod method, Map<String, String> headers, String body)
+  public String executeRequest(@NonNull String url,@NonNull HttpMethod method, Map<String, String> headers, String body)
       throws IOException, LinkedInApiException {
     LOGGER.info(String.format("Sending %s request to %s with body %s", method, url, body));
 
