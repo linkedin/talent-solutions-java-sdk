@@ -4,6 +4,7 @@ import com.linkedin.sdk.lts.jobs.exception.LinkedInApiException;
 import com.linkedin.sdk.lts.jobs.model.response.common.HttpMethod;
 import com.linkedin.sdk.lts.jobs.model.response.common.HttpStatusCategory;
 
+import com.linkedin.sdk.lts.jobs.util.LogRedactor;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.net.URL;
@@ -38,7 +39,7 @@ public class LinkedInHttpClient implements HttpClient {
   @Override
   public String executeRequest(@NonNull String url,@NonNull HttpMethod method, Map<String, String> headers, String body)
       throws IOException, LinkedInApiException {
-    LOGGER.info(String.format("Sending %s request to %s with body %s", method, url, body));
+    LOGGER.info(LogRedactor.redact(String.format("Sending %s request to %s with body %s", method, url, body)));
 
     HttpsURLConnection connection = createConnection(new URL(url), method);
     setHeaders(connection, headers);
@@ -113,7 +114,7 @@ public class LinkedInHttpClient implements HttpClient {
         : connection.getErrorStream();
 
     String response = readStream(inputStream);
-    LOGGER.info("Response body: " + response);
+    LOGGER.info(LogRedactor.redact(String.format("Response body: %s", response)));
 
     if (!HttpStatusCategory.SUCCESS.matches(responseCode)) {
       String errorMessage = "HTTP error " + responseCode + ": " + response;

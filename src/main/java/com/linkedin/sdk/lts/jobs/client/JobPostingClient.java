@@ -40,12 +40,6 @@ public class JobPostingClient {
   private static final Logger LOGGER = Logger.getLogger(JobPostingClient.class.getName());
 
   /**
-   * Cache of client instances keyed by their OAuth configurations.
-   * Uses ConcurrentHashMap to ensure thread-safe access to client instances.
-   */
-  private static final ConcurrentHashMap<OAuth2Config, JobPostingClient> INSTANCES = new ConcurrentHashMap<>();
-
-  /**
    * The OAuth 2.0 configuration for this client instance.
    */
   protected final OAuth2Config oAuth2Config;
