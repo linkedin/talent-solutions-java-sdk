@@ -27,6 +27,10 @@ public class TestingResourceUtility {
     return readJsonFromFile("MultipleJobPostingStatusSuccessResponse.txt");
   }
 
+  public static String getSuccessP4ProvisionCustomerHiringContractsResponse(){
+    return readJsonFromFile("P4PProvisionCustomerHiringContractsSuccessResponse.txt");
+  }
+
   public static String getSuccessP4PJobPerformanceReportsByIdsResponse(){
     return readJsonFromFile("P4PJobPerformanceReportsByIdsSuccessResponse.txt");
   }
@@ -37,6 +41,22 @@ public class TestingResourceUtility {
 
   public static String getSuccessP4PPartnerBudgetReportResponse(){
     return readJsonFromFile("P4PPartnerBudgetReportResponse.txt");
+  }
+
+  public static String getCreateApplicationSuccessResponse(){
+    return readJsonFromFile("CreateApplicationSuccessResponse.txt");
+  }
+
+  public static String getApplicationSuccessResponse(){
+    return readJsonFromFile("GetApplicationSuccessResponse.txt");
+  }
+
+  public static String getTokenSuccessResponse() {
+    return readJsonFromFile("TokenSuccessResponse.txt");
+  }
+
+  public static String getNewTokenSuccessResponse() {
+    return readJsonFromFile("NewTokenSuccessResponse.txt");
   }
 
   private static String readJsonFromFile(String filePath) {

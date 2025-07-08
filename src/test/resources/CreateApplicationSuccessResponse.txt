@@ -1,0 +1,7 @@
+{
+    "credentials": {
+        "client_id": "1234567890",
+        "client_secret": "ABCDEFGHIJKL"
+    },
+    "key": "urn:li:developerApplication:234"
+}

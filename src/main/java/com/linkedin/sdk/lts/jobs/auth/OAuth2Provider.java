@@ -1,21 +1,18 @@
 package com.linkedin.sdk.lts.jobs.auth;
 
+import com.linkedin.sdk.lts.jobs.client.linkedinclient.HttpClient;
 import com.linkedin.sdk.lts.jobs.exception.AuthenticationException;
 import com.linkedin.sdk.lts.jobs.exception.JsonDeserializationException;
-import com.linkedin.sdk.lts.jobs.model.response.common.HttpStatusCategory;
+import com.linkedin.sdk.lts.jobs.exception.LinkedInApiException;
+import com.linkedin.sdk.lts.jobs.model.response.common.HttpMethod;
 import com.linkedin.sdk.lts.jobs.util.ObjectMapperUtil;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.net.ssl.HttpsURLConnection;
 
 import static com.linkedin.sdk.lts.jobs.constants.HttpConstants.*;
 
@@ -27,7 +24,7 @@ import static com.linkedin.sdk.lts.jobs.constants.HttpConstants.*;
  *
  * <p>This class implements the Singleton pattern per configuration, ensuring only one instance
  * exists per unique {@link OAuth2Config}. Instances should be obtained using the
- * {@link #getInstance(OAuth2Config)} factory method.</p>
+ * {@link #getInstance(OAuth2Config, HttpClient)} factory method.</p>
  *
  * <p>Thread Safety: This class is thread-safe. It uses synchronized methods and volatile variables
  * to ensure proper concurrent access to shared resources. The token cache is managed using
@@ -64,17 +61,24 @@ public class OAuth2Provider implements AuthenticationProvider {
   private final OAuth2Config config;
 
   /**
+   * The HTTP client used to make requests to LinkedIn's API.
+   */
+  protected final HttpClient httpClient;
+
+  /**
    * The current OAuth 2.0 token. Volatile ensures visibility across threads.
    */
   private volatile OAuth2Token currentToken;
+
 
   /**
    * Private constructor enforcing singleton pattern per configuration.
    *
    * @param config the OAuth 2.0 configuration for this provider
    */
-  private OAuth2Provider(OAuth2Config config) {
+  protected OAuth2Provider(OAuth2Config config, HttpClient httpClient) {
     this.config = config;
+    this.httpClient = httpClient;
   }
 
   /**
@@ -83,11 +87,12 @@ public class OAuth2Provider implements AuthenticationProvider {
    * Otherwise, a new instance will be created.
    *
    * @param config the OAuth 2.0 configuration to use
+   * @param httpClient the HTTP client to use for making requests
    * @return an OAuth2Provider instance for the given configuration
    * @throws NullPointerException if config is null
    */
-  public static synchronized OAuth2Provider getInstance(OAuth2Config config) {
-    return INSTANCES.computeIfAbsent(config, OAuth2Provider::new);
+  public static synchronized OAuth2Provider getInstance(OAuth2Config config, HttpClient httpClient) {
+    return INSTANCES.computeIfAbsent(config, cfg -> new OAuth2Provider(cfg, httpClient));
   }
 
   /**
@@ -127,15 +132,12 @@ public class OAuth2Provider implements AuthenticationProvider {
    *         network issues, or invalid server response
    */
   private void authenticate() throws AuthenticationException {
-    HttpURLConnection connection = null;
     try {
 
-      URL url = new URL(config.getTokenUrl());
-      connection = openConnection(url);
-      connection.setRequestMethod(POST);
-      connection.setRequestProperty(CONTENT_TYPE, APPLICATION_FORM_URLENCODED);
-      connection.setRequestProperty(ACCEPT, APPLICATION_JSON);
-      connection.setDoOutput(true);
+      String url = config.getTokenUrl();
+      Map<String, String> headers = new HashMap<>();
+      headers.put(CONTENT_TYPE, APPLICATION_FORM_URLENCODED);
+      headers.put(ACCEPT, APPLICATION_JSON);
 
       String formBody = String.format(
           "grant_type=client_credentials" + QUERY_PARAM_SEPARATOR+ "client_id=%s" +  QUERY_PARAM_SEPARATOR + "client_secret=%s",
@@ -143,27 +145,10 @@ public class OAuth2Provider implements AuthenticationProvider {
           encodeURIComponent(config.getClientSecret())
       );
 
-      try (OutputStream os = connection.getOutputStream()) {
-        byte[] input = formBody.getBytes(StandardCharsets.UTF_8);
-        os.write(input, 0, input.length);
-      }
-
-      // Read response
-      int responseCode = connection.getResponseCode();
-      if (!HttpStatusCategory.SUCCESS.matches(responseCode)) {
-
-        String errorMessage = String.format(
-            "Failed to authenticate with LinkedIn API. Client ID: %s, Response Code: %d, Response: %s",
-            config.getClientId(), responseCode, readStream(connection.getErrorStream()));
-        LOGGER.severe(errorMessage);
-        throw new AuthenticationException("Authentication failed with status: " + responseCode);
-      }
-
-      String responseString = readStream(connection.getInputStream());
-      TokenInfo tokenInfo = ObjectMapperUtil.fromJson(responseString, TokenInfo.class);
+      String response = httpClient.executeRequest(url, HttpMethod.POST, headers, formBody);
+      TokenInfo tokenInfo = ObjectMapperUtil.fromJson(response, TokenInfo.class);
       currentToken = new OAuth2Token(tokenInfo.getAccessToken(), tokenInfo.getExpiresIn());
     } catch (IOException e) {
-
       String errorMessage = String.format(
           "Failed to authenticate with LinkedIn API. Client ID: %s, Error: %s", config.getClientId(), e.getMessage());
       LOGGER.log(Level.SEVERE, errorMessage, e);
@@ -174,10 +159,12 @@ public class OAuth2Provider implements AuthenticationProvider {
           config.getClientId(), e.getMessage());
       LOGGER.log(Level.SEVERE, errorMessage, e);
       throw new AuthenticationException(errorMessage, e);
-    } finally {
-      if (connection != null) {
-        connection.disconnect();
-      }
+    } catch (LinkedInApiException e) {
+      String errorMessage = String.format(
+          "Failed to authenticate with LinkedIn API. Client ID: %s, Response Code: %d, Response: %s",
+          config.getClientId(), e.getStatusCode(), e.getErrorBody());
+      LOGGER.severe(errorMessage);
+      throw new AuthenticationException("Authentication failed with status: " + e.getStatusCode());
     }
   }
 
@@ -195,24 +182,4 @@ public class OAuth2Provider implements AuthenticationProvider {
       throw new RuntimeException("Failed to encode URL parameter: " + value, e);
     }
   }
-
-  // Separated for testability
-  protected HttpsURLConnection openConnection(URL url) throws IOException {
-    LOGGER.info(String.format("Sending request to %s", url));
-    return (HttpsURLConnection) url.openConnection();
-  }
-
-  // Shared stream reader
-  private String readStream(InputStream inputStream) throws IOException {
-    if (inputStream == null) return "";
-    StringBuilder response = new StringBuilder();
-    try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
-      String line;
-      while ((line = reader.readLine()) != null) {
-        response.append(line);
-      }
-    }
-    return response.toString();
-  }
-
 }

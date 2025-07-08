@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import lombok.NonNull;
+
 import static com.linkedin.sdk.lts.jobs.constants.HttpConstants.*;
 import static com.linkedin.sdk.lts.jobs.constants.LinkedInApiConstants.*;
 import static com.linkedin.sdk.lts.jobs.constants.LinkedInApiConstants.P4P_REPORTS_API_CONSTANTS.*;
@@ -48,6 +50,47 @@ public class P4PJobPostingClient extends JobPostingClient {
   }
 
   /**
+   * Provision customer hiring contracts for Pay for Performance (P4P).
+   *
+   * @param p4PProvisionCustomerHiringContractsRequest the request containing contract details
+   * @return the P4PProvisionCustomerHiringContractsResponse containing the result of the operation
+   * @throws AuthenticationException if authentication fails
+   * @throws IllegalArgumentException if any parameters are invalid
+   * @throws LinkedInApiException if the API returns an error response
+   */
+  public P4PProvisionCustomerHiringContractsResponse provisionCustomerHiringContracts(
+      @NonNull P4PProvisionCustomerHiringContractsRequest p4PProvisionCustomerHiringContractsRequest)
+      throws AuthenticationException, LinkedInApiException, IllegalArgumentException{
+    try {
+      if(p4PProvisionCustomerHiringContractsRequest == null) {
+        throw new IllegalArgumentException("P4PProvisionCustomerHiringContractsRequest cannot be null");
+      }
+
+      String requestBody = ObjectMapperUtil.toJson(p4PProvisionCustomerHiringContractsRequest);
+      String response = this.httpClient.executeRequest(PROVISIONING_HIRING_CONTRACT_URL,
+          HttpMethod.POST, getHeadersForAPI(), requestBody);
+
+      return ObjectMapperUtil.fromJson(response, P4PProvisionCustomerHiringContractsResponse.class);
+    } catch (JsonDeserializationException e) {
+      String errorMessage = "Failed to parse LinkedIn API response: " + e.getMessage();
+      LOGGER.severe(errorMessage);
+      throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Response parsing error",
+          errorMessage);
+    } catch (IOException e) {
+      String errorMessage = "Network error while communicating with LinkedIn API: " + e.getMessage();
+      LOGGER.log(Level.SEVERE, errorMessage, e);
+      throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Network error",
+          errorMessage);
+    } catch (JsonSerializationException e) {
+      String errorMessage = "Failed to serialize request: " + e.getMessage();
+      LOGGER.severe(errorMessage);
+      throw new LinkedInApiException(HttpStatusCategory.CLIENT_ERROR.getDefaultCode(), "Invalid request format",
+          errorMessage);
+    }
+  }
+
+
+  /**
    * Get the Pay for Performance (P4P) report for a job posting by Ids.
    *
    * @return the P4PReportResponseByIds containing the performance metrics
@@ -55,7 +98,7 @@ public class P4PJobPostingClient extends JobPostingClient {
    * @throws IllegalArgumentException if any parameters are invalid
    * @throws LinkedInApiException if the API returns an error response
    */
-  public P4PReportResponseByIds getP4PReportByIds(P4PJobReportsRequestByIds p4PJobReportsRequestByIds)
+  public P4PReportResponseByIds getP4PReportByIds(@NonNull P4PJobReportsRequestByIds p4PJobReportsRequestByIds)
       throws AuthenticationException, LinkedInApiException, IllegalArgumentException {
     try {
       if(p4PJobReportsRequestByIds == null) {
@@ -108,7 +151,7 @@ public class P4PJobPostingClient extends JobPostingClient {
    * @throws LinkedInApiException if the API returns an error response
    */
   public P4PReportResponseByDate getP4PReportsByDate(
-      P4PJobReportsRequestByDate p4PJobPostingRequestByDate)
+      @NonNull P4PJobReportsRequestByDate p4PJobPostingRequestByDate)
       throws AuthenticationException, LinkedInApiException, IllegalArgumentException {
     try {
       if(p4PJobPostingRequestByDate == null) {
@@ -162,7 +205,7 @@ public class P4PJobPostingClient extends JobPostingClient {
    * @throws IllegalArgumentException if the partner contract ID is invalid
    * @throws LinkedInApiException if the API returns an error response
    */
-  public P4PBudgetReportResponse getPartnerBudgetReports(Long partnerContractId)
+  public P4PBudgetReportResponse getPartnerBudgetReports(@NonNull Long partnerContractId)
       throws AuthenticationException, LinkedInApiException, IllegalArgumentException {
     try {
       if (partnerContractId == null) {

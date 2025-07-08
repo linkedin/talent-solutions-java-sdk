@@ -1,0 +1,6 @@
+{
+  "value": {
+      "key": "urn:li:developerApplication:012345",
+      "contract": "urn:li:contract:67890"
+  }
+}

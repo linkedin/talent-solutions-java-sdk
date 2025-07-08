@@ -6,11 +6,13 @@ import com.linkedin.sdk.lts.jobs.client.linkedinclient.LinkedInHttpClient;
 import com.linkedin.sdk.lts.jobs.constants.HttpConstants;
 import com.linkedin.sdk.lts.jobs.exception.LinkedInApiException;
 import com.linkedin.sdk.lts.jobs.model.request.p4pjobposting.P4PJobReportsRequestByDate;
+import com.linkedin.sdk.lts.jobs.model.request.p4pjobposting.P4PProvisionCustomerHiringContractsRequest;
 import com.linkedin.sdk.lts.jobs.model.response.common.Date;
 import com.linkedin.sdk.lts.jobs.model.response.common.DateRange;
 import com.linkedin.sdk.lts.jobs.model.request.p4pjobposting.P4PJobReportsRequestByIds;
 import com.linkedin.sdk.lts.jobs.model.response.common.HttpMethod;
 import com.linkedin.sdk.lts.jobs.model.response.p4pjobposting.P4PBudgetReportResponse;
+import com.linkedin.sdk.lts.jobs.model.response.p4pjobposting.P4PProvisionCustomerHiringContractsResponse;
 import com.linkedin.sdk.lts.jobs.model.response.p4pjobposting.P4PReportResponseByDate;
 import com.linkedin.sdk.lts.jobs.model.response.p4pjobposting.P4PReportResponseByIds;
 import java.io.ByteArrayInputStream;
@@ -39,6 +41,7 @@ public class P4PJobPostingClientTest {
   private OAuth2Config config;
   private P4PJobReportsRequestByIds p4PJobReportsRequestByIds;
   private P4PJobReportsRequestByDate p4PJobReportsRequestByDate;
+  private P4PProvisionCustomerHiringContractsRequest p4PProvisionCustomerHiringContractsRequest;
 
   @Mock
   private P4PJobPostingClient client;
@@ -75,6 +78,39 @@ public class P4PJobPostingClientTest {
             .build())
         .partnerContractId(TEST_PARTNER_CONTRACT_ID)
         .build();
+
+    p4PProvisionCustomerHiringContractsRequest = P4PProvisionCustomerHiringContractsRequest.builder()
+        .partnerContractId(TEST_PARTNER_CONTRACT_ID)
+        .build();
+  }
+
+  @Test
+  public void provisionCustomerHiringContracts_successfulResponse() throws Exception {
+    doReturn(TestingResourceUtility.getSuccessP4ProvisionCustomerHiringContractsResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
+    P4PProvisionCustomerHiringContractsResponse response = client.provisionCustomerHiringContracts(p4PProvisionCustomerHiringContractsRequest);
+
+    assertNotNull(response);
+    assertNotNull(response.getValue().getContract());
+    assertNotNull(response.getValue().getKey());
+  }
+
+  @Test
+  public void provisionCustomerHiringContracts_errror400Response() throws Exception {
+    doThrow(new LinkedInApiException(400 ,HTTP_400_MESSAGE, HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
+    Exception exception = assertThrows(LinkedInApiException.class, () -> {
+      client.provisionCustomerHiringContracts(p4PProvisionCustomerHiringContractsRequest);
+    });
+
+    assertTrue(exception.getMessage().contains(HTTP_400_MESSAGE));
+  }
+
+  @Test
+  public void provisionCustomerHiringContracts_IllegalArgumentException() {
+    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+      client.provisionCustomerHiringContracts(null);
+    });
+
+    assertEquals("P4PProvisionCustomerHiringContractsRequest cannot be null", exception.getMessage());
   }
 
   @Test

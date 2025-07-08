@@ -3,6 +3,7 @@ package com.linkedin.sdk.lts.jobs.client;
 import com.linkedin.sdk.lts.jobs.auth.OAuth2Config;
 import com.linkedin.sdk.lts.jobs.client.linkedinclient.HttpClient;
 import com.linkedin.sdk.lts.jobs.client.linkedinclient.LinkedInHttpClient;
+import com.linkedin.sdk.lts.jobs.client.linkedinclient.RetryConfig;
 
 import static com.linkedin.sdk.lts.jobs.constants.LinkedInApiConstants.*;
 
@@ -35,7 +36,7 @@ public class LinkedInClientFactory {
   }
 
   /**
-   * Gets or creates a JobPostingClient for the given credentials.
+   * Creates a JobPostingClient for the given credentials.
    *
    * @param clientId the OAuth 2.0 client ID
    * @param clientSecret the OAuth 2.0 client secret
@@ -61,7 +62,7 @@ public class LinkedInClientFactory {
   }
 
   /**
-   * Gets or creates a P4PJobPostingClient for the given credentials.
+   * Creates a P4PJobPostingClient for the given credentials.
    *
    * @param clientId the OAuth 2.0 client ID
    * @param clientSecret the OAuth 2.0 client secret
@@ -87,7 +88,7 @@ public class LinkedInClientFactory {
   }
 
   /**
-   * Gets or creates a ApplyConnectJobPostingClient for the given credentials.
+   * Creates a ApplyConnectJobPostingClient for the given credentials.
    *
    * @param clientId the OAuth 2.0 client ID
    * @param clientSecret the OAuth 2.0 client secret
@@ -110,5 +111,33 @@ public class LinkedInClientFactory {
         .build();
 
     return new ApplyConnectJobPostingClient(config, httpClient);
+  }
+
+  /**
+   * Creates a provisioning clients for the given credentials.
+   * Provisioning clients are used to manage LinkedIn applications and their configurations.
+   * Pass parent application credentials to this method to create a client that can manage applications.
+   *
+   * @param clientId the OAuth 2.0 client ID
+   * @param clientSecret the OAuth 2.0 client secret
+   * @return JobPostingClient instance for the given credentials
+   * @throws IllegalArgumentException if clientId or clientSecret is null or empty
+   */
+  @SuppressWarnings("unchecked")
+  public synchronized ProvisioningClient getProvisioningClient(String clientId, String clientSecret) {
+    if (clientId == null || clientId.isEmpty()) {
+      throw new IllegalArgumentException("Client ID cannot be null or empty");
+    }
+    if (clientSecret == null || clientSecret.isEmpty()) {
+      throw new IllegalArgumentException("Client Secret cannot be null or empty");
+    }
+
+    OAuth2Config config = OAuth2Config.builder()
+        .clientId(clientId)
+        .clientSecret(clientSecret)
+        .tokenUrl(LINKEDIN_ACCESS_TOKEN_URL)
+        .build();
+
+    return new ProvisioningClient(config, httpClient);
   }
 }

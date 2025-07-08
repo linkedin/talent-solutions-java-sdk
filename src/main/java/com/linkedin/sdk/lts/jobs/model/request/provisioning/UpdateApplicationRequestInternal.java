@@ -1,13 +1,12 @@
 package com.linkedin.sdk.lts.jobs.model.request.provisioning;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.sun.istack.internal.Nullable;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-
 
 /**
  * Request object for updating an application's configuration.
@@ -42,10 +41,11 @@ public class UpdateApplicationRequestInternal {
 
   /**
    * Converts an UpdateApplicationRequest to UpdateApplicationRequestInternal.
-   * @param request the UpdateApplicationRequest to convert, can't be null
+   * @param request the UpdateApplicationRequest to convert.
    * @return UpdateApplicationRequestInternal instance
    */
-  public static UpdateApplicationRequestInternal fromUpdateRequest(@NonNull UpdateApplicationRequest request) {
+  @Nullable
+  public static UpdateApplicationRequestInternal fromUpdateRequest(UpdateApplicationRequest request) {
     if (request == null) {
       return null;
     }

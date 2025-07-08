@@ -1,0 +1,21 @@
+{
+    "elements": [
+        {
+            "credentials": {
+                "client_id": "123abc456defga"
+            },
+            "uniqueForeignId": "Unique Foreign ID",
+            "name": "Test Application",
+            "description": "This is my test application",
+            "validJsSdkDomains": [
+                "http://linkedin.com",
+                "https://linkedin.com"
+            ],
+            "key": "urn:li:developerApplication:1234567",
+            "oauth2AuthorizedCallbackUrls": [
+                "https://www.linkedin.com.com/oauth2/callback",
+                "http://www.linkedin.com/oauth2/callback"
+            ]
+        }
+    ]
+}
