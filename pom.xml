@@ -4,9 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.example</groupId>
-  <artifactId>talent-solutions-sdk-java</artifactId>
-  <version>1.0</version>
+  <groupId>com.linkedin</groupId>
+  <artifactId>talent-solutions-java-sdk</artifactId>
+  <version>0.1.0-alpha</version>
 
   <properties>
     <maven.compiler.source>1.8</maven.compiler.source>
@@ -65,14 +65,6 @@
                 <relocation>
                   <pattern>com.fasterxml.jackson.core</pattern>
                   <shadedPattern>com.linkedin.lts.client.internal.jackson</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>org.mockito</pattern>
-                  <shadedPattern>com.linkedin.lts.client.internal.mockito</shadedPattern>
-                </relocation>
-                <relocation>
-                  <pattern>junit</pattern>
-                  <shadedPattern>com.linkedin.lts.client.internal.junit</shadedPattern>
                 </relocation>
                 <!-- Add other dependencies as needed -->
               </relocations>

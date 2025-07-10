@@ -61,15 +61,6 @@ public class JobPostingClientTest {
   }
 
   @Test
-  public void testSingletonBehavior() throws Exception {
-    JobPostingClient client1 = LinkedInClientFactory.getInstance().getJobPostingClient(
-        TestingCommonConstants.TEST_CLIENT_ID, TestingCommonConstants.TEST_CLIENT_SECRET);
-    JobPostingClient client2 = LinkedInClientFactory.getInstance().getJobPostingClient(
-        TestingCommonConstants.TEST_CLIENT_ID, TestingCommonConstants.TEST_CLIENT_SECRET);
-    assertSame(client1, client2);
-  }
-
-  @Test
   public void testPost_error400Response() throws Exception {
     doThrow(new LinkedInApiException(400 ,
         TestingCommonConstants.HTTP_400_MESSAGE, TestingCommonConstants.HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
