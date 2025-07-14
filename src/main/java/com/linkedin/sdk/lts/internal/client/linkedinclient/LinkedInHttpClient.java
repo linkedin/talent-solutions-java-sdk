@@ -1,6 +1,7 @@
 package com.linkedin.sdk.lts.internal.client.linkedinclient;
 
 import com.linkedin.sdk.lts.api.exception.LinkedInApiException;
+import com.linkedin.sdk.lts.api.exception.TransientLinkedInApiException;
 import com.linkedin.sdk.lts.api.model.response.common.HttpMethod;
 import com.linkedin.sdk.lts.api.model.response.common.HttpStatusCategory;
 
@@ -25,6 +26,12 @@ public class LinkedInHttpClient implements HttpClient {
   private static final int DEFAULT_CONNECT_TIMEOUT = 30000;
   private static final int DEFAULT_READ_TIMEOUT = 30000;
 
+  private final RetryConfig retryConfig;
+
+  public LinkedInHttpClient(RetryConfig retryConfig) {
+    this.retryConfig = retryConfig;
+  }
+
   /**
    * Executes an HTTP request to the specified URL using the given method, headers, and body.
    *
@@ -39,16 +46,68 @@ public class LinkedInHttpClient implements HttpClient {
   @Override
   public String executeRequest(@NonNull String url,@NonNull HttpMethod method, Map<String, String> headers, String body)
       throws IOException, LinkedInApiException {
-    LOGGER.info(LogRedactor.redact(String.format("Sending %s request to %s with body %s", method, url, body)));
+    long backoff = retryConfig.getInitialBackoffMillis();
+    LinkedInApiException lastException = null;
 
-    HttpsURLConnection connection = createConnection(new URL(url), method);
-    setHeaders(connection, headers);
+    for (int attempt = 0; attempt <= retryConfig.getMaxRetries(); attempt++) {
+      try {
+        return executeWithErrorHandling(url, method, headers, body);
+      } catch (TransientLinkedInApiException e) {
+        lastException = e;
 
-    if (body != null && !method.equals(HttpMethod.GET)) {
-      writeRequestBody(connection, body);
+        // If this was our last attempt, don't sleep
+        if (attempt == retryConfig.getMaxRetries()) {
+          LOGGER.severe(String.format("Max retries reached (%d). Last error: %s",
+              retryConfig.getMaxRetries(), e.getMessage()));
+          throw e;
+        }
+
+        try {
+          LOGGER.warning(String.format("Transient error occurred (attempt %d/%d). Retrying in %d ms. Error: %s",
+              attempt + 1, retryConfig.getMaxRetries(), backoff, e.getMessage()));
+          Thread.sleep(backoff);
+        } catch (InterruptedException ie) {
+          Thread.currentThread().interrupt();
+          throw e;
+        }
+
+        backoff = Math.min(
+            (long) (backoff * retryConfig.getBackoffMultiplier()),
+            retryConfig.getMaxBackoffMillis()
+        );
+      }
     }
 
-    return getResponseBody(connection);
+    // This should never happen due to the throw in the loop, but adding for completeness
+    throw lastException;
+  }
+
+  /**
+   * @param url     the URL to send the request to
+   * @param method  the HTTP method to use (e.g., GET, POST)
+   * @param headers the HTTP headers to include in the request
+   * @param body    the request body (optional, can be null for GET requests)
+   * @return the response body as a string
+   * @throws IOException           if an I/O error occurs during the request
+   * @throws LinkedInApiException if the API returns an error response
+   * @throws TransientLinkedInApiException if a transient error occurs
+   */
+  private String executeWithErrorHandling(@NonNull String url,@NonNull HttpMethod method, Map<String, String> headers, String body)
+      throws LinkedInApiException {
+    try {
+      LOGGER.info(LogRedactor.redact(String.format("Sending %s request to %s with body %s", method, url, body)));
+
+      HttpsURLConnection connection = createConnection(new URL(url), method);
+      setHeaders(connection, headers);
+
+      if (body != null && !method.equals(HttpMethod.GET)) {
+        writeRequestBody(connection, body);
+      }
+
+      return getResponseBody(connection);
+    } catch (IOException e) {
+      throw new TransientLinkedInApiException(500, "Network error occurred", e.getMessage());
+    }
   }
 
   /**
@@ -116,11 +175,16 @@ public class LinkedInHttpClient implements HttpClient {
     String response = readStream(inputStream);
     LOGGER.info(LogRedactor.redact(String.format("Response body: %s", response)));
 
-    if (!HttpStatusCategory.SUCCESS.matches(responseCode)) {
+    if (TransientLinkedInApiException.isTransient(responseCode)) {
+      String errorMessage = "HTTP error " + responseCode;
+      LOGGER.severe(errorMessage);
+      throw new TransientLinkedInApiException(responseCode, response, errorMessage);
+    } else if(!HttpStatusCategory.SUCCESS.matches(responseCode)) {
       String errorMessage = "HTTP error " + responseCode + ": " + response;
       LOGGER.severe(errorMessage);
       throw new LinkedInApiException(responseCode, response, errorMessage);
     }
+
     return response;
   }
 

@@ -7,6 +7,7 @@ import com.linkedin.sdk.lts.internal.client.linkedinclient.LinkedInHttpClient;
 import com.linkedin.sdk.lts.internal.client.ApplyConnectJobPostingClientImpl;
 import com.linkedin.sdk.lts.internal.client.JobPostingClientImpl;
 import com.linkedin.sdk.lts.internal.client.ProvisioningClientImpl;
+import com.linkedin.sdk.lts.internal.client.linkedinclient.RetryConfig;
 
 import static com.linkedin.sdk.lts.internal.constants.LinkedInApiConstants.*;
 
@@ -25,7 +26,7 @@ public class LinkedInClientFactory {
    * Use getInstance() to obtain the singleton instance.
    */
   private LinkedInClientFactory() {
-    httpClient = new LinkedInHttpClient();
+    httpClient = new LinkedInHttpClient(RetryConfig.builder().build());
   }
 
   /**

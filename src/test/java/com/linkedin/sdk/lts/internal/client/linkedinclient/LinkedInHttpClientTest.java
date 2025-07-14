@@ -7,7 +7,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -26,7 +25,6 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class LinkedInHttpClientTest {
 
-  @Spy
   private LinkedInHttpClient httpClient;
 
   private HttpsURLConnection mockConnection;
@@ -37,6 +35,7 @@ public class LinkedInHttpClientTest {
   public void setUp() throws Exception {
     MockitoAnnotations.openMocks(this);
     mockConnection = mock(HttpsURLConnection.class);
+    httpClient = spy(new LinkedInHttpClient(RetryConfig.builder().build()));
   }
 
   @Test
@@ -103,10 +102,27 @@ public class LinkedInHttpClientTest {
     httpClient.executeRequest(TEST_URL, HttpMethod.GET, new HashMap<>(), null);
   }
 
-  @Test(expected = Exception.class)
-  public void testExecuteRequest_InvalidUrl() throws Exception {
-    // Act
-    httpClient.executeRequest("invalid-url", HttpMethod.GET, new HashMap<>(), null);
+  @Test
+  public void testExecuteRequest_TransientException() throws Exception {
+    // Arrange
+    httpClient = spy(new LinkedInHttpClient(RetryConfig.builder().build()));
+    doReturn(mockConnection).when(httpClient).createConnection(any(URL.class), any(HttpMethod.class));
+
+    // Setup mock to throw TransientLinkedInApiException
+    when(mockConnection.getResponseCode()).thenReturn(500); // Server error to trigger retry
+    when(mockConnection.getErrorStream()).thenReturn(
+        new ByteArrayInputStream("Server Error".getBytes(StandardCharsets.UTF_8))
+    );
+
+    // Act & Assert
+    try {
+      httpClient.executeRequest(TEST_URL, HttpMethod.GET, new HashMap<>(), null);
+      fail("Expected LinkedInApiException to be thrown");
+    } catch (LinkedInApiException e) {
+      // Verify createConnection was called 4 times (initial + 3 retries)
+      verify(httpClient, times(4)).createConnection(any(URL.class), any(HttpMethod.class));
+      assertEquals(500, e.getStatusCode());
+    }
   }
 
   @Test
