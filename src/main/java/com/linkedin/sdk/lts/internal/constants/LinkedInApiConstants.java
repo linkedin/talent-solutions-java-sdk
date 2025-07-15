@@ -40,9 +40,14 @@ public class LinkedInApiConstants {
   /**
     * The base URL for LinkedIn's Provisioned Applications API endpoints.
    */
-   public static final String PROVISIONING_APPLICATION_BASE_URL = "https://api.linkedin.com/v2/provisionedApplications/";
+   public static final String PROVISIONING_APPLICATION_BASE_URL = BASE_URL + "provisionedApplications";
 
-   /**
+  /**
+   * The URL for LinkedIn's Job Application Lifecycle Actions API endpoints.
+   */
+  public static final String SYNC_JOB_APPLICATION_NOTIFICATIONS_URL = BASE_URL + "jobApplicationLifecycleActions";
+
+  /**
    * The header for LinkedIn X-REST.li protocol versioning.
    */
   public static final String X_REST_LI_PROTOCOL_VERSION = "x-restli-protocol-version";

@@ -1,7 +1,5 @@
 package com.linkedin.sdk.lts.internal.client;
 
-import com.linkedin.sdk.lts.api.client.JobPostingClient;
-import com.linkedin.sdk.lts.api.client.LinkedInClientFactory;
 import com.linkedin.sdk.lts.internal.auth.OAuth2Config;
 import com.linkedin.sdk.lts.internal.client.linkedinclient.HttpClient;
 import com.linkedin.sdk.lts.api.exception.LinkedInApiException;

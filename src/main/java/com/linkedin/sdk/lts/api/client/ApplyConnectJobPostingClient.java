@@ -1,11 +1,26 @@
 package com.linkedin.sdk.lts.api.client;
 
+import com.linkedin.sdk.lts.api.exception.AuthenticationException;
+import com.linkedin.sdk.lts.api.exception.LinkedInApiException;
+import com.linkedin.sdk.lts.api.model.request.applyconnect.jobApplicationNotification.JobApplicationNotificationRequest;
+import lombok.NonNull;
+
+
 /**
  * Public Interface for interacting with LinkedIn's ApplyConnect Job Posting API.
  *
- * We will add more methods to this interface as per the requirements of the ApplyConnect APIs.
  * </pre>
  */
 public interface ApplyConnectJobPostingClient extends JobPostingClient {
 
+  /**
+   * Synchronizes job application notifications with LinkedIn's ApplyConnect API.
+   *
+   * @param jobApplicationNotificationRequest the request containing job application notification data
+   * @throws AuthenticationException if authentication fails
+   * @throws LinkedInApiException if the API returns an error response
+   * @throws IllegalArgumentException if the request fails validation
+   */
+  void syncJobApplicationNotification(@NonNull JobApplicationNotificationRequest jobApplicationNotificationRequest)
+      throws AuthenticationException, LinkedInApiException, IllegalArgumentException;
 }
