@@ -223,7 +223,7 @@ public class JobPosting {
    * The budget for the job posting.
    * This field is used for P4P Jobs (Pay for Performance Jobs).
    */
-  private P4PBudget p4PBudget;
+  private P4PBudget budget;
 
   /**
    * Onsite apply configuration for the job posting.
@@ -274,7 +274,7 @@ public class JobPosting {
    * @param partnerRequisitionId Unique ID of job requisition linked to this posting.
    * @param contract Contract information for LinkedIn Recruiter services.
    * @param showPosterInfo Whether to display poster information on job description page.
-   * @param p4PBudget The budget for the job posting, used for P4P Jobs.
+   * @param budget The budget for the job posting, used for P4P Jobs.
    * @param onsiteApplyConfiguration Onsite apply configuration for the job posting.
    */
   @Builder
@@ -289,7 +289,7 @@ public class JobPosting {
       PosterProvidedCompensation compensation, Long expireAt,
       ListingType listingType, Availability availability,
       String posterEmail, String partnerRequisitionId,
-      String contract, boolean showPosterInfo, P4PBudget p4PBudget,
+      String contract, boolean showPosterInfo, P4PBudget budget,
       OnsiteApplyConfiguration onsiteApplyConfiguration){
 
     this.companyId = companyId;
@@ -319,7 +319,7 @@ public class JobPosting {
     this.partnerRequisitionId = partnerRequisitionId;
     this.contract = contract;
     this.showPosterInfo = showPosterInfo;
-    this.p4PBudget = p4PBudget;
+    this.budget = budget;
     this.onsiteApplyConfiguration = onsiteApplyConfiguration;
 
     // Set company based on companyId

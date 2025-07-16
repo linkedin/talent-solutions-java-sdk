@@ -4,7 +4,9 @@ public class TestingCommonConstants {
 
   public static final String TEST_TOKEN = "test-access-token";
   public static final long EXPIRY_SECONDS = 3600; // 1 hour
+  public static final String JSON_SERIALIZATION_ERROR = "JSON Serialization failed";
   public static final String HTTP_400_MESSAGE = "HTTP error 400";
+  public static final String NETWORK_ERROR_MESSAGE = "Network error";
   protected static final String TEST_CLIENT_ID = "test-client-id";
   protected static final String TEST_CLIENT_SECRET = "test-client-secret";
   protected static final String TEST_TOKEN_URL = "https://www.linkedin.com/oauth/v2/accessToken";

@@ -6,6 +6,7 @@ import com.linkedin.sdk.lts.api.model.response.common.HttpMethod;
 import com.linkedin.sdk.lts.api.model.response.common.HttpStatusCategory;
 
 import com.linkedin.sdk.lts.internal.util.LogRedactor;
+import java.util.List;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.net.URL;
@@ -173,7 +174,8 @@ public class LinkedInHttpClient implements HttpClient {
         : connection.getErrorStream();
 
     String response = readStream(inputStream);
-    LOGGER.info(LogRedactor.redact(String.format("Response body: %s", response)));
+    Map<String, List<String>> headers = connection.getHeaderFields();
+    LOGGER.info(LogRedactor.redact(String.format("Response headers: %s, \n Response body: %s", headers, response)));
 
     if (TransientLinkedInApiException.isTransient(responseCode)) {
       String errorMessage = "HTTP error " + responseCode;
