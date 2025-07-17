@@ -9,6 +9,7 @@ import com.linkedin.sdk.lts.api.model.response.common.HttpMethod;
 import com.linkedin.sdk.lts.api.model.response.common.HttpStatusCategory;
 import com.linkedin.sdk.lts.internal.auth.OAuth2Config;
 import com.linkedin.sdk.lts.internal.client.linkedinclient.HttpClient;
+import com.linkedin.sdk.lts.internal.util.LogRedactor;
 import com.linkedin.sdk.lts.internal.util.ObjectMapperUtil;
 import java.io.IOException;
 import java.util.HashMap;
@@ -64,12 +65,12 @@ public class ApplyConnectJobPostingClientImpl extends JobPostingClientImpl imple
       httpClient.executeRequest(SYNC_JOB_APPLICATION_NOTIFICATIONS_URL, HttpMethod.POST, headers, requestBody);
     } catch (JsonSerializationException e) {
       String errorMessage = "Failed to serialize request: " + e.getMessage();
-      LOGGER.severe(errorMessage);
+      LOGGER.severe(LogRedactor.redact(errorMessage));
       throw new LinkedInApiException(HttpStatusCategory.CLIENT_ERROR.getDefaultCode(), "Invalid request format",
           errorMessage);
     } catch (IOException e) {
       String errorMessage = "Network error while communicating with LinkedIn API: " + e.getMessage();
-      LOGGER.log(Level.SEVERE, errorMessage, e);
+      LOGGER.log(Level.SEVERE, LogRedactor.redact(errorMessage), e);
       throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Network error",
           errorMessage);
     }

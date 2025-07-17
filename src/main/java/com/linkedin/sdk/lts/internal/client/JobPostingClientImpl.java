@@ -13,6 +13,7 @@ import com.linkedin.sdk.lts.api.model.response.common.HttpStatusCategory;
 import com.linkedin.sdk.lts.api.model.response.jobposting.JobPostingResponse;
 import com.linkedin.sdk.lts.api.model.response.jobpostingstatus.JobPostingStatusResponse;
 import com.linkedin.sdk.lts.api.model.response.jobtaskstatus.JobTaskStatusResponse;
+import com.linkedin.sdk.lts.internal.util.LogRedactor;
 import com.linkedin.sdk.lts.internal.util.ObjectMapperUtil;
 import com.linkedin.sdk.lts.api.client.JobPostingClient;
 import java.io.IOException;
@@ -23,6 +24,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import lombok.extern.java.Log;
 
 import static com.linkedin.sdk.lts.internal.constants.HttpConstants.*;
 import static com.linkedin.sdk.lts.internal.constants.LinkedInApiConstants.*;
@@ -85,17 +87,17 @@ public class JobPostingClientImpl implements JobPostingClient {
       return ObjectMapperUtil.fromJson(response, JobPostingResponse.class);
     } catch (JsonSerializationException e) {
       String errorMessage = "Failed to serialize request: " + e.getMessage();
-      LOGGER.severe(errorMessage);
+      LOGGER.severe(LogRedactor.redact(errorMessage));
       throw new LinkedInApiException(HttpStatusCategory.CLIENT_ERROR.getDefaultCode(), "Invalid request format",
           errorMessage);
     } catch (JsonDeserializationException e) {
       String errorMessage = "Failed to parse LinkedIn API response: " + e.getMessage();
-      LOGGER.severe(errorMessage);
+      LOGGER.severe(LogRedactor.redact(errorMessage));
       throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Response parsing error",
           errorMessage);
     } catch (IOException e) {
       String errorMessage = "Network error while communicating with LinkedIn API: " + e.getMessage();
-      LOGGER.log(Level.SEVERE, errorMessage, e);
+      LOGGER.log(Level.SEVERE, LogRedactor.redact(errorMessage), e);
       throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Network error",
           errorMessage);
     }
@@ -145,12 +147,12 @@ public class JobPostingClientImpl implements JobPostingClient {
       return ObjectMapperUtil.fromJson(response, JobTaskStatusResponse.class);
     } catch (JsonDeserializationException e) {
       String errorMessage = "Failed to parse LinkedIn API response: " + e.getMessage();
-      LOGGER.severe(errorMessage);
+      LOGGER.severe(LogRedactor.redact(errorMessage));
       throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Response parsing error",
           errorMessage);
     } catch (IOException e) {
       String errorMessage = "Network error while communicating with LinkedIn API: " + e.getMessage();
-      LOGGER.log(Level.SEVERE, errorMessage, e);
+      LOGGER.log(Level.SEVERE, LogRedactor.redact(errorMessage), e);
       throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Network error",
           errorMessage);
     }
@@ -199,11 +201,11 @@ public class JobPostingClientImpl implements JobPostingClient {
       return ObjectMapperUtil.fromJson(response, JobPostingStatusResponse.class);
     } catch (JsonDeserializationException e) {
       String errorMessage = "Failed to parse LinkedIn API response: " + e.getMessage();
-      LOGGER.severe(errorMessage);
+      LOGGER.severe(LogRedactor.redact(errorMessage));
       throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Response parsing error", errorMessage);
     } catch (IOException e) {
       String errorMessage = "Network error while communicating with LinkedIn API: " + e.getMessage();
-      LOGGER.log(Level.SEVERE, errorMessage, e);
+      LOGGER.log(Level.SEVERE, LogRedactor.redact(errorMessage), e);
       throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Network error", errorMessage);
     }
   }

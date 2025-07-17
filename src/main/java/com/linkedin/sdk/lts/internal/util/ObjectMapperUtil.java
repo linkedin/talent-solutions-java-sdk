@@ -53,7 +53,7 @@ public class ObjectMapperUtil {
     } catch (JsonProcessingException e) {
       String errorMessage = String.format("Failed to serialize object of type %s to JSON: %s",
           value.getClass().getSimpleName(), e.getMessage());
-      LOGGER.log(Level.SEVERE, errorMessage, e);
+      LOGGER.log(Level.SEVERE, LogRedactor.redact(errorMessage), e);
       throw new JsonSerializationException(errorMessage, e);
     }
   }
@@ -73,7 +73,7 @@ public class ObjectMapperUtil {
     } catch (IOException e) {
       String errorMessage = String.format("Failed to deserialize JSON to %s: %s",
           clazz.getSimpleName(), e.getMessage());
-      LOGGER.log(Level.SEVERE, errorMessage, e);
+      LOGGER.log(Level.SEVERE, LogRedactor.redact(errorMessage), e);
       throw new JsonDeserializationException(errorMessage, e);
     }
   }

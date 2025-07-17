@@ -18,6 +18,7 @@ import com.linkedin.sdk.lts.api.model.response.common.DateRange;
 import com.linkedin.sdk.lts.api.model.response.common.HttpStatusCategory;
 import com.linkedin.sdk.lts.internal.client.linkedinclient.HttpClient;
 import com.linkedin.sdk.lts.internal.auth.OAuth2Config;
+import com.linkedin.sdk.lts.internal.util.LogRedactor;
 import com.linkedin.sdk.lts.internal.util.ObjectMapperUtil;
 import java.io.IOException;
 import java.util.HashMap;
@@ -26,6 +27,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lombok.NonNull;
+import lombok.extern.java.Log;
 
 import static com.linkedin.sdk.lts.internal.constants.HttpConstants.*;
 import static com.linkedin.sdk.lts.internal.constants.LinkedInApiConstants.*;
@@ -76,17 +78,17 @@ public class P4PJobPostingClientImpl extends JobPostingClientImpl implements P4P
       return ObjectMapperUtil.fromJson(response, P4PProvisionCustomerHiringContractsResponse.class);
     } catch (JsonDeserializationException e) {
       String errorMessage = "Failed to parse LinkedIn API response: " + e.getMessage();
-      LOGGER.severe(errorMessage);
+      LOGGER.severe(LogRedactor.redact(errorMessage));
       throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Response parsing error",
           errorMessage);
     } catch (IOException e) {
       String errorMessage = "Network error while communicating with LinkedIn API: " + e.getMessage();
-      LOGGER.log(Level.SEVERE, errorMessage, e);
+      LOGGER.log(Level.SEVERE, LogRedactor.redact(errorMessage), e);
       throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Network error",
           errorMessage);
     } catch (JsonSerializationException e) {
       String errorMessage = "Failed to serialize request: " + e.getMessage();
-      LOGGER.severe(errorMessage);
+      LOGGER.severe(LogRedactor.redact(errorMessage));
       throw new LinkedInApiException(HttpStatusCategory.CLIENT_ERROR.getDefaultCode(), "Invalid request format",
           errorMessage);
     }
@@ -121,7 +123,7 @@ public class P4PJobPostingClientImpl extends JobPostingClientImpl implements P4P
       }
 
       // Build the URL with query parameters
-      String queryParams = IDS + EQUALS_SEPARATOR + LIST + OPENING_BRACKET + String.join(SEMICOLON_SEPARATOR, ids) + CLOSING_BRACKET +
+      String queryParams = IDS + EQUALS_SEPARATOR + LIST + OPENING_BRACKET + String.join(COLON_SEPARATOR, ids) + CLOSING_BRACKET +
           QUERY_PARAM_SEPARATOR + formatDateRange(dateRange);
 
       if(partnerContractId != null) {
@@ -133,12 +135,12 @@ public class P4PJobPostingClientImpl extends JobPostingClientImpl implements P4P
       return ObjectMapperUtil.fromJson(response, P4PReportResponseByIds.class);
     } catch (JsonDeserializationException e) {
       String errorMessage = "Failed to parse LinkedIn API response: " + e.getMessage();
-      LOGGER.severe(errorMessage);
+      LOGGER.severe(LogRedactor.redact(errorMessage));
       throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Response parsing error",
           errorMessage);
     } catch (IOException e) {
       String errorMessage = "Network error while communicating with LinkedIn API: " + e.getMessage();
-      LOGGER.log(Level.SEVERE, errorMessage, e);
+      LOGGER.log(Level.SEVERE, LogRedactor.redact(errorMessage), e);
       throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Network error",
           errorMessage);
     }
@@ -188,12 +190,12 @@ public class P4PJobPostingClientImpl extends JobPostingClientImpl implements P4P
       return ObjectMapperUtil.fromJson(response, P4PReportResponseByDate.class);
     } catch (JsonDeserializationException e) {
       String errorMessage = "Failed to parse LinkedIn API response: " + e.getMessage();
-      LOGGER.severe(errorMessage);
+      LOGGER.severe(LogRedactor.redact(errorMessage));
       throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Response parsing error",
           errorMessage);
     } catch (IOException e) {
       String errorMessage = "Network error while communicating with LinkedIn API: " + e.getMessage();
-      LOGGER.log(Level.SEVERE, errorMessage, e);
+      LOGGER.log(Level.SEVERE, LogRedactor.redact(errorMessage), e);
       throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Network error",
           errorMessage);
     }
@@ -222,12 +224,12 @@ public class P4PJobPostingClientImpl extends JobPostingClientImpl implements P4P
       return ObjectMapperUtil.fromJson(response, P4PBudgetReportResponse.class);
     } catch (JsonDeserializationException e) {
       String errorMessage = "Failed to parse LinkedIn API response: " + e.getMessage();
-      LOGGER.severe(errorMessage);
+      LOGGER.severe(LogRedactor.redact(errorMessage));
       throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Response parsing error",
           errorMessage);
     } catch (IOException e) {
       String errorMessage = "Network error while communicating with LinkedIn API: " + e.getMessage();
-      LOGGER.log(Level.SEVERE, errorMessage, e);
+      LOGGER.log(Level.SEVERE, LogRedactor.redact(errorMessage), e);
       throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Network error",
           errorMessage);
     }
@@ -257,7 +259,7 @@ public class P4PJobPostingClientImpl extends JobPostingClientImpl implements P4P
    */
   private static String formatDateRange(DateRange dateRange) throws IOException {
     return DATE_RANGE + EQUALS_SEPARATOR + OPENING_BRACKET
-        + START + COLON_SEPARATOR + formatDate(dateRange.getStart()) + SEMICOLON_SEPARATOR
+        + START + COLON_SEPARATOR + formatDate(dateRange.getStart()) + COMMA_SEPARATOR
         + END + COLON_SEPARATOR + formatDate(dateRange.getEnd())
         + CLOSING_BRACKET;
   }

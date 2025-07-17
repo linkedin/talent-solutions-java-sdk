@@ -18,6 +18,5 @@ public class HttpConstants {
   public static final String QUERY_PARAM_SEPARATOR = "&";
   public static final String QUERY_SEPARATOR = "?";
   public static final String SPACE_SEPARATOR = " ";
-  public static final String SEMICOLON_SEPARATOR = ",";
   public static final String X_REST_LI_METHOD = "x-restli-method";
 }

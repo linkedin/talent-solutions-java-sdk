@@ -16,6 +16,7 @@ import com.linkedin.sdk.lts.api.model.response.provisioning.GetApplicationRespon
 import com.linkedin.sdk.lts.internal.auth.OAuth2Config;
 import com.linkedin.sdk.lts.internal.auth.OAuth2Provider;
 import com.linkedin.sdk.lts.internal.client.linkedinclient.HttpClient;
+import com.linkedin.sdk.lts.internal.util.LogRedactor;
 import com.linkedin.sdk.lts.internal.util.ObjectMapperUtil;
 import java.io.IOException;
 import java.util.HashMap;
@@ -72,17 +73,17 @@ public class ProvisioningClientImpl implements ProvisioningClient {
       return ObjectMapperUtil.fromJson(response, CreateApplicationResponse.class);
     } catch (JsonSerializationException e) {
       String errorMessage = "Failed to serialize request: " + e.getMessage();
-      LOGGER.severe(errorMessage);
+      LOGGER.severe(LogRedactor.redact(errorMessage));
       throw new LinkedInApiException(HttpStatusCategory.CLIENT_ERROR.getDefaultCode(), "Invalid request format",
           errorMessage);
     } catch (JsonDeserializationException e) {
       String errorMessage = "Failed to parse LinkedIn API response: " + e.getMessage();
-      LOGGER.severe(errorMessage);
+      LOGGER.severe(LogRedactor.redact(errorMessage));
       throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Response parsing error",
         errorMessage);
     } catch (IOException e) {
       String errorMessage = "Network error while communicating with LinkedIn API: " + e.getMessage();
-      LOGGER.log(Level.SEVERE, errorMessage, e);
+      LOGGER.log(Level.SEVERE, LogRedactor.redact(errorMessage), e);
       throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Network error",
         errorMessage);
     }
@@ -110,12 +111,12 @@ public class ProvisioningClientImpl implements ProvisioningClient {
           HttpMethod.POST, getHeadersForAPI() , requestBody);
     } catch (JsonSerializationException e) {
       String errorMessage = "Failed to serialize request: " + e.getMessage();
-      LOGGER.severe(errorMessage);
+      LOGGER.severe(LogRedactor.redact(errorMessage));
       throw new LinkedInApiException(HttpStatusCategory.CLIENT_ERROR.getDefaultCode(), "Invalid request format",
           errorMessage);
     } catch (IOException e) {
       String errorMessage = "Network error while communicating with LinkedIn API: " + e.getMessage();
-      LOGGER.log(Level.SEVERE, errorMessage, e);
+      LOGGER.log(Level.SEVERE, LogRedactor.redact(errorMessage), e);
       throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Network error",
           errorMessage);
     }
@@ -148,12 +149,12 @@ public class ProvisioningClientImpl implements ProvisioningClient {
       return ObjectMapperUtil.fromJson(response, GetApplicationResponse.class);
     } catch (JsonDeserializationException e) {
       String errorMessage = "Failed to parse LinkedIn API response: " + e.getMessage();
-      LOGGER.severe(errorMessage);
+      LOGGER.severe(LogRedactor.redact(errorMessage));
       throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Response parsing error",
           errorMessage);
     } catch (IOException e) {
       String errorMessage = "Network error while communicating with LinkedIn API: " + e.getMessage();
-      LOGGER.log(Level.SEVERE, errorMessage, e);
+      LOGGER.log(Level.SEVERE, LogRedactor.redact(errorMessage), e);
       throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Network error",
           errorMessage);
     }

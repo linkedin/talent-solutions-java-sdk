@@ -237,7 +237,7 @@ public class JobPosting {
   public void setCompanyId(String companyId) {
     this.companyId = companyId;
     if (companyId != null && !companyId.isEmpty()) {
-      this.company = LINKEDIN_URN_FORMAT + companyId;
+      this.company = LINKEDIN_ORGANIZATION_URN_FORMAT + companyId;
     } else {
       this.company = null;
     }
@@ -324,7 +324,7 @@ public class JobPosting {
 
     // Set company based on companyId
     if (companyId != null || !companyId.isEmpty()) {
-      this.company = LINKEDIN_URN_FORMAT + companyId;
+      this.company = LINKEDIN_ORGANIZATION_URN_FORMAT + companyId;
     }
   }
 

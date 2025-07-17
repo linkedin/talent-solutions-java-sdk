@@ -8,5 +8,5 @@ public class LinkedInCommonConstants {
   /**
    * Constant for the format of LinkedIn URNs for organizations.
    */
-  public static final String LINKEDIN_URN_FORMAT = "urn:li:organization:";
+  public static final String LINKEDIN_ORGANIZATION_URN_FORMAT = "urn:li:organization:";
 }
