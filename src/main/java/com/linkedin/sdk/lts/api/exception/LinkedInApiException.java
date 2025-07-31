@@ -1,5 +1,8 @@
 package com.linkedin.sdk.lts.api.exception;
 
+import com.linkedin.sdk.lts.api.model.response.common.HttpStatusCategory;
+
+
 /**
  * Exception thrown when an error occurs while interacting with the LinkedIn API.
  * This exception encapsulates the HTTP status code and error body returned by the API,
@@ -28,6 +31,15 @@ public class LinkedInApiException extends Exception {
     super(message);
     this.statusCode = statusCode;
     this.errorBody = errorBody;
+  }
+
+  /**
+   * Verify http status code is a transient error and can be retried.
+   *
+   * @param statusCode the HTTP status code returned by the LinkedIn API
+   */
+  public static boolean isTransient(int statusCode) {
+    return HttpStatusCategory.SERVER_ERROR.matches(statusCode);
   }
 
   public int getStatusCode() {

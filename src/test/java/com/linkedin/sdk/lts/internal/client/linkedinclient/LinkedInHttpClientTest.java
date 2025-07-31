@@ -39,7 +39,7 @@ public class LinkedInHttpClientTest {
   }
 
   @Test
-  public void testExecuteRequest_GET_Success() throws Exception {
+  public void testExecuteGetRequestReturnsSuccessResponse() throws Exception {
     // Arrange
     Map<String, String> headers = new HashMap<>();
     headers.put(CONTENT_TYPE, APPLICATION_JSON);
@@ -60,7 +60,7 @@ public class LinkedInHttpClientTest {
   }
 
   @Test
-  public void testExecuteRequest_POST_WithBody_Success() throws Exception {
+  public void testExecutePostRequestWithBodyReturnsSuccessResponse() throws Exception {
     // Arrange
     String requestBody = TEST_RESPONSE.toString();
     Map<String, String> headers = new HashMap<>();
@@ -87,7 +87,7 @@ public class LinkedInHttpClientTest {
   }
 
   @Test(expected = LinkedInApiException.class)
-  public void testExecuteRequest_Error_Response() throws Exception {
+  public void testExecuteGetRequestReturnsErrorResponse() throws Exception {
     // Arrange
     String errorResponse = "{\"error\":\"Bad Request\"}";
     ByteArrayInputStream errorStream = new ByteArrayInputStream(
@@ -103,7 +103,7 @@ public class LinkedInHttpClientTest {
   }
 
   @Test
-  public void testExecuteRequest_TransientException() throws Exception {
+  public void testExecuteGetRequestThrowsTransientException() throws Exception {
     // Arrange
     httpClient = spy(new LinkedInHttpClient(RetryConfig.builder().build()));
     doReturn(mockConnection).when(httpClient).createConnection(any(URL.class), any(HttpMethod.class));
@@ -126,7 +126,7 @@ public class LinkedInHttpClientTest {
   }
 
   @Test
-  public void testExecuteRequest_WithHeaders() throws Exception {
+  public void testExecuteGetRequestWithHeadersReturnsSuccessResponse() throws Exception {
     // Arrange
     Map<String, String> headers = new HashMap<>();
     headers.put(CONTENT_TYPE, APPLICATION_JSON);
@@ -151,7 +151,7 @@ public class LinkedInHttpClientTest {
   }
 
   @Test
-  public void testExecuteRequest_EmptyResponse() throws Exception {
+  public void testExecuteGetRequestReturnsEmptyResponse() throws Exception {
     // Arrange
     ByteArrayInputStream inputStream = new ByteArrayInputStream(new byte[0]);
 

@@ -49,7 +49,7 @@ public class JobPostingClientTest {
   }
 
   @Test
-  public void testPost_successfulResponse() throws Exception {
+  public void testPostWithSuccessfulResponse() throws Exception {
     doReturn(TestingResourceUtility.getSuccessJobPostingResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
     JobPostingResponse response = client.post(mockRequest);
 
@@ -59,7 +59,7 @@ public class JobPostingClientTest {
   }
 
   @Test
-  public void testPost_error400Response() throws Exception {
+  public void testPostWith400Response() throws Exception {
     doThrow(new LinkedInApiException(400 ,
         TestingCommonConstants.HTTP_400_MESSAGE, TestingCommonConstants.HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
     Exception exception = assertThrows(Exception.class, () -> {
@@ -70,7 +70,7 @@ public class JobPostingClientTest {
   }
 
   @Test
-  public void testGetTaskStatus_singleId_successfulResponse() throws Exception {
+  public void testGetTaskStatusSingleIdWithSuccessfulResponse() throws Exception {
     doReturn(TestingResourceUtility.getSuccessTaskStatusResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull());
     JobTaskStatusResponse response = client.getTaskStatus(TestingCommonConstants.TEST_JOB_POSTING_TASK_ID_1);
     assertNotNull(response);
@@ -81,7 +81,7 @@ public class JobPostingClientTest {
 
 
   @Test
-  public void testGetTaskStatus_singleId_nullTaskId() {
+  public void testGetTaskStatusSingleIdWithNullTaskId() {
     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
       client.getTaskStatus((String) null);
     });
@@ -90,7 +90,7 @@ public class JobPostingClientTest {
   }
 
   @Test
-  public void testGetTaskStatus_singleId_emptyTaskId() {
+  public void testGetTaskStatusSingleIdWithEmptyTaskId() {
     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
       client.getTaskStatus("");
     });
@@ -99,7 +99,7 @@ public class JobPostingClientTest {
   }
 
   @Test
-  public void testGetTaskStatus_singleId_error400Response() throws Exception {
+  public void testGetTaskStatusSingleIdWith400Response() throws Exception {
     doThrow(new LinkedInApiException(400 ,
         TestingCommonConstants.HTTP_400_MESSAGE, TestingCommonConstants.HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull());
     Exception exception = assertThrows(Exception.class, () -> {
@@ -110,7 +110,7 @@ public class JobPostingClientTest {
   }
 
   @Test
-  public void testGetTaskStatus_multipleIds_successfulResponse() throws Exception {
+  public void testGetTaskStatusMultipleIdsWithSuccessfulResponse() throws Exception {
     doReturn(TestingResourceUtility.getMultipleSuccessTaskStatusResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull());
     List<String> taskIds = Arrays.asList(
         TestingCommonConstants.TEST_JOB_POSTING_TASK_ID_1, TestingCommonConstants.TEST_JOB_POSTING_TASK_ID_2);
@@ -124,7 +124,7 @@ public class JobPostingClientTest {
   }
 
   @Test
-  public void testGetTaskStatus_multipleIds_nullTaskIds() {
+  public void testGetTaskStatusMultipleIdsWithNullTaskIds() {
     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
       client.getTaskStatus((List<String>) null);
     });
@@ -133,7 +133,7 @@ public class JobPostingClientTest {
   }
 
   @Test
-  public void testGetTaskStatus_multipleIds_emptyTaskIds() {
+  public void testGetTaskStatusMultipleIdsWithEmptyTaskIds() {
     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
       client.getTaskStatus(Arrays.asList());
     });
@@ -142,7 +142,7 @@ public class JobPostingClientTest {
   }
 
   @Test
-  public void testGetTaskStatus_multipleIds_error400Response() throws Exception {
+  public void testGetTaskStatusMultipleIdsWith400Response() throws Exception {
     doThrow(new LinkedInApiException(400 ,
         TestingCommonConstants.HTTP_400_MESSAGE, TestingCommonConstants.HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull());
     Exception exception = assertThrows(Exception.class, () -> {
@@ -154,7 +154,7 @@ public class JobPostingClientTest {
   }
 
   @Test
-  public void testGetJobPostingStatus_singleId_successfulResponse() throws Exception {
+  public void testGetJobPostingStatusSingleIdWithSuccessfulResponse() throws Exception {
     doReturn(TestingResourceUtility.getSuccessJobPostingStatusResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull());
     JobPostingStatusResponse response = client.getJobPostingStatus(TestingCommonConstants.TEST_EXTERNAL_JOB_POSTING_ID_1);
 
@@ -163,7 +163,7 @@ public class JobPostingClientTest {
   }
 
   @Test
-  public void testGetJobPostingStatus_singleId_nullJobId() {
+  public void testGetJobPostingStatusSingleIdWithNullJobId() {
     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
       client.getJobPostingStatus((String)null);
     });
@@ -172,7 +172,7 @@ public class JobPostingClientTest {
   }
 
   @Test
-  public void testGetJobPostingStatus_singleId_emptyJobId() {
+  public void testGetJobPostingStatusSingleIdWithEmptyJobId() {
     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
       client.getJobPostingStatus("");
     });
@@ -181,7 +181,7 @@ public class JobPostingClientTest {
   }
 
   @Test
-  public void testGetJobPostingStatus_singleId_error400Response() throws Exception {
+  public void testGetJobPostingStatusSingleIdWith400Response() throws Exception {
     doThrow(new LinkedInApiException(400 ,
         TestingCommonConstants.HTTP_400_MESSAGE, TestingCommonConstants.HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull());
     Exception exception = assertThrows(Exception.class, () -> {
@@ -192,7 +192,7 @@ public class JobPostingClientTest {
   }
 
   @Test
-  public void testGetJobPostingStatus_multipleIds_successfulResponse() throws Exception {
+  public void testGetJobPostingStatusMultipleIdsWithSuccessfulResponse() throws Exception {
     doReturn(TestingResourceUtility.getMultipleSuccessJobPostingStatusResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull());
     List<String> jobIds = Arrays.asList(
         TestingCommonConstants.TEST_EXTERNAL_JOB_POSTING_ID_1, TestingCommonConstants.TEST_EXTERNAL_JOB_POSTING_ID_2);
@@ -204,7 +204,7 @@ public class JobPostingClientTest {
   }
 
   @Test
-  public void testGetJobPostingStatus_multipleIds_nullJobIds() {
+  public void testGetJobPostingStatusMultipleIdsWithNullJobIds() {
     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
       client.getJobPostingStatus((List<String>) null);
     });
@@ -213,7 +213,7 @@ public class JobPostingClientTest {
   }
 
   @Test
-  public void testGetJobPostingStatus_multipleIds_emptyJobIds() {
+  public void testGetJobPostingStatusMultipleIdsWithEmptyJobIds() {
     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
       client.getJobPostingStatus(Arrays.asList());
     });
@@ -222,7 +222,7 @@ public class JobPostingClientTest {
   }
 
   @Test
-  public void testGetJobPostingStatus_multipleIds_error400Response() throws Exception {
+  public void testGetJobPostingStatusMultipleIdsWith400Response() throws Exception {
     doThrow(new LinkedInApiException(400 ,
         TestingCommonConstants.HTTP_400_MESSAGE, TestingCommonConstants.HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull());
     Exception exception = assertThrows(Exception.class, () -> {

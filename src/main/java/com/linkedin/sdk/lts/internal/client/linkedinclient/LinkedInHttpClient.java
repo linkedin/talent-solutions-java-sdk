@@ -45,7 +45,7 @@ public class LinkedInHttpClient implements HttpClient {
    * @throws LinkedInApiException if the API returns an error response
    */
   @Override
-  public String executeRequest(@NonNull String url,@NonNull HttpMethod method, Map<String, String> headers, String body)
+  public String executeRequest(@NonNull String url, @NonNull HttpMethod method, Map<String, String> headers, String body)
       throws IOException, LinkedInApiException {
     long backoff = retryConfig.getInitialBackoffMillis();
     LinkedInApiException lastException = null;
@@ -93,7 +93,7 @@ public class LinkedInHttpClient implements HttpClient {
    * @throws LinkedInApiException if the API returns an error response
    * @throws TransientLinkedInApiException if a transient error occurs
    */
-  private String executeWithErrorHandling(@NonNull String url,@NonNull HttpMethod method, Map<String, String> headers, String body)
+  private String executeWithErrorHandling(@NonNull String url, @NonNull HttpMethod method, Map<String, String> headers, String body)
       throws LinkedInApiException {
     try {
       LOGGER.info(LogRedactor.redact(String.format("Sending %s request to %s with body %s", method, url, body)));
@@ -101,7 +101,7 @@ public class LinkedInHttpClient implements HttpClient {
       HttpsURLConnection connection = createConnection(new URL(url), method);
       setHeaders(connection, headers);
 
-      if (body != null && !method.equals(HttpMethod.GET)) {
+      if (body != null && !(method.equals(HttpMethod.GET) || method.equals(HttpMethod.DELETE))) {
         writeRequestBody(connection, body);
       }
 
@@ -177,7 +177,7 @@ public class LinkedInHttpClient implements HttpClient {
     Map<String, List<String>> headers = connection.getHeaderFields();
     LOGGER.info(LogRedactor.redact(String.format("Response headers: %s, \n Response body: %s", headers, response)));
 
-    if (TransientLinkedInApiException.isTransient(responseCode)) {
+    if (LinkedInApiException.isTransient(responseCode)) {
       String errorMessage = "HTTP error " + responseCode;
       LOGGER.severe(errorMessage);
       throw new TransientLinkedInApiException(responseCode, response, errorMessage);

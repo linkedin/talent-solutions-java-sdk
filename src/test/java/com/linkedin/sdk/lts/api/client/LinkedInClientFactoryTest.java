@@ -12,7 +12,7 @@ public class LinkedInClientFactoryTest {
   private static final String ALTERNATE_CLIENT_SECRET = "alternate-client-secret";
 
   @Test
-  public void testGetInstance_returnsSingletonInstance() {
+  public void testGetInstanceShouldReturnSameInstance() {
     LinkedInClientFactory instance1 = LinkedInClientFactory.getInstance();
     LinkedInClientFactory instance2 = LinkedInClientFactory.getInstance();
 
@@ -21,7 +21,7 @@ public class LinkedInClientFactoryTest {
   }
 
   @Test
-  public void testGetJobPostingClient_returnsDifferentInstancesForDifferentCredentials() {
+  public void testGetJobPostingClientShouldReturnDifferentInstancesForDifferentCredentials() {
     LinkedInClientFactory factory = LinkedInClientFactory.getInstance();
 
     JobPostingClient client1 = factory.getJobPostingClient(TEST_CLIENT_ID, TEST_CLIENT_SECRET);
@@ -31,7 +31,7 @@ public class LinkedInClientFactoryTest {
   }
 
   @Test
-  public void testGetP4PJobPostingClient_returnsDifferentInstancesForDifferentCredentials() {
+  public void testGetP4PJobPostingClientShouldReturnDifferentInstancesForDifferentCredentials() {
     LinkedInClientFactory factory = LinkedInClientFactory.getInstance();
 
     P4PJobPostingClient client1 = factory.getP4PJobPostingClient(TEST_CLIENT_ID, TEST_CLIENT_SECRET);
@@ -41,7 +41,7 @@ public class LinkedInClientFactoryTest {
   }
 
   @Test
-  public void testGetApplyConnectJobPostingClient_returnsDifferentInstancesForDifferentCredentials() {
+  public void testGetApplyConnectJobPostingClientShouldReturnDifferentInstancesForDifferentCredentials() {
     LinkedInClientFactory factory = LinkedInClientFactory.getInstance();
 
     ApplyConnectJobPostingClient
@@ -53,37 +53,37 @@ public class LinkedInClientFactoryTest {
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testGetJobPostingClient_emptyClientId() {
+  public void testGetJobPostingClientWhenEmptyClientId() {
     LinkedInClientFactory factory = LinkedInClientFactory.getInstance();
     factory.getJobPostingClient("", TEST_CLIENT_SECRET);
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testGetJobPostingClient_nullClientSecret() {
+  public void testGetJobPostingClientWhenNullClientSecret() {
     LinkedInClientFactory factory = LinkedInClientFactory.getInstance();
     factory.getJobPostingClient(TEST_CLIENT_ID, null);
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testGetP4PJobPostingClient_emptyClientId() {
+  public void testGetP4PJobPostingClientWhenEmptyClientId() {
     LinkedInClientFactory factory = LinkedInClientFactory.getInstance();
     factory.getP4PJobPostingClient("", TEST_CLIENT_SECRET);
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testGetP4PJobPostingClient_nullClientSecret() {
+  public void testGetP4PJobPostingClientWhenNullClientSecret() {
     LinkedInClientFactory factory = LinkedInClientFactory.getInstance();
     factory.getP4PJobPostingClient(TEST_CLIENT_ID, null);
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testGetApplyConnectJobPostingClient_emptyClientId() {
+  public void testGetApplyConnectJobPostingClientWhenEmptyClientId() {
     LinkedInClientFactory factory = LinkedInClientFactory.getInstance();
     factory.getApplyConnectJobPostingClient("", TEST_CLIENT_SECRET);
   }
 
   @Test(expected = IllegalArgumentException.class)
-  public void testGetApplyConnectJobPostingClient_nullClientSecret() {
+  public void testGetApplyConnectJobPostingClientWhenNullClientSecret() {
     LinkedInClientFactory factory = LinkedInClientFactory.getInstance();
     factory.getApplyConnectJobPostingClient(TEST_CLIENT_ID, null);
   }

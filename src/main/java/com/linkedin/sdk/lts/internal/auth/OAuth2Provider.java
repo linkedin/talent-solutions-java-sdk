@@ -114,12 +114,9 @@ public class OAuth2Provider implements AuthenticationProvider {
   }
 
   /**
-   * {@inheritDoc}
-   *
-   * <p>This implementation checks both for token existence and expiration status.</p>
+   * Checks if the current OAuth 2.0 token is valid.
    */
-  @Override
-  public boolean isTokenValid() {
+  protected boolean isTokenValid() {
     return currentToken != null && !currentToken.isExpired();
   }
 

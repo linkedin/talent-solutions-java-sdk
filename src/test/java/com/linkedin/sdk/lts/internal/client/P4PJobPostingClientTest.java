@@ -78,7 +78,7 @@ public class P4PJobPostingClientTest {
   }
 
   @Test
-  public void provisionCustomerHiringContracts_successfulResponse() throws Exception {
+  public void provisionCustomerHiringContractsWithSuccessfulResponse() throws Exception {
     doReturn(TestingResourceUtility.getSuccessP4ProvisionCustomerHiringContractsResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
     P4PProvisionCustomerHiringContractsResponse response = client.provisionCustomerHiringContracts(p4PProvisionCustomerHiringContractsRequest);
 
@@ -88,7 +88,7 @@ public class P4PJobPostingClientTest {
   }
 
   @Test
-  public void provisionCustomerHiringContracts_errror400Response() throws Exception {
+  public void provisionCustomerHiringContractsWith400Response() throws Exception {
     doThrow(new LinkedInApiException(400 ,HTTP_400_MESSAGE, HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
     Exception exception = assertThrows(LinkedInApiException.class, () -> {
       client.provisionCustomerHiringContracts(p4PProvisionCustomerHiringContractsRequest);
@@ -98,7 +98,7 @@ public class P4PJobPostingClientTest {
   }
 
   @Test
-  public void provisionCustomerHiringContracts_IllegalArgumentException() {
+  public void provisionCustomerHiringContractsWithNullP4PProvisionCustomerHiringContractsRequest() {
     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
       client.provisionCustomerHiringContracts(null);
     });
@@ -107,7 +107,7 @@ public class P4PJobPostingClientTest {
   }
 
   @Test
-  public void testGetP4PPerformanceReportByIds_successfulResponse() throws Exception {
+  public void testGetP4PPerformanceReportByIdsWithSuccessfulResponse() throws Exception {
     doReturn(TestingResourceUtility.getSuccessP4PJobPerformanceReportsByIdsResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull());
     P4PReportResponseByIds response = client.getP4PReportByIds(p4PJobReportsRequestByIds);
 
@@ -117,7 +117,7 @@ public class P4PJobPostingClientTest {
   }
 
   @Test
-  public void testGetP4PPerformanceReportByIds_errror400Response() throws Exception {
+  public void testGetP4PPerformanceReportByIdsWith400Response() throws Exception {
     doThrow(new LinkedInApiException(400 ,HTTP_400_MESSAGE, HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull());
     Exception exception = assertThrows(LinkedInApiException.class, () -> {
       client.getP4PReportByIds(p4PJobReportsRequestByIds);
@@ -127,7 +127,7 @@ public class P4PJobPostingClientTest {
   }
 
   @Test
-  public void testGetP4PPerformanceReportByIds_IllegalArgumentException() {
+  public void testGetP4PPerformanceReportByIdsWithNullP4PJobReportsRequestByIds() {
     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
       client.getP4PReportByIds(null);
     });
@@ -136,7 +136,7 @@ public class P4PJobPostingClientTest {
   }
 
   @Test
-  public void testGetP4PPerformanceReportByIds_nullIds() {
+  public void testGetP4PPerformanceReportByIdsWithNullIds() {
     p4PJobReportsRequestByIds.setIds(null);
     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
       client.getP4PReportByIds(p4PJobReportsRequestByIds);
@@ -146,7 +146,7 @@ public class P4PJobPostingClientTest {
   }
 
   @Test
-  public void testGetP4PPerformanceReportByIds_nullDateRange() {
+  public void testGetP4PPerformanceReportByIdsWithNullDateRange() {
     p4PJobReportsRequestByIds.setDateRange(null);
     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
       client.getP4PReportByIds(p4PJobReportsRequestByIds);
@@ -157,7 +157,7 @@ public class P4PJobPostingClientTest {
 
 
   @Test
-  public void testGetP4PPerformanceReportByDate_successfulResponse() throws Exception {
+  public void testGetP4PPerformanceReportByDateWithSuccessfulResponse() throws Exception {
     doReturn(TestingResourceUtility.getSuccessP4PJobPerformanceReportsByDateResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull());
     P4PReportResponseByDate response = client.getP4PReportsByDate(p4PJobReportsRequestByDate);
 
@@ -166,7 +166,7 @@ public class P4PJobPostingClientTest {
   }
 
   @Test
-  public void testGetP4PPerformanceReportByDate_errror400Response() throws Exception {
+  public void testGetP4PPerformanceReportByDateWith400Response() throws Exception {
     doThrow(new LinkedInApiException(400 ,HTTP_400_MESSAGE, HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull());
     Exception exception = assertThrows(LinkedInApiException.class, () -> {
       client.getP4PReportsByDate(p4PJobReportsRequestByDate);
@@ -176,7 +176,7 @@ public class P4PJobPostingClientTest {
   }
 
   @Test
-  public void testGetP4PPerformanceReportByDate_nullRequest() {
+  public void testGetP4PPerformanceReportByDateWithNullP4PJobReportsRequestByDate() {
     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
       client.getP4PReportsByDate(null);
     });
@@ -186,7 +186,7 @@ public class P4PJobPostingClientTest {
 
 
   @Test
-  public void testGetP4PPerformanceReportByDate_nullDateRange() {
+  public void testGetP4PPerformanceReportByDateWithNullDateRange() {
     p4PJobReportsRequestByDate.setDateRange(null);
     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
       client.getP4PReportsByDate(p4PJobReportsRequestByDate);
@@ -196,7 +196,7 @@ public class P4PJobPostingClientTest {
   }
 
   @Test
-  public void testGetP4PPartnerBudgetReport_successfulResponse() throws Exception {
+  public void testGetP4PPartnerBudgetReportWithSuccessfulResponse() throws Exception {
     doReturn(TestingResourceUtility.getSuccessP4PPartnerBudgetReportResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull());
     P4PBudgetReportResponse response = client.getPartnerBudgetReports(TEST_PARTNER_CONTRACT_ID);
 
@@ -205,7 +205,7 @@ public class P4PJobPostingClientTest {
   }
 
   @Test
-  public void testGetP4PPartnerBudgetReport_errror400Response() throws Exception {
+  public void testGetP4PPartnerBudgetReportWith400Response() throws Exception {
     doThrow(new LinkedInApiException(400 ,HTTP_400_MESSAGE, HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull());
     Exception exception = assertThrows(LinkedInApiException.class, () -> {
       client.getPartnerBudgetReports(TEST_PARTNER_CONTRACT_ID);
@@ -215,7 +215,7 @@ public class P4PJobPostingClientTest {
   }
 
   @Test
-  public void testGetP4PPartnerBudgetReport_nullPartnerContractId() {
+  public void testGetP4PPartnerBudgetReportWithNullPartnerContractId() {
     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
       client.getPartnerBudgetReports(null);
     });

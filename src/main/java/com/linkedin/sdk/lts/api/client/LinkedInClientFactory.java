@@ -48,20 +48,7 @@ public class LinkedInClientFactory {
    */
   @SuppressWarnings("unchecked")
   public synchronized JobPostingClient getJobPostingClient(String clientId, String clientSecret) {
-    if (clientId == null || clientId.isEmpty()) {
-      throw new IllegalArgumentException("Client ID cannot be null or empty");
-    }
-    if (clientSecret == null || clientSecret.isEmpty()) {
-      throw new IllegalArgumentException("Client Secret cannot be null or empty");
-    }
-
-    OAuth2Config config = OAuth2Config.builder()
-        .clientId(clientId)
-        .clientSecret(clientSecret)
-        .tokenUrl(LINKEDIN_ACCESS_TOKEN_URL)
-        .build();
-
-    return new JobPostingClientImpl(config, httpClient);
+    return new JobPostingClientImpl(buildOAuth2Config(clientId, clientSecret), httpClient);
   }
 
   /**
@@ -74,20 +61,7 @@ public class LinkedInClientFactory {
    */
   @SuppressWarnings("unchecked")
   public synchronized P4PJobPostingClient getP4PJobPostingClient(String clientId, String clientSecret) {
-    if (clientId == null || clientId.isEmpty()) {
-      throw new IllegalArgumentException("Client ID cannot be null or empty");
-    }
-    if (clientSecret == null || clientSecret.isEmpty()) {
-      throw new IllegalArgumentException("Client Secret cannot be null or empty");
-    }
-
-    OAuth2Config config = OAuth2Config.builder()
-        .clientId(clientId)
-        .clientSecret(clientSecret)
-        .tokenUrl(LINKEDIN_ACCESS_TOKEN_URL)
-        .build();
-
-    return new P4PJobPostingClientImpl(config, httpClient);
+    return new P4PJobPostingClientImpl(buildOAuth2Config(clientId, clientSecret), httpClient);
   }
 
   /**
@@ -100,20 +74,7 @@ public class LinkedInClientFactory {
    */
   @SuppressWarnings("unchecked")
   public synchronized ApplyConnectJobPostingClient getApplyConnectJobPostingClient(String clientId, String clientSecret) {
-    if (clientId == null || clientId.isEmpty()) {
-      throw new IllegalArgumentException("Client ID cannot be null or empty");
-    }
-    if (clientSecret == null || clientSecret.isEmpty()) {
-      throw new IllegalArgumentException("Client Secret cannot be null or empty");
-    }
-
-    OAuth2Config config = OAuth2Config.builder()
-        .clientId(clientId)
-        .clientSecret(clientSecret)
-        .tokenUrl(LINKEDIN_ACCESS_TOKEN_URL)
-        .build();
-
-    return new ApplyConnectJobPostingClientImpl(config, httpClient);
+    return new ApplyConnectJobPostingClientImpl(buildOAuth2Config(clientId, clientSecret), httpClient);
   }
 
   /**
@@ -128,6 +89,18 @@ public class LinkedInClientFactory {
    */
   @SuppressWarnings("unchecked")
   public synchronized ProvisioningClient getProvisioningClient(String clientId, String clientSecret) {
+    return new ProvisioningClientImpl(buildOAuth2Config(clientId, clientSecret), httpClient);
+  }
+
+  /**
+   * Builds an OAuth2Config object with the provided client ID and client secret.
+   *
+   * @param clientId the OAuth 2.0 client ID
+   * @param clientSecret the OAuth 2.0 client secret
+   * @return an OAuth2Config instance configured with the provided credentials
+   * @throws IllegalArgumentException if either clientId or clientSecret is null or empty
+   */
+  private OAuth2Config buildOAuth2Config(String clientId, String clientSecret) {
     if (clientId == null || clientId.isEmpty()) {
       throw new IllegalArgumentException("Client ID cannot be null or empty");
     }
@@ -135,12 +108,10 @@ public class LinkedInClientFactory {
       throw new IllegalArgumentException("Client Secret cannot be null or empty");
     }
 
-    OAuth2Config config = OAuth2Config.builder()
+    return OAuth2Config.builder()
         .clientId(clientId)
         .clientSecret(clientSecret)
         .tokenUrl(LINKEDIN_ACCESS_TOKEN_URL)
         .build();
-
-    return new ProvisioningClientImpl(config, httpClient);
   }
 }

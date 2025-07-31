@@ -51,7 +51,7 @@ public class ProvisioningClientTest {
   }
 
   @Test
-  public void testCreateApplication_successfulResponse() throws Exception {
+  public void testCreateApplicationWithSuccessfulResponse() throws Exception {
     doReturn(TestingResourceUtility.getCreateApplicationSuccessResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
     CreateApplicationResponse response = client.createApplication(mockCreateApplicationRequest);
 
@@ -63,7 +63,7 @@ public class ProvisioningClientTest {
   }
 
   @Test
-  public void testCreateApplication_error400Response() throws Exception {
+  public void testCreateApplicationWith400Response() throws Exception {
     doThrow(new LinkedInApiException(400 ,
         TestingCommonConstants.HTTP_400_MESSAGE, TestingCommonConstants.HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
     Exception exception = assertThrows(Exception.class, () -> {
@@ -74,7 +74,7 @@ public class ProvisioningClientTest {
   }
 
   @Test
-  public void testCreateApplication_nullRequest() throws Exception {
+  public void testCreateApplicationWithNullRequest() throws Exception {
     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
       client.createApplication(null);
     });
@@ -83,7 +83,7 @@ public class ProvisioningClientTest {
   }
 
   @Test
-  public void testGetApplication_successfulResponse() throws Exception {
+  public void testGetApplicationWithSuccessfulResponse() throws Exception {
     doReturn(TestingResourceUtility.getApplicationSuccessResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull());
     GetApplicationResponse response = client.getApplication(mockGetApplicationRequest);
 
@@ -97,7 +97,7 @@ public class ProvisioningClientTest {
   }
 
   @Test
-  public void testGetApplication_error400Response() throws Exception {
+  public void testGetApplicationWith400Response() throws Exception {
     doThrow(new LinkedInApiException(400 ,
         TestingCommonConstants.HTTP_400_MESSAGE, TestingCommonConstants.HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull());
     Exception exception = assertThrows(Exception.class, () -> {
@@ -107,7 +107,7 @@ public class ProvisioningClientTest {
   }
 
   @Test
-  public void testGetApplication_nullRequest() throws Exception {
+  public void testGetApplicationWithNullRequest() throws Exception {
     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
       client.getApplication(null);
     });
@@ -116,7 +116,7 @@ public class ProvisioningClientTest {
   }
 
   @Test
-  public void testGetApplication_nullUniqueForeignId() throws Exception {
+  public void testGetApplicationWithNullUniqueForeignId() throws Exception {
     doReturn(null).when(mockGetApplicationRequest).getUniqueForeignId();
     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
       client.getApplication(mockGetApplicationRequest);
@@ -126,13 +126,13 @@ public class ProvisioningClientTest {
   }
 
   @Test
-  public void testUpdateApplication_successfulResponse() throws Exception {
+  public void testUpdateApplicationWithSuccessfulResponse() throws Exception {
     doReturn(null).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
     client.updateApplication(mockUpdateApplicationRequest);
   }
 
   @Test
-  public void testUpdateApplication_error400Response() throws Exception {
+  public void testUpdateApplicationWith400Response() throws Exception {
     doThrow(new LinkedInApiException(400 ,
         TestingCommonConstants.HTTP_400_MESSAGE, TestingCommonConstants.HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
     Exception exception = assertThrows(Exception.class, () -> {
@@ -143,7 +143,7 @@ public class ProvisioningClientTest {
   }
 
   @Test
-  public void testUpdateApplication_nullRequest() throws Exception {
+  public void testUpdateApplicationWithNullRequest() throws Exception {
     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
       client.updateApplication(null);
     });
@@ -152,7 +152,7 @@ public class ProvisioningClientTest {
   }
 
   @Test
-  public void testUpdateApplication_nullDeveloperApplicationUrn() throws Exception {
+  public void testUpdateApplicationWithNullDeveloperApplicationUrn() throws Exception {
     doReturn(null).when(mockUpdateApplicationRequest).getDeveloperApplicationUrn();
     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
       client.updateApplication(mockUpdateApplicationRequest);

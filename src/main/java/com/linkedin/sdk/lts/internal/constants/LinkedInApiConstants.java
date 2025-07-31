@@ -10,7 +10,7 @@ public class LinkedInApiConstants {
   /**
    * The base URL for LinkedIn's Job Posting APIs v2 endpoints.
    */
-  public static final String BASE_URL = "https://api.linkedin.com/v2/";
+  public static final String BASE_URL_UNVERSIONED = "https://api.linkedin.com/v2/";
 
   /**
    * The base URL for LinkedIn's Job Posting APIs versioned endpoints.
@@ -30,7 +30,7 @@ public class LinkedInApiConstants {
   /**
    * The base URL for LinkedIn's Job Posting APIs v2 endpoints related to job posting status.
    */
-  public static final String JOB_STATUS_BASE_URL = BASE_URL + "jobPostingStatus";
+  public static final String JOB_STATUS_BASE_URL = BASE_URL_UNVERSIONED + "jobPostingStatus";
 
   /**
    * The URL for LinkedIn's OAuth 2.0 authorization endpoint.
@@ -40,12 +40,12 @@ public class LinkedInApiConstants {
   /**
     * The base URL for LinkedIn's Provisioned Applications API endpoints.
    */
-   public static final String PROVISIONING_APPLICATION_BASE_URL = BASE_URL + "provisionedApplications";
+   public static final String PROVISIONING_APPLICATION_BASE_URL = BASE_URL_UNVERSIONED + "provisionedApplications";
 
   /**
    * The URL for LinkedIn's Job Application Lifecycle Actions API endpoints.
    */
-  public static final String SYNC_JOB_APPLICATION_NOTIFICATIONS_URL = BASE_URL + "jobApplicationLifecycleActions";
+  public static final String SYNC_JOB_APPLICATION_NOTIFICATIONS_URL = BASE_URL_UNVERSIONED + "jobApplicationLifecycleActions";
 
   /**
    * The header for LinkedIn X-REST.li protocol versioning.

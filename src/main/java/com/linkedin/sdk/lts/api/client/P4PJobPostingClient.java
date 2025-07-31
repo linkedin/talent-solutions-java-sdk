@@ -34,7 +34,7 @@ public interface P4PJobPostingClient extends JobPostingClient {
 
 
   /**
-   * Get the Pay for Performance (P4P) report for a job posting by Ids.
+   * Get the Pay for Performance (P4P) report for a job posting by IDs.
    *
    * @return the P4PReportResponseByIds containing the performance metrics
    * @throws AuthenticationException if authentication fails

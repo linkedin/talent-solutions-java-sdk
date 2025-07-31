@@ -9,55 +9,55 @@ import java.util.stream.Collectors;
 public class TestingResourceUtility {
 
   public static String getSuccessJobPostingResponse(){
-    return readJsonFromFile("JobPostingSuccessResponse.txt");
+    return readJsonFromFile("JobPostingSuccessResponse.json");
   }
 
   public static String getSuccessTaskStatusResponse() {
-    return readJsonFromFile("TaskStatusSuccessResponse.txt");
+    return readJsonFromFile("TaskStatusSuccessResponse.json");
   }
 
   public static String getMultipleSuccessTaskStatusResponse() {
-    return readJsonFromFile("MultipleTaskStatusSuccessResponse.txt");
+    return readJsonFromFile("MultipleTaskStatusSuccessResponse.json");
   }
 
   public static String getSuccessJobPostingStatusResponse() {
-    return readJsonFromFile("JobPostingStatusSuccessResponse.txt");
+    return readJsonFromFile("JobPostingStatusSuccessResponse.json");
   }
 
   public static String getMultipleSuccessJobPostingStatusResponse() {
-    return readJsonFromFile("MultipleJobPostingStatusSuccessResponse.txt");
+    return readJsonFromFile("MultipleJobPostingStatusSuccessResponse.json");
   }
 
   public static String getSuccessP4ProvisionCustomerHiringContractsResponse(){
-    return readJsonFromFile("P4PProvisionCustomerHiringContractsSuccessResponse.txt");
+    return readJsonFromFile("P4PProvisionCustomerHiringContractsSuccessResponse.json");
   }
 
   public static String getSuccessP4PJobPerformanceReportsByIdsResponse(){
-    return readJsonFromFile("P4PJobPerformanceReportsByIdsSuccessResponse.txt");
+    return readJsonFromFile("P4PJobPerformanceReportsByIdsSuccessResponse.json");
   }
 
   public static String getSuccessP4PJobPerformanceReportsByDateResponse(){
-    return readJsonFromFile("P4PJobPerformanceReportsByDateSuccessResponse.txt");
+    return readJsonFromFile("P4PJobPerformanceReportsByDateSuccessResponse.json");
   }
 
   public static String getSuccessP4PPartnerBudgetReportResponse(){
-    return readJsonFromFile("P4PPartnerBudgetReportResponse.txt");
+    return readJsonFromFile("P4PPartnerBudgetReportResponse.json");
   }
 
   public static String getCreateApplicationSuccessResponse(){
-    return readJsonFromFile("CreateApplicationSuccessResponse.txt");
+    return readJsonFromFile("CreateApplicationSuccessResponse.json");
   }
 
   public static String getApplicationSuccessResponse(){
-    return readJsonFromFile("GetApplicationSuccessResponse.txt");
+    return readJsonFromFile("GetApplicationSuccessResponse.json");
   }
 
   public static String getTokenSuccessResponse() {
-    return readJsonFromFile("TokenSuccessResponse.txt");
+    return readJsonFromFile("TokenSuccessResponse.json");
   }
 
   public static String getNewTokenSuccessResponse() {
-    return readJsonFromFile("NewTokenSuccessResponse.txt");
+    return readJsonFromFile("NewTokenSuccessResponse.json");
   }
 
   private static String readJsonFromFile(String filePath) {

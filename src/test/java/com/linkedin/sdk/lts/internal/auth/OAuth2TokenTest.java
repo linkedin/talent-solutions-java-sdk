@@ -11,7 +11,7 @@ import org.junit.Test;
 public class OAuth2TokenTest {
 
   @Test
-  public void testIsExpired_WithValidToken_ReturnsFalse() {
+  public void testTokenIsExpiredWithValidTokenShouldReturnsFalse() {
     // Given
     OAuth2Token token = new OAuth2Token(TEST_TOKEN, EXPIRY_SECONDS);
 
@@ -20,7 +20,7 @@ public class OAuth2TokenTest {
   }
 
   @Test
-  public void testIsExpired_WithExpiredToken_ReturnsTrue() {
+  public void testTokenIsExpiredWithExpiredTokenShouldReturnsTrue() {
     // Given
     OAuth2Token token = new OAuth2Token(TEST_TOKEN, -10); // Negative expiry = already expired
 
@@ -29,7 +29,7 @@ public class OAuth2TokenTest {
   }
 
   @Test
-  public void testGetAccessToken_ReturnsCorrectToken() {
+  public void testGetAccessTokenShouldReturnsCorrectToken() {
     // Given
     OAuth2Token token = new OAuth2Token(TEST_TOKEN, EXPIRY_SECONDS);
 

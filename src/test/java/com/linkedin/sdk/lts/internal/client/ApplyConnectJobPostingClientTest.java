@@ -49,14 +49,14 @@ public class ApplyConnectJobPostingClientTest {
   }
 
   @Test
-  public void testSyncJobApplicationNotification_successfulResponse() throws Exception {
+  public void testSyncJobApplicationNotificationReturnsSuccessfulResponse() throws Exception {
     doReturn(TestingResourceUtility.getSuccessJobPostingResponse()).when(httpClient).executeRequest(anyString(), eq(
         HttpMethod.POST), anyMap(), anyString());
     client.syncJobApplicationNotification(mockRequest);
   }
 
   @Test
-  public void testSyncJobApplicationNotification_error400Response() throws Exception {
+  public void testSyncJobApplicationNotificationReturns400Response() throws Exception {
     doThrow(new LinkedInApiException(400 ,
         TestingCommonConstants.HTTP_400_MESSAGE, TestingCommonConstants.HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
     Exception exception = assertThrows(Exception.class, () -> {
@@ -67,7 +67,7 @@ public class ApplyConnectJobPostingClientTest {
   }
 
   @Test
-  public void testSyncJobApplicationNotification_jsonSerializationException() throws Exception {
+  public void testSyncJobApplicationNotificationWithJsonSerializationException() throws Exception {
     try (MockedStatic<ObjectMapperUtil> mockedStatic = mockStatic(ObjectMapperUtil.class)) {
       mockedStatic.when(() -> ObjectMapperUtil.toJson(any()))
           .thenThrow(new JsonSerializationException(JSON_SERIALIZATION_ERROR));
@@ -83,7 +83,7 @@ public class ApplyConnectJobPostingClientTest {
   }
 
   @Test
-  public void testSyncJobApplicationNotification_networkIOError() throws Exception {
+  public void testSyncJobApplicationNotificationWithNetworkIOError() throws Exception {
     doThrow(new IOException(NETWORK_ERROR_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
     Exception exception = assertThrows(Exception.class, () -> {
       client.syncJobApplicationNotification(mockRequest);
@@ -93,7 +93,7 @@ public class ApplyConnectJobPostingClientTest {
   }
 
   @Test
-  public void testSyncJobApplicationNotification_nullJobApplicationNotificationRequest() {
+  public void testSyncJobApplicationNotificationWithNullJobApplicationNotificationRequest() {
     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
       client.syncJobApplicationNotification(null);
     });

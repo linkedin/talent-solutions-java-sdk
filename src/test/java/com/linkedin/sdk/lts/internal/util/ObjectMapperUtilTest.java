@@ -15,7 +15,7 @@ import static org.mockito.Mockito.*;
 public class ObjectMapperUtilTest {
 
     @Test
-    public void testToJson_ValidObject_ReturnsJsonString() throws JsonSerializationException {
+    public void testToJsonValidObjectShouldReturnJsonString() throws JsonSerializationException {
       TokenInfo tokenInfo = new TokenInfo("abc123", new Long(3600));
       String json = ObjectMapperUtil.toJson(tokenInfo);
       assertNotNull(json);
@@ -24,7 +24,7 @@ public class ObjectMapperUtilTest {
     }
 
   @Test
-  public void testToJson_ThrowsJsonProcessingException_WhenJsonProcessingExceptionOccurs() {
+  public void testToJsonShouldThrowsJsonProcessingExceptionWhenJsonProcessingExceptionOccurs() {
     try (MockedConstruction<ObjectMapper> mockedConstruction = mockConstruction(ObjectMapper.class,
         (mock, context) -> {
           // Configure the mock ObjectMapper to throw JsonProcessingException
@@ -43,7 +43,7 @@ public class ObjectMapperUtilTest {
   }
 
     @Test
-    public void testFromJson_ValidJson_ReturnsObject() throws JsonDeserializationException {
+    public void testFromJsonWithValidJsonShouldReturnsObject() throws JsonDeserializationException {
       String json = "{\"access_token\":\"xyz789\",\"expires_in\":1800}";
       TokenInfo tokenInfo = ObjectMapperUtil.fromJson(json, TokenInfo.class);
       assertNotNull(tokenInfo);
@@ -52,7 +52,7 @@ public class ObjectMapperUtilTest {
     }
 
     @Test(expected = JsonDeserializationException.class)
-    public void testFromJson_InvalidJson_ThrowsException() throws JsonDeserializationException {
+    public void testFromJsonWithInvalidJsonShouldThrowsException() throws JsonDeserializationException {
       String invalidJson = "{access_token:}";
       ObjectMapperUtil.fromJson(invalidJson, TokenInfo.class);
     }

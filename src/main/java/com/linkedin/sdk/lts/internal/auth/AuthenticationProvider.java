@@ -28,15 +28,4 @@ public interface AuthenticationProvider {
    *         due to network issues, invalid credentials, or other authentication failures
    */
   String getAccessToken() throws AuthenticationException;
-
-  /**
-   * Checks if the current access token is valid.
-   *
-   * <p>This method should verify both the existence and validity of the token,
-   * including expiration status if applicable.</p>
-   *
-   * @return true if a valid access token exists, false otherwise
-   */
-  boolean isTokenValid();
-
 }

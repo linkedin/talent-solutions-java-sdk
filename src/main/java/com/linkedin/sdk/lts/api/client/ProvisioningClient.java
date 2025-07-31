@@ -10,8 +10,8 @@ import com.linkedin.sdk.lts.api.model.response.provisioning.GetApplicationRespon
 
 
 /**
- * Public Interface LinkedIn's Provisioning APIs allow Partners to create and configure
- * developer applications on behalf of their Customers which is an initial
+ * LinkedIn's Provisioning APIs allow partners to create and configure
+ * developer applications on behalf of their customers which is an initial
  * step in managing and enabling their integrations.
  */
 public interface ProvisioningClient {

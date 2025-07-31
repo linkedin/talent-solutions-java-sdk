@@ -1,6 +1,5 @@
-package com.linkedin.sdk.lts.util;
+package com.linkedin.sdk.lts.internal.util;
 
-import com.linkedin.sdk.lts.internal.util.LogRedactor;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

@@ -67,7 +67,7 @@ public class OAuth2ProviderTest {
   }
 
   @Test
-  public void testGetInstance_ReturnsSameInstanceForSameConfig() {
+  public void testGetInstanceShouldReturnSameInstanceForSameConfig() {
     OAuth2Provider provider1 = OAuth2Provider.getInstance(config, httpClient);
     OAuth2Provider provider2 = OAuth2Provider.getInstance(config, httpClient);
 
@@ -75,7 +75,7 @@ public class OAuth2ProviderTest {
   }
 
   @Test
-  public void testGetInstance_ReturnsDifferentInstancesForDifferentConfigs() {
+  public void testGetInstanceShouldReturnsDifferentInstancesForDifferentConfigs() {
     OAuth2Provider provider1 = OAuth2Provider.getInstance(config, httpClient);
     OAuth2Provider provider2 = OAuth2Provider.getInstance(configNewId, httpClient);
 
@@ -83,7 +83,7 @@ public class OAuth2ProviderTest {
   }
 
   @Test
-  public void testGetAccessToken_PerformsAuthentication_WhenNoTokenExists() throws Exception {
+  public void testGetAccessTokenShouldPerformsAuthenticationWhenNoTokenExists() throws Exception {
     doReturn(TestingResourceUtility.getTokenSuccessResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
     String accessToken = providerSpy.getAccessToken();
 
@@ -93,7 +93,7 @@ public class OAuth2ProviderTest {
   }
 
   @Test
-  public void testGetAccessToken_ReusesToken_WhenValidTokenExists() throws Exception {
+  public void testGetAccessTokenShouldReusesTokenWhenValidTokenExists() throws Exception {
     doReturn(TestingResourceUtility.getTokenSuccessResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
     String firstToken = providerSpy.getAccessToken();
     doReturn(TestingResourceUtility.getNewTokenSuccessResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
@@ -104,7 +104,7 @@ public class OAuth2ProviderTest {
   }
 
   @Test
-  public void testGetAccessToken_RefreshesToken_WhenTokenExpired() throws Exception {
+  public void testGetAccessTokenShouldRefreshesTokenWhenTokenExpired() throws Exception {
     doReturn(TestingResourceUtility.getTokenSuccessResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
     providerSpy.getAccessToken();
     setExpiredToken(providerSpy);
@@ -116,25 +116,25 @@ public class OAuth2ProviderTest {
   }
 
   @Test(expected = AuthenticationException.class)
-  public void testAuthenticate_ThrowsException_WhenHttpErrorOccurs() throws Exception {
+  public void testAuthenticateShouldThrowsExceptionWhenHttpErrorOccurs() throws Exception {
     doThrow(new LinkedInApiException(400 ,HTTP_400_MESSAGE, HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
     providerSpy.getAccessToken();
   }
 
   @Test(expected = AuthenticationException.class)
-  public void testAuthenticate_ThrowsException_WhenIOExceptionOccurs() throws Exception {
+  public void testAuthenticateShouldThrowsExceptionWhenIOExceptionOccurs() throws Exception {
     doThrow(new IOException("Network error")).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
     providerSpy.getAccessToken();
   }
 
   @Test
-  public void testIsTokenValid_ReturnsFalse_WhenNoToken() {
+  public void testIsTokenValidShouldReturnsFalseWhenNoToken() {
     boolean isValid = providerSpy.isTokenValid();
     assertFalse("Should return false when no token exists", isValid);
   }
 
   @Test
-  public void testURLEncoding_HandlesSpecialCharacters() throws Exception {
+  public void testURLEncodingShouldHandlesSpecialCharacters() throws Exception {
     doReturn(TestingResourceUtility.getTokenSuccessResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
     specialCharProviderSpy.getAccessToken();
     Mockito.verify(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(),

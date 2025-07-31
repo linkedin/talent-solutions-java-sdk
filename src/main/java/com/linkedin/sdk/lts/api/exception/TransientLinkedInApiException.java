@@ -20,13 +20,4 @@ public class TransientLinkedInApiException extends LinkedInApiException {
   public TransientLinkedInApiException(int statusCode, String message, String details) {
     super(statusCode, message, details);
   }
-
-  /**
-   * Verify http status code is a transient error and can be retried.
-   *
-   * @param statusCode the HTTP status code returned by the LinkedIn API
-   */
-  public static boolean isTransient(int statusCode) {
-    return HttpStatusCategory.SERVER_ERROR.matches(statusCode);
-  }
 }
