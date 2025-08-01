@@ -51,7 +51,7 @@ public class JobPostingClientTest {
   @Test
   public void testPostWithSuccessfulResponse() throws Exception {
     doReturn(TestingResourceUtility.getSuccessJobPostingResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
-    JobPostingResponse response = client.post(mockRequest);
+    JobPostingResponse response = client.processJobPosting(mockRequest);
 
     assertEquals(response.getElements().get(0).getStatus(), 202);
     Assert.assertEquals(response.getElements().get(0).getId(), TestingCommonConstants.TEST_JOB_POSTING_TASK_ID_2);
@@ -63,7 +63,7 @@ public class JobPostingClientTest {
     doThrow(new LinkedInApiException(400 ,
         TestingCommonConstants.HTTP_400_MESSAGE, TestingCommonConstants.HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
     Exception exception = assertThrows(Exception.class, () -> {
-      client.post(mockRequest);
+      client.processJobPosting(mockRequest);
     });
 
     assertTrue(exception.getMessage().contains(TestingCommonConstants.HTTP_400_MESSAGE));

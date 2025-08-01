@@ -93,7 +93,7 @@ Main Methods Exposed:
 
 
 
-* [Post](https://learn.microsoft.com/en-us/linkedin/talent/job-postings/api/sync-job-postings?view=li-lts-2025-04)
+* [ProcessJobPosting](https://learn.microsoft.com/en-us/linkedin/talent/job-postings/api/sync-job-postings?view=li-lts-2025-04)
 
   Used to Create, Update, Upgrade, Downgrade, Close, or Renew a job posting.
 

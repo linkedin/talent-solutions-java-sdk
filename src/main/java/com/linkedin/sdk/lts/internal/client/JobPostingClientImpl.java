@@ -71,7 +71,7 @@ public class JobPostingClientImpl implements JobPostingClient {
    * @throws IllegalArgumentException if the request fails validation
    * @throws LinkedInApiException if the API returns an error response
    */
-  public JobPostingResponse post(JobPostingRequest jobPostingRequest)
+  public JobPostingResponse processJobPosting(JobPostingRequest jobPostingRequest)
       throws AuthenticationException, LinkedInApiException, IllegalArgumentException {
     try {
       if (jobPostingRequest == null) {

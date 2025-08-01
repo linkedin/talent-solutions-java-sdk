@@ -27,7 +27,7 @@ public interface JobPostingClient {
    * @throws IllegalArgumentException if the request fails validation
    * @throws LinkedInApiException if the API returns an error response
    */
-  JobPostingResponse post(JobPostingRequest jobPostingRequest)
+  JobPostingResponse processJobPosting(JobPostingRequest jobPostingRequest)
       throws AuthenticationException, LinkedInApiException, IllegalArgumentException;
 
   /**
