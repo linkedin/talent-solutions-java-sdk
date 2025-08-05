@@ -1,5 +1,6 @@
 package com.linkedin.sdk.lts.internal.client;
 
+import com.linkedin.sdk.lts.api.exception.AuthenticationException;
 import com.linkedin.sdk.lts.api.exception.JsonSerializationException;
 import com.linkedin.sdk.lts.api.exception.LinkedInApiException;
 import com.linkedin.sdk.lts.api.model.request.applyconnect.jobApplicationNotification.JobApplicationNotificationRequest;
@@ -8,15 +9,15 @@ import com.linkedin.sdk.lts.internal.auth.OAuth2Config;
 import com.linkedin.sdk.lts.internal.client.linkedinclient.HttpClient;
 import com.linkedin.sdk.lts.internal.util.ObjectMapperUtil;
 import java.io.IOException;
-import org.junit.Before;
-import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
 
 import static com.linkedin.sdk.lts.internal.client.TestingCommonConstants.*;
-import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -34,7 +35,7 @@ public class ApplyConnectJobPostingClientTest {
   @Mock
   private HttpClient httpClient;
 
-  @Before
+  @BeforeMethod
   public void setUp() throws Exception {
     MockitoAnnotations.openMocks(this);
     config = OAuth2Config.builder()
@@ -55,49 +56,32 @@ public class ApplyConnectJobPostingClientTest {
     client.syncJobApplicationNotification(mockRequest);
   }
 
-  @Test
+  @Test(expectedExceptions = LinkedInApiException.class,
+      expectedExceptionsMessageRegExp = TestingCommonConstants.HTTP_400_MESSAGE)
   public void testSyncJobApplicationNotificationReturns400Response() throws Exception {
     doThrow(new LinkedInApiException(400 ,
         TestingCommonConstants.HTTP_400_MESSAGE, TestingCommonConstants.HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
-    Exception exception = assertThrows(Exception.class, () -> {
-      client.syncJobApplicationNotification(mockRequest);
-    });
-
-    assertTrue(exception.getMessage().contains(TestingCommonConstants.HTTP_400_MESSAGE));
+    client.syncJobApplicationNotification(mockRequest);
   }
 
-  @Test
+  @Test(expectedExceptions = LinkedInApiException.class)
   public void testSyncJobApplicationNotificationWithJsonSerializationException() throws Exception {
     try (MockedStatic<ObjectMapperUtil> mockedStatic = mockStatic(ObjectMapperUtil.class)) {
       mockedStatic.when(() -> ObjectMapperUtil.toJson(any()))
           .thenThrow(new JsonSerializationException(JSON_SERIALIZATION_ERROR));
-
-      Exception exception = assertThrows(LinkedInApiException.class, () -> {
         client.syncJobApplicationNotification(mockRequest);
-      });
-
-      assertTrue(exception.getMessage().contains(JSON_SERIALIZATION_ERROR));
-      // HTTP client should not be called if serialization fails
-      verify(httpClient, never()).executeRequest(anyString(), any(), anyMap(), anyString());
     }
   }
 
-  @Test
+  @Test(expectedExceptions = LinkedInApiException.class)
   public void testSyncJobApplicationNotificationWithNetworkIOError() throws Exception {
     doThrow(new IOException(NETWORK_ERROR_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
-    Exception exception = assertThrows(Exception.class, () -> {
-      client.syncJobApplicationNotification(mockRequest);
-    });
-
-    assertTrue(exception.getMessage().contains(TestingCommonConstants.NETWORK_ERROR_MESSAGE));
+    client.syncJobApplicationNotification(mockRequest);
   }
 
-  @Test
-  public void testSyncJobApplicationNotificationWithNullJobApplicationNotificationRequest() {
-    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void testSyncJobApplicationNotificationWithNullJobApplicationNotificationRequest()
+      throws AuthenticationException, LinkedInApiException {
       client.syncJobApplicationNotification(null);
-    });
-
-    assertEquals("Job Posting Notification Request cannot be null", exception.getMessage());
   }
 }

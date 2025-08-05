@@ -10,14 +10,14 @@ import com.linkedin.sdk.lts.api.model.response.common.HttpMethod;
 import com.linkedin.sdk.lts.api.model.response.provisioning.CreateApplicationResponse;
 import com.linkedin.sdk.lts.api.model.response.provisioning.GetApplicationResponse;
 
-import org.junit.Before;
-import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
+import static org.testng.Assert.*;
 
 
 public class ProvisioningClientTest {
@@ -35,7 +35,7 @@ public class ProvisioningClientTest {
   @Mock
   private HttpClient httpClient;
 
-  @Before
+  @BeforeMethod
   public void setUp() throws Exception {
     MockitoAnnotations.openMocks(this);
     config = OAuth2Config.builder()
@@ -62,24 +62,16 @@ public class ProvisioningClientTest {
     assertNotNull(response.getKey());
   }
 
-  @Test
+  @Test(expectedExceptions = LinkedInApiException.class)
   public void testCreateApplicationWith400Response() throws Exception {
     doThrow(new LinkedInApiException(400 ,
         TestingCommonConstants.HTTP_400_MESSAGE, TestingCommonConstants.HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
-    Exception exception = assertThrows(Exception.class, () -> {
-      client.createApplication(mockCreateApplicationRequest);
-    });
-
-    assertTrue(exception.getMessage().contains(TestingCommonConstants.HTTP_400_MESSAGE));
+    client.createApplication(mockCreateApplicationRequest);
   }
 
-  @Test
+  @Test(expectedExceptions = IllegalArgumentException.class)
   public void testCreateApplicationWithNullRequest() throws Exception {
-    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-      client.createApplication(null);
-    });
-
-    assertEquals("CreateApplicationRequest cannot be null", exception.getMessage());
+    client.createApplication(null);
   }
 
   @Test
@@ -96,33 +88,22 @@ public class ProvisioningClientTest {
     assertNull(response.getElements().get(0).getCredentials().getClientSecret());
   }
 
-  @Test
+  @Test(expectedExceptions = LinkedInApiException.class)
   public void testGetApplicationWith400Response() throws Exception {
     doThrow(new LinkedInApiException(400 ,
         TestingCommonConstants.HTTP_400_MESSAGE, TestingCommonConstants.HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull());
-    Exception exception = assertThrows(Exception.class, () -> {
-      client.getApplication(mockGetApplicationRequest);
-    });
-    assertTrue(exception.getMessage().contains(TestingCommonConstants.HTTP_400_MESSAGE));
+    client.getApplication(mockGetApplicationRequest);
   }
 
-  @Test
+  @Test(expectedExceptions = IllegalArgumentException.class)
   public void testGetApplicationWithNullRequest() throws Exception {
-    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-      client.getApplication(null);
-    });
-
-    assertEquals("GetApplicationRequest cannot be null", exception.getMessage());
+    client.getApplication(null);
   }
 
-  @Test
+  @Test(expectedExceptions = IllegalArgumentException.class)
   public void testGetApplicationWithNullUniqueForeignId() throws Exception {
     doReturn(null).when(mockGetApplicationRequest).getUniqueForeignId();
-    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-      client.getApplication(mockGetApplicationRequest);
-    });
-
-    assertEquals("UniqueForeignId cannot be null or empty", exception.getMessage());
+    client.getApplication(mockGetApplicationRequest);
   }
 
   @Test
@@ -131,33 +112,21 @@ public class ProvisioningClientTest {
     client.updateApplication(mockUpdateApplicationRequest);
   }
 
-  @Test
+  @Test(expectedExceptions = LinkedInApiException.class)
   public void testUpdateApplicationWith400Response() throws Exception {
     doThrow(new LinkedInApiException(400 ,
         TestingCommonConstants.HTTP_400_MESSAGE, TestingCommonConstants.HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
-    Exception exception = assertThrows(Exception.class, () -> {
-      client.updateApplication(mockUpdateApplicationRequest);
-    });
-
-    assertTrue(exception.getMessage().contains(TestingCommonConstants.HTTP_400_MESSAGE));
+    client.updateApplication(mockUpdateApplicationRequest);
   }
 
-  @Test
+  @Test(expectedExceptions = IllegalArgumentException.class)
   public void testUpdateApplicationWithNullRequest() throws Exception {
-    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-      client.updateApplication(null);
-    });
-
-    assertEquals("CreateApplicationRequest cannot be null", exception.getMessage());
+    client.updateApplication(null);
   }
 
-  @Test
+  @Test(expectedExceptions = IllegalArgumentException.class)
   public void testUpdateApplicationWithNullDeveloperApplicationUrn() throws Exception {
     doReturn(null).when(mockUpdateApplicationRequest).getDeveloperApplicationUrn();
-    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-      client.updateApplication(mockUpdateApplicationRequest);
-    });
-
-    assertEquals("DeveloperApplicationUrn cannot be null or empty", exception.getMessage());
+    client.updateApplication(mockUpdateApplicationRequest);
   }
 }

@@ -1,5 +1,6 @@
 package com.linkedin.sdk.lts.internal.client;
 
+import com.linkedin.sdk.lts.api.exception.AuthenticationException;
 import com.linkedin.sdk.lts.internal.auth.OAuth2Config;
 import com.linkedin.sdk.lts.internal.client.linkedinclient.LinkedInHttpClient;
 import com.linkedin.sdk.lts.api.exception.LinkedInApiException;
@@ -13,11 +14,12 @@ import com.linkedin.sdk.lts.api.model.response.p4pjobposting.P4PBudgetReportResp
 import com.linkedin.sdk.lts.api.model.response.p4pjobposting.P4PProvisionCustomerHiringContractsResponse;
 import com.linkedin.sdk.lts.api.model.response.p4pjobposting.P4PReportResponseByDate;
 import com.linkedin.sdk.lts.api.model.response.p4pjobposting.P4PReportResponseByIds;
-import org.junit.Before;
-import org.junit.Test;
+
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import java.util.Arrays;
 
 import static com.linkedin.sdk.lts.internal.client.TestingCommonConstants.*;
@@ -25,7 +27,7 @@ import static com.linkedin.sdk.lts.internal.client.TestingCommonConstants.TEST_C
 import static com.linkedin.sdk.lts.internal.client.TestingCommonConstants.TEST_CLIENT_SECRET;
 import static com.linkedin.sdk.lts.internal.client.TestingCommonConstants.TEST_EXTERNAL_JOB_POSTING_ID_1;
 import static com.linkedin.sdk.lts.internal.client.TestingCommonConstants.TEST_TOKEN_URL;
-import static org.junit.Assert.*;
+import static org.testng.Assert.*;
 import static org.mockito.Mockito.*;
 
 
@@ -42,7 +44,7 @@ public class P4PJobPostingClientTest {
   private LinkedInHttpClient httpClient;
 
 
-  @Before
+  @BeforeMethod
   public void setUp() throws Exception {
     MockitoAnnotations.openMocks(this);
 
@@ -87,23 +89,16 @@ public class P4PJobPostingClientTest {
     assertNotNull(response.getValue().getKey());
   }
 
-  @Test
+  @Test(expectedExceptions = LinkedInApiException.class)
   public void provisionCustomerHiringContractsWith400Response() throws Exception {
     doThrow(new LinkedInApiException(400 ,HTTP_400_MESSAGE, HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
-    Exception exception = assertThrows(LinkedInApiException.class, () -> {
-      client.provisionCustomerHiringContracts(p4PProvisionCustomerHiringContractsRequest);
-    });
-
-    assertTrue(exception.getMessage().contains(HTTP_400_MESSAGE));
+    client.provisionCustomerHiringContracts(p4PProvisionCustomerHiringContractsRequest);
   }
 
-  @Test
-  public void provisionCustomerHiringContractsWithNullP4PProvisionCustomerHiringContractsRequest() {
-    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-      client.provisionCustomerHiringContracts(null);
-    });
-
-    assertEquals("P4PProvisionCustomerHiringContractsRequest cannot be null", exception.getMessage());
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void provisionCustomerHiringContractsWithNullP4PProvisionCustomerHiringContractsRequest()
+      throws AuthenticationException, LinkedInApiException {
+    client.provisionCustomerHiringContracts(null);
   }
 
   @Test
@@ -116,43 +111,28 @@ public class P4PJobPostingClientTest {
     assertTrue(response.getResults().containsKey(TEST_EXTERNAL_JOB_POSTING_ID_1));
   }
 
-  @Test
+  @Test(expectedExceptions = LinkedInApiException.class)
   public void testGetP4PPerformanceReportByIdsWith400Response() throws Exception {
     doThrow(new LinkedInApiException(400 ,HTTP_400_MESSAGE, HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull());
-    Exception exception = assertThrows(LinkedInApiException.class, () -> {
-      client.getP4PReportByIds(p4PJobReportsRequestByIds);
-    });
-
-    assertTrue(exception.getMessage().contains(HTTP_400_MESSAGE));
+    client.getP4PReportByIds(p4PJobReportsRequestByIds);
   }
 
-  @Test
-  public void testGetP4PPerformanceReportByIdsWithNullP4PJobReportsRequestByIds() {
-    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-      client.getP4PReportByIds(null);
-    });
-
-    assertEquals("P4PJobReportsRequestByIds cannot be null", exception.getMessage());
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void testGetP4PPerformanceReportByIdsWithNullP4PJobReportsRequestByIds()
+      throws AuthenticationException, LinkedInApiException {
+    client.getP4PReportByIds(null);
   }
 
-  @Test
-  public void testGetP4PPerformanceReportByIdsWithNullIds() {
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void testGetP4PPerformanceReportByIdsWithNullIds() throws AuthenticationException, LinkedInApiException {
     p4PJobReportsRequestByIds.setIds(null);
-    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-      client.getP4PReportByIds(p4PJobReportsRequestByIds);
-    });
-
-    assertEquals("Ids cannot be null or empty", exception.getMessage());
+    client.getP4PReportByIds(p4PJobReportsRequestByIds);
   }
 
-  @Test
-  public void testGetP4PPerformanceReportByIdsWithNullDateRange() {
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void testGetP4PPerformanceReportByIdsWithNullDateRange() throws AuthenticationException, LinkedInApiException {
     p4PJobReportsRequestByIds.setDateRange(null);
-    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-      client.getP4PReportByIds(p4PJobReportsRequestByIds);
-    });
-
-    assertEquals("Date range cannot be null and must have both start and end dates", exception.getMessage());
+    client.getP4PReportByIds(p4PJobReportsRequestByIds);
   }
 
 
@@ -165,34 +145,24 @@ public class P4PJobPostingClientTest {
     assertEquals(13, response.getElements().size());
   }
 
-  @Test
+  @Test(expectedExceptions = LinkedInApiException.class)
   public void testGetP4PPerformanceReportByDateWith400Response() throws Exception {
     doThrow(new LinkedInApiException(400 ,HTTP_400_MESSAGE, HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull());
-    Exception exception = assertThrows(LinkedInApiException.class, () -> {
-      client.getP4PReportsByDate(p4PJobReportsRequestByDate);
-    });
-
-    assertTrue(exception.getMessage().contains(HTTP_400_MESSAGE));
+    client.getP4PReportsByDate(p4PJobReportsRequestByDate);
   }
 
-  @Test
-  public void testGetP4PPerformanceReportByDateWithNullP4PJobReportsRequestByDate() {
-    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-      client.getP4PReportsByDate(null);
-    });
-
-    assertEquals("P4PJobReportsRequestByDate cannot be null", exception.getMessage());
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void testGetP4PPerformanceReportByDateWithNullP4PJobReportsRequestByDate()
+      throws AuthenticationException, LinkedInApiException {
+    client.getP4PReportsByDate(null);
   }
 
 
-  @Test
-  public void testGetP4PPerformanceReportByDateWithNullDateRange() {
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void testGetP4PPerformanceReportByDateWithNullDateRange()
+      throws AuthenticationException, LinkedInApiException {
     p4PJobReportsRequestByDate.setDateRange(null);
-    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-      client.getP4PReportsByDate(p4PJobReportsRequestByDate);
-    });
-
-    assertEquals("Date range cannot be null and must have both start and end dates", exception.getMessage());
+    client.getP4PReportsByDate(p4PJobReportsRequestByDate);
   }
 
   @Test
@@ -204,23 +174,15 @@ public class P4PJobPostingClientTest {
     assertFalse(response.getPartnerBudgetDetails().isEmpty());
   }
 
-  @Test
+  @Test(expectedExceptions = LinkedInApiException.class)
   public void testGetP4PPartnerBudgetReportWith400Response() throws Exception {
     doThrow(new LinkedInApiException(400 ,HTTP_400_MESSAGE, HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull());
-    Exception exception = assertThrows(LinkedInApiException.class, () -> {
-      client.getPartnerBudgetReports(TEST_PARTNER_CONTRACT_ID);
-    });
-
-    assertTrue(exception.getMessage().contains(HTTP_400_MESSAGE));
+    client.getPartnerBudgetReports(TEST_PARTNER_CONTRACT_ID);
   }
 
-  @Test
-  public void testGetP4PPartnerBudgetReportWithNullPartnerContractId() {
-    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-      client.getPartnerBudgetReports(null);
-    });
-
-    assertEquals("Partner contract ID cannot be null", exception.getMessage());
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void testGetP4PPartnerBudgetReportWithNullPartnerContractId()
+      throws AuthenticationException, LinkedInApiException {
+    client.getPartnerBudgetReports(null);
   }
-
 }

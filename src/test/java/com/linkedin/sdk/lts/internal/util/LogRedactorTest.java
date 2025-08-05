@@ -1,7 +1,7 @@
 package com.linkedin.sdk.lts.internal.util;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.testng.annotations.Test;
+import static org.testng.Assert.*;
 
 public class LogRedactorTest {
 

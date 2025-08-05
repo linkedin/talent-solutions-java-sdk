@@ -3,11 +3,10 @@ package com.linkedin.sdk.lts.internal.client.linkedinclient;
 import com.linkedin.sdk.lts.internal.client.TestingCommonConstants;
 import com.linkedin.sdk.lts.api.exception.LinkedInApiException;
 import com.linkedin.sdk.lts.api.model.response.common.HttpMethod;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.ByteArrayInputStream;
@@ -19,10 +18,10 @@ import java.util.Map;
 
 import static com.linkedin.sdk.lts.internal.constants.HttpConstants.*;
 import static com.linkedin.sdk.lts.internal.constants.LinkedInApiConstants.*;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+import static org.mockito.Mockito.*;
+import static org.testng.Assert.*;
+
 public class LinkedInHttpClientTest {
 
   private LinkedInHttpClient httpClient;
@@ -31,7 +30,7 @@ public class LinkedInHttpClientTest {
   private static final String TEST_URL = "https://api.linkedin.com/v2/test";
   private static final String TEST_RESPONSE = "{\"status\":\"success\"}";
 
-  @Before
+  @BeforeMethod
   public void setUp() throws Exception {
     MockitoAnnotations.openMocks(this);
     mockConnection = mock(HttpsURLConnection.class);
@@ -86,7 +85,7 @@ public class LinkedInHttpClientTest {
         String.valueOf(requestBody.getBytes(StandardCharsets.UTF_8).length));
   }
 
-  @Test(expected = LinkedInApiException.class)
+  @Test(expectedExceptions = LinkedInApiException.class)
   public void testExecuteGetRequestReturnsErrorResponse() throws Exception {
     // Arrange
     String errorResponse = "{\"error\":\"Bad Request\"}";

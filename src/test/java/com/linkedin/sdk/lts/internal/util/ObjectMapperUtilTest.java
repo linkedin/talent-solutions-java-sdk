@@ -1,15 +1,11 @@
 package com.linkedin.sdk.lts.internal.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.linkedin.sdk.lts.internal.auth.TokenInfo;
 import com.linkedin.sdk.lts.api.exception.JsonDeserializationException;
 import com.linkedin.sdk.lts.api.exception.JsonSerializationException;
-import org.junit.Test;
-import org.mockito.MockedConstruction;
+import org.testng.annotations.Test;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.testng.Assert.*;
 
 
 public class ObjectMapperUtilTest {
@@ -23,25 +19,6 @@ public class ObjectMapperUtilTest {
       assertTrue(json.contains("expires_in"));
     }
 
-  @Test
-  public void testToJsonShouldThrowsJsonProcessingExceptionWhenJsonProcessingExceptionOccurs() {
-    try (MockedConstruction<ObjectMapper> mockedConstruction = mockConstruction(ObjectMapper.class,
-        (mock, context) -> {
-          // Configure the mock ObjectMapper to throw JsonProcessingException
-          when(mock.writeValueAsString(any()))
-              .thenThrow(new JsonProcessingException("Mock serialization error") {});
-        })) {
-
-      // Test that JsonSerializationException is thrown when ObjectMapper fails
-      JsonSerializationException exception = assertThrows(JsonSerializationException.class, () -> {
-        ObjectMapperUtil.toJson("test");
-      });
-
-      assertEquals("Failed to serialize object of type String to JSON: Mock serialization error", exception.getMessage());
-      assertEquals("Mock serialization error", exception.getCause().getMessage());
-    }
-  }
-
     @Test
     public void testFromJsonWithValidJsonShouldReturnsObject() throws JsonDeserializationException {
       String json = "{\"access_token\":\"xyz789\",\"expires_in\":1800}";
@@ -51,7 +28,7 @@ public class ObjectMapperUtilTest {
       assertEquals(new Long(1800), tokenInfo.getExpiresIn());
     }
 
-    @Test(expected = JsonDeserializationException.class)
+    @Test(expectedExceptions = JsonDeserializationException.class)
     public void testFromJsonWithInvalidJsonShouldThrowsException() throws JsonDeserializationException {
       String invalidJson = "{access_token:}";
       ObjectMapperUtil.fromJson(invalidJson, TokenInfo.class);

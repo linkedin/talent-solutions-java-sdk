@@ -2,10 +2,11 @@ package com.linkedin.sdk.lts.api.model.request.JobPosting;
 
 import com.linkedin.sdk.lts.api.model.request.jobposting.JobPosting;
 import com.linkedin.sdk.lts.api.model.request.jobposting.JobPostingOperationType;
-import org.junit.Test;
+
+import org.testng.annotations.Test;
 
 import static com.linkedin.sdk.lts.internal.constants.LinkedInCommonConstants.*;
-import static org.junit.Assert.*;
+import static org.testng.Assert.*;
 
 public class JobPostingTest {
 

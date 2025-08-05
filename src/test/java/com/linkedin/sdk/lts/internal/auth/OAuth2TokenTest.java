@@ -1,12 +1,9 @@
 package com.linkedin.sdk.lts.internal.auth;
 
 import static com.linkedin.sdk.lts.internal.client.TestingCommonConstants.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
-import org.junit.Test;
-
+import org.testng.annotations.Test;
+import static org.testng.Assert.*;
 
 public class OAuth2TokenTest {
 
@@ -16,7 +13,7 @@ public class OAuth2TokenTest {
     OAuth2Token token = new OAuth2Token(TEST_TOKEN, EXPIRY_SECONDS);
 
     // When/Then
-    assertFalse("New token with future expiry should not be expired", token.isExpired());
+    assertFalse(token.isExpired(), "New token with future expiry should not be expired");
   }
 
   @Test
@@ -25,7 +22,7 @@ public class OAuth2TokenTest {
     OAuth2Token token = new OAuth2Token(TEST_TOKEN, -10); // Negative expiry = already expired
 
     // When/Then
-    assertTrue("Token with past expiry should be expired", token.isExpired());
+    assertTrue(token.isExpired(), "Token with past expiry should be expired");
   }
 
   @Test
@@ -37,6 +34,6 @@ public class OAuth2TokenTest {
     String accessToken = token.getAccessToken();
 
     // Then
-    assertEquals("getAccessToken should return the token value", accessToken, TEST_TOKEN);
+    assertEquals(accessToken, TEST_TOKEN, "getAccessToken should return the token value");
   }
 }

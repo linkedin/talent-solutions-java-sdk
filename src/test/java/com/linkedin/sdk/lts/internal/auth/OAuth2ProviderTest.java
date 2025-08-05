@@ -5,18 +5,18 @@ import com.linkedin.sdk.lts.internal.client.linkedinclient.HttpClient;
 import com.linkedin.sdk.lts.api.exception.AuthenticationException;
 import com.linkedin.sdk.lts.api.exception.LinkedInApiException;
 import com.linkedin.sdk.lts.api.model.response.common.HttpMethod;
-import org.junit.Before;
-import org.junit.Test;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 import static com.linkedin.sdk.lts.internal.client.TestingCommonConstants.*;
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
+import static org.testng.Assert.*;
 
 public class OAuth2ProviderTest {
 
@@ -38,7 +38,7 @@ public class OAuth2ProviderTest {
   @Mock
   private HttpClient httpClient;
 
-  @Before
+  @BeforeMethod
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
     config = OAuth2Config.builder()
@@ -71,7 +71,7 @@ public class OAuth2ProviderTest {
     OAuth2Provider provider1 = OAuth2Provider.getInstance(config, httpClient);
     OAuth2Provider provider2 = OAuth2Provider.getInstance(config, httpClient);
 
-    assertSame("Should return the same instance for the same config", provider1, provider2);
+    assertSame(provider1, provider2, "Should return the same instance for the same config");
   }
 
   @Test
@@ -79,7 +79,7 @@ public class OAuth2ProviderTest {
     OAuth2Provider provider1 = OAuth2Provider.getInstance(config, httpClient);
     OAuth2Provider provider2 = OAuth2Provider.getInstance(configNewId, httpClient);
 
-    assertNotSame("Should return different instances for different configs", provider1, provider2);
+    assertNotSame(provider1, provider2, "Should return different instances for different configs");
   }
 
   @Test
@@ -87,8 +87,8 @@ public class OAuth2ProviderTest {
     doReturn(TestingResourceUtility.getTokenSuccessResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
     String accessToken = providerSpy.getAccessToken();
 
-    assertEquals("Should return the correct access token", TEST_ACCESS_TOKEN, accessToken);
-    assertTrue("Should return true when valid token exists", providerSpy.isTokenValid());
+    assertEquals(TEST_ACCESS_TOKEN, accessToken, "Should return the correct access token");
+    assertTrue(providerSpy.isTokenValid(), "Should return true when valid token exists");
 
   }
 
@@ -98,9 +98,9 @@ public class OAuth2ProviderTest {
     String firstToken = providerSpy.getAccessToken();
     doReturn(TestingResourceUtility.getNewTokenSuccessResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
     String secondToken = providerSpy.getAccessToken();
-    assertEquals("Should return the same token", firstToken, secondToken);
-    assertEquals("Should return the correct access token", TEST_ACCESS_TOKEN, firstToken);
-    assertEquals("Should return the correct access token", TEST_ACCESS_TOKEN, secondToken);
+    assertEquals(firstToken, secondToken, "Should return the same token");
+    assertEquals(TEST_ACCESS_TOKEN, firstToken, "Should return the correct access token");
+    assertEquals(TEST_ACCESS_TOKEN, secondToken, "Should return the correct access token");
   }
 
   @Test
@@ -109,19 +109,19 @@ public class OAuth2ProviderTest {
     providerSpy.getAccessToken();
     setExpiredToken(providerSpy);
     boolean isValid = providerSpy.isTokenValid();
-    assertFalse("Should return false when token is expired", isValid);
+    assertFalse(isValid, "Should return false when token is expired");
     doReturn(TestingResourceUtility.getNewTokenSuccessResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
     String refreshedToken = providerSpy.getAccessToken();
-    assertEquals("Should return the new token", TEST_ACCESS_NEW_TOKEN, refreshedToken);
+    assertEquals(TEST_ACCESS_NEW_TOKEN, refreshedToken, "Should return the new token");
   }
 
-  @Test(expected = AuthenticationException.class)
+  @Test(expectedExceptions = AuthenticationException.class)
   public void testAuthenticateShouldThrowsExceptionWhenHttpErrorOccurs() throws Exception {
     doThrow(new LinkedInApiException(400 ,HTTP_400_MESSAGE, HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
     providerSpy.getAccessToken();
   }
 
-  @Test(expected = AuthenticationException.class)
+  @Test(expectedExceptions = AuthenticationException.class)
   public void testAuthenticateShouldThrowsExceptionWhenIOExceptionOccurs() throws Exception {
     doThrow(new IOException("Network error")).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
     providerSpy.getAccessToken();
@@ -130,7 +130,7 @@ public class OAuth2ProviderTest {
   @Test
   public void testIsTokenValidShouldReturnsFalseWhenNoToken() {
     boolean isValid = providerSpy.isTokenValid();
-    assertFalse("Should return false when no token exists", isValid);
+    assertFalse(isValid, "Should return false when no token exists");
   }
 
   @Test

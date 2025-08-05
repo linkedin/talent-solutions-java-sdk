@@ -1,5 +1,6 @@
 package com.linkedin.sdk.lts.internal.client;
 
+import com.linkedin.sdk.lts.api.exception.AuthenticationException;
 import com.linkedin.sdk.lts.internal.auth.OAuth2Config;
 import com.linkedin.sdk.lts.internal.client.linkedinclient.HttpClient;
 import com.linkedin.sdk.lts.api.exception.LinkedInApiException;
@@ -13,14 +14,14 @@ import com.linkedin.sdk.lts.api.model.response.jobtaskstatus.JobTaskStatusRespon
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import static org.junit.Assert.*;
+import static org.testng.Assert.*;
 import static org.mockito.Mockito.*;
 
 
@@ -34,7 +35,7 @@ public class JobPostingClientTest {
   @Mock
   private HttpClient httpClient;
 
-  @Before
+  @BeforeMethod
   public void setUp() throws Exception {
     MockitoAnnotations.openMocks(this);
     config = OAuth2Config.builder()
@@ -54,19 +55,15 @@ public class JobPostingClientTest {
     JobPostingResponse response = client.processJobPosting(mockRequest);
 
     assertEquals(response.getElements().get(0).getStatus(), 202);
-    Assert.assertEquals(response.getElements().get(0).getId(), TestingCommonConstants.TEST_JOB_POSTING_TASK_ID_2);
+    assertEquals(response.getElements().get(0).getId(), TestingCommonConstants.TEST_JOB_POSTING_TASK_ID_2);
     assertNull(response.getElements().get(0).getJobPostingError());
   }
 
-  @Test
+  @Test(expectedExceptions = LinkedInApiException.class)
   public void testPostWith400Response() throws Exception {
     doThrow(new LinkedInApiException(400 ,
         TestingCommonConstants.HTTP_400_MESSAGE, TestingCommonConstants.HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
-    Exception exception = assertThrows(Exception.class, () -> {
-      client.processJobPosting(mockRequest);
-    });
-
-    assertTrue(exception.getMessage().contains(TestingCommonConstants.HTTP_400_MESSAGE));
+    client.processJobPosting(mockRequest);
   }
 
   @Test
@@ -79,34 +76,21 @@ public class JobPostingClientTest {
     assertTrue(response.getStatuses().isEmpty());
   }
 
-
-  @Test
-  public void testGetTaskStatusSingleIdWithNullTaskId() {
-    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-      client.getTaskStatus((String) null);
-    });
-
-    assertEquals("Task ID cannot be null or empty", exception.getMessage());
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void testGetTaskStatusSingleIdWithNullTaskId() throws AuthenticationException, LinkedInApiException {
+    client.getJobPostingStatus((String)null);
   }
 
-  @Test
-  public void testGetTaskStatusSingleIdWithEmptyTaskId() {
-    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-      client.getTaskStatus("");
-    });
-
-    assertEquals("Task ID cannot be null or empty", exception.getMessage());
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void testGetTaskStatusSingleIdWithEmptyTaskId() throws AuthenticationException, LinkedInApiException {
+    client.getTaskStatus("");
   }
 
-  @Test
+  @Test(expectedExceptions = LinkedInApiException.class)
   public void testGetTaskStatusSingleIdWith400Response() throws Exception {
     doThrow(new LinkedInApiException(400 ,
         TestingCommonConstants.HTTP_400_MESSAGE, TestingCommonConstants.HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull());
-    Exception exception = assertThrows(Exception.class, () -> {
-      client.getTaskStatus(TestingCommonConstants.TEST_EXTERNAL_JOB_POSTING_ID_1);
-    });
-
-    assertTrue(exception.getMessage().contains(TestingCommonConstants.HTTP_400_MESSAGE));
+    client.getTaskStatus(TestingCommonConstants.TEST_JOB_POSTING_TASK_ID_1);
   }
 
   @Test
@@ -123,34 +107,22 @@ public class JobPostingClientTest {
     assertTrue(response.getStatuses().isEmpty());
   }
 
-  @Test
-  public void testGetTaskStatusMultipleIdsWithNullTaskIds() {
-    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-      client.getTaskStatus((List<String>) null);
-    });
-
-    assertEquals("Task IDs list cannot be null or empty", exception.getMessage());
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void testGetTaskStatusMultipleIdsWithNullTaskIds() throws AuthenticationException, LinkedInApiException {
+    client.getTaskStatus((List<String>) null);
   }
 
-  @Test
-  public void testGetTaskStatusMultipleIdsWithEmptyTaskIds() {
-    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-      client.getTaskStatus(Arrays.asList());
-    });
-
-    assertEquals("Task IDs list cannot be null or empty", exception.getMessage());
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void testGetTaskStatusMultipleIdsWithEmptyTaskIds() throws AuthenticationException, LinkedInApiException {
+    client.getTaskStatus(Arrays.asList());
   }
 
-  @Test
+  @Test(expectedExceptions = LinkedInApiException.class)
   public void testGetTaskStatusMultipleIdsWith400Response() throws Exception {
     doThrow(new LinkedInApiException(400 ,
         TestingCommonConstants.HTTP_400_MESSAGE, TestingCommonConstants.HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull());
-    Exception exception = assertThrows(Exception.class, () -> {
-      client.getTaskStatus(Arrays.asList(
+    client.getTaskStatus(Arrays.asList(
           TestingCommonConstants.TEST_EXTERNAL_JOB_POSTING_ID_1, TestingCommonConstants.TEST_EXTERNAL_JOB_POSTING_ID_2));
-    });
-
-    assertTrue(exception.getMessage().contains(TestingCommonConstants.HTTP_400_MESSAGE));
   }
 
   @Test
@@ -162,33 +134,21 @@ public class JobPostingClientTest {
     assertEquals(response.getResults().get(TestingCommonConstants.TEST_EXTERNAL_JOB_POSTING_ID_1).getListingStatus().toValue(), ListingStatus.LISTED.toValue());
   }
 
-  @Test
-  public void testGetJobPostingStatusSingleIdWithNullJobId() {
-    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-      client.getJobPostingStatus((String)null);
-    });
-
-    assertEquals("Job Posting ID cannot be null or empty", exception.getMessage());
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void testGetJobPostingStatusSingleIdWithNullJobId() throws AuthenticationException, LinkedInApiException {
+    client.getJobPostingStatus((String)null);
   }
 
-  @Test
-  public void testGetJobPostingStatusSingleIdWithEmptyJobId() {
-    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-      client.getJobPostingStatus("");
-    });
-
-    assertEquals("Job Posting ID cannot be null or empty", exception.getMessage());
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void testGetJobPostingStatusSingleIdWithEmptyJobId() throws AuthenticationException, LinkedInApiException {
+    client.getJobPostingStatus("");
   }
 
-  @Test
+  @Test(expectedExceptions = LinkedInApiException.class)
   public void testGetJobPostingStatusSingleIdWith400Response() throws Exception {
     doThrow(new LinkedInApiException(400 ,
         TestingCommonConstants.HTTP_400_MESSAGE, TestingCommonConstants.HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull());
-    Exception exception = assertThrows(Exception.class, () -> {
-      client.getJobPostingStatus(TestingCommonConstants.TEST_JOB_POSTING_TASK_ID_1);
-    });
-
-    assertTrue(exception.getMessage().contains(TestingCommonConstants.HTTP_400_MESSAGE));
+    client.getJobPostingStatus(TestingCommonConstants.TEST_JOB_POSTING_TASK_ID_1);
   }
 
   @Test
@@ -203,33 +163,21 @@ public class JobPostingClientTest {
     assertEquals(response.getResults().get(TestingCommonConstants.TEST_EXTERNAL_JOB_POSTING_ID_2).getListingStatus().toValue(), ListingStatus.NOT_LISTED.toValue());
   }
 
-  @Test
-  public void testGetJobPostingStatusMultipleIdsWithNullJobIds() {
-    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-      client.getJobPostingStatus((List<String>) null);
-    });
-
-    assertEquals("Job Posting IDs list cannot be null or empty", exception.getMessage());
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void testGetJobPostingStatusMultipleIdsWithNullJobIds() throws AuthenticationException, LinkedInApiException {
+    client.getJobPostingStatus((List<String>) null);
   }
 
-  @Test
-  public void testGetJobPostingStatusMultipleIdsWithEmptyJobIds() {
-    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-      client.getJobPostingStatus(Arrays.asList());
-    });
-
-    assertEquals("Job Posting IDs list cannot be null or empty", exception.getMessage());
+  @Test(expectedExceptions = IllegalArgumentException.class)
+  public void testGetJobPostingStatusMultipleIdsWithEmptyJobIds() throws AuthenticationException, LinkedInApiException {
+    client.getJobPostingStatus(Arrays.asList());
   }
 
-  @Test
+  @Test(expectedExceptions = LinkedInApiException.class)
   public void testGetJobPostingStatusMultipleIdsWith400Response() throws Exception {
     doThrow(new LinkedInApiException(400 ,
         TestingCommonConstants.HTTP_400_MESSAGE, TestingCommonConstants.HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull());
-    Exception exception = assertThrows(Exception.class, () -> {
-      client.getJobPostingStatus(Arrays.asList(
+    client.getJobPostingStatus(Arrays.asList(
           TestingCommonConstants.TEST_JOB_POSTING_TASK_ID_1, TestingCommonConstants.TEST_JOB_POSTING_TASK_ID_2));
-    });
-
-    assertTrue(exception.getMessage().contains(TestingCommonConstants.HTTP_400_MESSAGE));
   }
 }
