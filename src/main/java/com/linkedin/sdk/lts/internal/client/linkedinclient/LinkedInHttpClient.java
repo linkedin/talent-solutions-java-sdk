@@ -137,6 +137,7 @@ public class LinkedInHttpClient implements HttpClient {
    * @param headers    a map of header names and values
    */
   private void setHeaders(HttpsURLConnection connection, Map<String, String> headers) {
+    connection.setRequestProperty(X_EXTERNAL_APP, SDK_USER_NAME);
     if (headers != null) {
       headers.forEach(connection::setRequestProperty);
     }

@@ -17,6 +17,9 @@ public class HttpConstants {
   public static final String OPENING_BRACKET = "(";
   public static final String QUERY_PARAM_SEPARATOR = "&";
   public static final String QUERY_SEPARATOR = "?";
+  public static final String SDK_USER_NAME = "talent-solutions-sdk-java";
   public static final String SPACE_SEPARATOR = " ";
+  public static final String X_EXTERNAL_APP = "X-External-App";
+  public static final String X_EXTERNAL_USER = "X-External-User";
   public static final String X_REST_LI_METHOD = "x-restli-method";
 }

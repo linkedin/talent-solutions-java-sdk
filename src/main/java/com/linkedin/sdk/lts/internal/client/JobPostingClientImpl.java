@@ -221,6 +221,7 @@ public class JobPostingClientImpl implements JobPostingClient {
     headers.put(CONTENT_TYPE, APPLICATION_JSON);
     headers.put(AUTHORIZATION, BEARER + SPACE_SEPARATOR + getAccessToken());
     headers.put(LINKEDIN_VERSION, API_VERSION_2025_04);
+    headers.put(X_EXTERNAL_USER, oAuth2Config.getClientId());
     return headers;
   }
 
