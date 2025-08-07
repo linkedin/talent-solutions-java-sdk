@@ -142,7 +142,7 @@ public class ProvisioningClientImpl implements ProvisioningClient {
         throw new IllegalArgumentException("UniqueForeignId cannot be null or empty");
       }
 
-      String url = PROVISIONING_APPLICATION_BASE_URL + QUERY + EQUALS_SEPARATOR + CREDENTIALS_BY_UNIQUE_FOREIGN_ID + QUERY_PARAM_SEPARATOR +
+      String url = PROVISIONING_APPLICATION_BASE_URL + QUERY_SEPARATOR + QUERY + EQUALS_SEPARATOR + CREDENTIALS_BY_UNIQUE_FOREIGN_ID + QUERY_PARAM_SEPARATOR +
           UNIQUE_FOREIGN_ID + EQUALS_SEPARATOR + getApplicationRequest.getUniqueForeignId();
       String response = this.httpClient.executeRequest(url, HttpMethod.GET, getHeadersForAPI(), null);
 

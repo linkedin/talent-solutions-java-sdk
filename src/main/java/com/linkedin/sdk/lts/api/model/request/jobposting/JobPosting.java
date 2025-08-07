@@ -323,7 +323,7 @@ public class JobPosting {
     this.onsiteApplyConfiguration = onsiteApplyConfiguration;
 
     // Set company based on companyId
-    if (companyId != null || !companyId.isEmpty()) {
+    if (companyId != null && !companyId.isEmpty()) {
       this.company = LINKEDIN_ORGANIZATION_URN_FORMAT + companyId;
     }
   }

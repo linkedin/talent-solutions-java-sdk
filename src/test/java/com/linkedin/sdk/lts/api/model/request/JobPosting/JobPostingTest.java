@@ -19,14 +19,16 @@ public class JobPostingTest {
   @Test
   public void testIntegrationContextSetup() {
     JobPosting jobPosting = JobPosting.builder()
-        .companyId(COMPANY_ID)
         .externalJobPostingId(EXTERNAL_JOB_POSTING_ID)
         .jobPostingOperationType(JobPostingOperationType.CREATE)
         .title(TITLE)
         .description(DESCRIPTION)
         .build();
 
-    // Verify initial integrationContext
+    assertEquals(jobPosting.getCompany(), null);
+
+    jobPosting.setCompanyId(COMPANY_ID);
+    // Verify companyId and integrationContext
     assertEquals(jobPosting.getCompany(), LINKEDIN_ORGANIZATION_URN_FORMAT + COMPANY_ID);
 
     // Update companyId and verify integrationContext
