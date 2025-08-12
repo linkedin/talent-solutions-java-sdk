@@ -35,6 +35,13 @@ public class OAuth2Config {
   private final String clientSecret;
 
   /**
+   * The parent client ID for the application.
+   * This is used to identify the parent application in multi-application scenarios.
+   */
+  @NonNull
+  private final String parentClientId;
+
+  /**
    * The URL of the OAuth 2.0 token endpoint.
    * This is the endpoint where the application will make requests to obtain access tokens.
    * For LinkedIn, this is typically "https://www.linkedin.com/oauth/v2/accessToken".

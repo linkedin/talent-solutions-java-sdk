@@ -171,7 +171,7 @@ public class ProvisioningClientImpl implements ProvisioningClient {
     headers.put(CONTENT_TYPE, APPLICATION_JSON);
     headers.put(AUTHORIZATION, BEARER + SPACE_SEPARATOR + getAccessToken());
     headers.put(LINKEDIN_VERSION, API_VERSION_2025_04);
-    headers.put(X_EXTERNAL_USER, oAuth2Config.getClientId());
+    headers.put(X_EXTERNAL_USER, oAuth2Config.getParentClientId());
     return headers;
   }
 
