@@ -248,7 +248,7 @@ public class P4PJobPostingClientImpl extends JobPostingClientImpl implements P4P
     headers.put(AUTHORIZATION, BEARER + SPACE_SEPARATOR + getAccessToken());
     headers.put(LINKEDIN_VERSION, API_VERSION_2025_04);
     headers.put(X_REST_LI_PROTOCOL_VERSION, X_REST_LI_PROTOCOL_VERSION_VALUE_2_0_0);
-    headers.put(X_EXTERNAL_USER, oAuth2Config.getParentClientId());
+    headers.put(X_EXTERNAL_USER, oAuth2Config.getClientId());
     return headers;
   }
 

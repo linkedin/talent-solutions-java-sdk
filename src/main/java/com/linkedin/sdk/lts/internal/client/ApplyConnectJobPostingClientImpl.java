@@ -62,7 +62,7 @@ public class ApplyConnectJobPostingClientImpl extends JobPostingClientImpl imple
       Map<String, String> headers = new HashMap<>();
       headers.put(X_REST_LI_METHOD, CREATE);
       headers.put(AUTHORIZATION, BEARER + SPACE_SEPARATOR + getAccessToken());
-      headers.put(X_EXTERNAL_USER, oAuth2Config.getParentClientId());
+      headers.put(X_EXTERNAL_USER, oAuth2Config.getClientId());
       httpClient.executeRequest(SYNC_JOB_APPLICATION_NOTIFICATIONS_URL, HttpMethod.POST, headers, requestBody);
     } catch (JsonSerializationException e) {
       String errorMessage = "Failed to serialize request: " + e.getMessage();

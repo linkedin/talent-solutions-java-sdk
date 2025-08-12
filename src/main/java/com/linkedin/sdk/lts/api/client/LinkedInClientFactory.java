@@ -41,43 +41,40 @@ public class LinkedInClientFactory {
   /**
    * Creates a JobPostingClient for the given credentials.
    *
-   * @param childAppId child application client id for the application
-   * @param childAppSecret child application client secret for the application
-   * @param parentAppId parent application client id for the application
+   * @param clientId the OAuth 2.0 client ID
+   * @param clientSecret the OAuth 2.0 client secret
    * @return JobPostingClient instance for the given credentials
    * @throws IllegalArgumentException if clientId or clientSecret is null or empty
    */
   @SuppressWarnings("unchecked")
-  public synchronized JobPostingClient getJobPostingClient(String childAppId, String childAppSecret, String parentAppId) {
-    return new JobPostingClientImpl(buildOAuth2Config(childAppId, childAppSecret, parentAppId), httpClient);
+  public synchronized JobPostingClient getJobPostingClient(String clientId, String clientSecret) {
+    return new JobPostingClientImpl(buildOAuth2Config(clientId, clientSecret), httpClient);
   }
 
   /**
    * Creates a P4PJobPostingClient for the given credentials.
    *
-   * @param childAppId child application client id for the application
-   * @param childAppSecret child application client secret for the application
-   * @param parentAppId parent application client id for the application
+   * @param clientId the OAuth 2.0 client ID
+   * @param clientSecret the OAuth 2.0 client secret
    * @return JobPostingClient instance for the given credentials
    * @throws IllegalArgumentException if clientId or clientSecret is null or empty
    */
   @SuppressWarnings("unchecked")
-  public synchronized P4PJobPostingClient getP4PJobPostingClient(String childAppId, String childAppSecret, String parentAppId) {
-    return new P4PJobPostingClientImpl(buildOAuth2Config(childAppId, childAppSecret, parentAppId), httpClient);
+  public synchronized P4PJobPostingClient getP4PJobPostingClient(String clientId, String clientSecret) {
+    return new P4PJobPostingClientImpl(buildOAuth2Config(clientId, clientSecret), httpClient);
   }
 
   /**
    * Creates a ApplyConnectJobPostingClient for the given credentials.
    *
-   * @param childAppId child application client id for the application
-   * @param childAppSecret child application client secret for the application
-   * @param parentAppId parent application client id for the application
+   * @param clientId the OAuth 2.0 client ID
+   * @param clientSecret the OAuth 2.0 client secret
    * @return JobPostingClient instance for the given credentials
    * @throws IllegalArgumentException if clientId or clientSecret is null or empty
    */
   @SuppressWarnings("unchecked")
-  public synchronized ApplyConnectJobPostingClient getApplyConnectJobPostingClient(String childAppId, String childAppSecret, String parentAppId) {
-    return new ApplyConnectJobPostingClientImpl(buildOAuth2Config(childAppId, childAppSecret, parentAppId), httpClient);
+  public synchronized ApplyConnectJobPostingClient getApplyConnectJobPostingClient(String clientId, String clientSecret) {
+    return new ApplyConnectJobPostingClientImpl(buildOAuth2Config(clientId, clientSecret), httpClient);
   }
 
   /**
@@ -85,14 +82,14 @@ public class LinkedInClientFactory {
    * Provisioning clients are used to manage LinkedIn applications and their configurations.
    * Pass parent application credentials to this method to create a client that can manage applications.
    *
-   * @param parentAppId parent application client id for the application
-   * @param parentAppSecret parent application client secret for the application
-   * @return ProvisioningClient instance for the given credentials
+   * @param clientId the OAuth 2.0 client ID
+   * @param clientSecret the OAuth 2.0 client secret
+   * @return JobPostingClient instance for the given credentials
    * @throws IllegalArgumentException if clientId or clientSecret is null or empty
    */
   @SuppressWarnings("unchecked")
-  public synchronized ProvisioningClient getProvisioningClient(String parentAppId, String parentAppSecret) {
-    return new ProvisioningClientImpl(buildOAuth2Config(parentAppId, parentAppSecret, parentAppId), httpClient);
+  public synchronized ProvisioningClient getProvisioningClient(String clientId, String clientSecret) {
+    return new ProvisioningClientImpl(buildOAuth2Config(clientId, clientSecret), httpClient);
   }
 
   /**
@@ -100,25 +97,20 @@ public class LinkedInClientFactory {
    *
    * @param clientId the OAuth 2.0 client ID
    * @param clientSecret the OAuth 2.0 client secret
-   * @param parentClientId the parent client ID
    * @return an OAuth2Config instance configured with the provided credentials
    * @throws IllegalArgumentException if either clientId or clientSecret is null or empty
    */
-  private OAuth2Config buildOAuth2Config(String clientId, String clientSecret, String parentClientId) {
+  private OAuth2Config buildOAuth2Config(String clientId, String clientSecret) {
     if (clientId == null || clientId.isEmpty()) {
       throw new IllegalArgumentException("Client ID cannot be null or empty");
     }
     if (clientSecret == null || clientSecret.isEmpty()) {
       throw new IllegalArgumentException("Client Secret cannot be null or empty");
     }
-    if(parentClientId == null || parentClientId.isEmpty()) {
-      throw new IllegalArgumentException("Parent Client ID cannot be null or empty");
-    }
 
     return OAuth2Config.builder()
         .clientId(clientId)
         .clientSecret(clientSecret)
-        .parentClientId(parentClientId)
         .tokenUrl(LINKEDIN_ACCESS_TOKEN_URL)
         .build();
   }
