@@ -75,4 +75,17 @@
     </plugins>
   </build>
 
+  <distributionManagement>
+    <repository>
+      <id>central</id>
+      <name>Artifactory for talent solution java sdk</name>
+      <url>https://linkedin.jfrog.io/artifactory/talent-solutions-java-sdk</url>
+    </repository>
+    <snapshotRepository>
+      <id>snapshots</id>
+      <name>Artifactory for talent solution java sdk</name>
+      <url>https://linkedin.jfrog.io/artifactory/talent-solutions-java-sdk</url>
+    </snapshotRepository>
+  </distributionManagement>
+
 </project>

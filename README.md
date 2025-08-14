@@ -18,24 +18,39 @@
 
 ### **Gradle users**
 
-Add this dependency to your project's build.gradle file:
+Add this dependency and repositories information to your project's build.gradle file:
 
 ```build.gradle
-implementation "com.linkedin:talent-solutions-sdk-java:0.1.0-alpha.1"
+repositories {
+    maven {
+        url "https://linkedin.jfrog.io/artifactory/talent-solutions-java-sdk/"
+    }
+    mavenCentral()
+}
+
+dependencies {
+    implementation "com.linkedin:talent-solutions-java-sdk:0.1.0-alpha"
+}
 ```
 
 
 ### **Maven users**
 
-Add this dependency to your project's POM.xml:
+Add this dependency and repositories information to your project's POM.xml:
 
 ```pom.xml
-<dependency>
-   <groupId>com.linkedin</groupId>
-   <artifactId>talent-solutions-sdk-java</artifactId>
-   <version>0.1.0-alpha.1</version> 
-</dependency>
+<repositories>
+    <repository>
+        <id>public-jfrog</id>
+        <url>https://linkedin.jfrog.io/artifactory/talent-solutions-java-sdk/</url>
+    </repository>
+</repositories>
 
+<dependency>
+    <groupId>com.linkedin</groupId>
+    <artifactId>talent-solutions-java-sdk</artifactId>
+    <version>0.1.0-alpha</version>
+</dependency>
 ```
 
 ### **Downloads**
