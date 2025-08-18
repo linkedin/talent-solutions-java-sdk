@@ -5,9 +5,6 @@
 
 ## **Installation**
 
----
-
-
 
 ### **Requirements**
 
@@ -59,21 +56,15 @@ If you are not using any of above, you will need to manually download and instal
 
 To use these JARs:
 
-1. Download the JARs from Maven Central [To be Added]
+1. Download the JARs from [Jfrog](https://linkedin.jfrog.io/ui/native/talent-solutions-java-sdk/com/linkedin/talent-solutions-java-sdk/)
 2. Add the JARs to your project's classpath
 
 ## **Documentation**
 
-
----
-
 Please see the [API docs](https://learn.microsoft.com/en-us/linkedin/talent/?view=li-lts-2025-04) for the most up-to-date documentation.
 
 
-## **SDK Overview **
-
----
-
+## **SDK Overview**
 
 We have grouped the api operations as per business use-case in separate clients.
 
@@ -123,9 +114,9 @@ Main Methods Exposed:
 
 ### **P4PJobPostingClient**
 
-This client encapsulates the LinkedIn P4P(Pay For Performance) Job Posting and Reports APIs described [here](https://learn.microsoft.com/en-us/linkedin/talent/p4p-job-posting?context=linkedin%2Ftalent%2Fpay-for-performance%2Ffull_context%2Fcontext&view=li-lts-2025-04).
+  This client encapsulates the LinkedIn P4P(Pay For Performance) Job Posting and Reports APIs described [here](https://learn.microsoft.com/en-us/linkedin/talent/p4p-job-posting?context=linkedin%2Ftalent%2Fpay-for-performance%2Ffull_context%2Fcontext&view=li-lts-2025-04).
 
-In addition to the methods provided by the JobPostingClient, the P4PJobPostingClient adds the following methods:
+  In addition to the methods provided by the JobPostingClient, the P4PJobPostingClient adds the following methods:
 
 
 
@@ -150,13 +141,11 @@ In addition to the methods provided by the JobPostingClient, the P4PJobPostingCl
 
 This client encapsulates the LinkedIn ApplyConnect Job Posting APIs described [here](https://learn.microsoft.com/en-us/linkedin/talent/apply-connect/sync-jobs-onsite-apply?view=li-lts-2025-04)
 
-Currently only methods provided by the JobPostingClient are available to this client.
-
+ * [SyncJobApplicationNotification](https://learn.microsoft.com/en-us/linkedin/talent/apply-connect/sync-job-application-feedback?view=li-lts-2025-04)
+    
+   Deliver real-time feedback to applicants
 
 ## **SDK Usage**
-
-
----
 
 
 ### **Use LinkedInClientFactory for Client Instance Creation**
