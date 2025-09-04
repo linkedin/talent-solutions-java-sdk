@@ -30,5 +30,5 @@ public class P4PJobReport {
    * Contains performance metrics for the job posting.
    * This includes daily metrics such as charge amount, apply clicks, and view counts.
    */
-  private List<P4PJobPerformanceMetrics> performanceMetrics;
+  private List<P4PJobPerformanceMetrics> jobPerformanceMetrics;
 }
