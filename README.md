@@ -154,26 +154,26 @@ This client encapsulates the LinkedIn ApplyConnect Job Posting APIs described [h
 #### ProvisioningClient instance
 
 ```java
-ProvisioningClient provisioningClient = LinkedInClientFactory.getProvisioningClient
+ProvisioningClient provisioningClient = LinkedInClientFactory.getInstance().getProvisioningClient
         ("partner-clientid","partner-clientsecret");
 ```
 
 
 #### JobPostingClient instance
 ```java
-JobPostingClient jobPostingClient = LinkedInClientFactory.getJobPostingClient
+JobPostingClient jobPostingClient = LinkedInClientFactory.getInstance().getJobPostingClient
         ("customer-clientid", "customer-clientsecret");
 ```
 
 #### P4PJobPostingClient instance
 ```java
-P4PJobPostingClient p4pJobPostingClient = LinkedInClientFactory.getP4PJobPostingClient
+P4PJobPostingClient p4pJobPostingClient = LinkedInClientFactory.getInstance().getP4PJobPostingClient
         ("customer-clientid", "customer-clientsecret");
 ```
 
 #### ApplyConnectJobPostingClient instance
 ```java
-ApplyConnectJobPostingClient applyConnectJobPostingClient = LinkedInClientFactory.getApplyConnectJobPostingClient
+ApplyConnectJobPostingClient applyConnectJobPostingClient = LinkedInClientFactory.getInstance().getApplyConnectJobPostingClient
         ("customer-clientid", "customer-clientsecret");
 ```
 
