@@ -1,5 +1,6 @@
 package com.linkedin.sdk.lts.internal.client;
 
+import com.linkedin.sdk.lts.api.model.response.common.APIResponse;
 import com.linkedin.sdk.lts.internal.auth.OAuth2Config;
 import com.linkedin.sdk.lts.internal.client.linkedinclient.HttpClient;
 import com.linkedin.sdk.lts.api.exception.LinkedInApiException;
@@ -10,6 +11,7 @@ import com.linkedin.sdk.lts.api.model.response.common.HttpMethod;
 import com.linkedin.sdk.lts.api.model.response.provisioning.CreateApplicationResponse;
 import com.linkedin.sdk.lts.api.model.response.provisioning.GetApplicationResponse;
 
+import java.util.HashMap;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -52,20 +54,20 @@ public class ProvisioningClientTest {
 
   @Test
   public void testCreateApplicationWithSuccessfulResponse() throws Exception {
-    doReturn(TestingResourceUtility.getCreateApplicationSuccessResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
-    CreateApplicationResponse response = client.createApplication(mockCreateApplicationRequest);
+    doReturn(TestingResourceUtility.getCreateApplicationSuccessResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString(), any());
+    APIResponse<CreateApplicationResponse> response = client.createApplication(mockCreateApplicationRequest);
 
-    assertNotNull(response);
-    assertNotNull(response.getCredentials());
-    assertNotNull(response.getCredentials().getClientId());
-    assertNotNull(response.getCredentials().getClientSecret());
-    assertNotNull(response.getKey());
+    assertNotNull(response.getBody());
+    assertNotNull(response.getBody().getCredentials());
+    assertNotNull(response.getBody().getCredentials().getClientId());
+    assertNotNull(response.getBody().getCredentials().getClientSecret());
+    assertNotNull(response.getBody().getKey());
   }
 
   @Test(expectedExceptions = LinkedInApiException.class)
   public void testCreateApplicationWith400Response() throws Exception {
     doThrow(new LinkedInApiException(400 ,
-        TestingCommonConstants.HTTP_400_MESSAGE, TestingCommonConstants.HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
+        new HashMap<>(), TestingCommonConstants.HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString(), any());
     client.createApplication(mockCreateApplicationRequest);
   }
 
@@ -76,22 +78,22 @@ public class ProvisioningClientTest {
 
   @Test
   public void testGetApplicationWithSuccessfulResponse() throws Exception {
-    doReturn(TestingResourceUtility.getApplicationSuccessResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull());
-    GetApplicationResponse response = client.getApplication(mockGetApplicationRequest);
+    doReturn(TestingResourceUtility.getApplicationSuccessResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull(), any());
+    APIResponse<GetApplicationResponse> response = client.getApplication(mockGetApplicationRequest);
 
     assertNotNull(response);
-    assertEquals(response.getElements().size(), 1);
-    assertNotNull(response.getElements().get(0).getUniqueForeignId());
-    assertNotNull(response.getElements().get(0).getKey());
-    assertNotNull(response.getElements().get(0).getCredentials());
-    assertNotNull(response.getElements().get(0).getCredentials().getClientId());
-    assertNull(response.getElements().get(0).getCredentials().getClientSecret());
+    assertEquals(response.getBody().getElements().size(), 1);
+    assertNotNull(response.getBody().getElements().get(0).getUniqueForeignId());
+    assertNotNull(response.getBody().getElements().get(0).getKey());
+    assertNotNull(response.getBody().getElements().get(0).getCredentials());
+    assertNotNull(response.getBody().getElements().get(0).getCredentials().getClientId());
+    assertNull(response.getBody().getElements().get(0).getCredentials().getClientSecret());
   }
 
   @Test(expectedExceptions = LinkedInApiException.class)
   public void testGetApplicationWith400Response() throws Exception {
     doThrow(new LinkedInApiException(400 ,
-        TestingCommonConstants.HTTP_400_MESSAGE, TestingCommonConstants.HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull());
+        new HashMap<>(), TestingCommonConstants.HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull(), any());
     client.getApplication(mockGetApplicationRequest);
   }
 
@@ -108,14 +110,14 @@ public class ProvisioningClientTest {
 
   @Test
   public void testUpdateApplicationWithSuccessfulResponse() throws Exception {
-    doReturn(null).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
+    doReturn(null).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString(), any());
     client.updateApplication(mockUpdateApplicationRequest);
   }
 
   @Test(expectedExceptions = LinkedInApiException.class)
   public void testUpdateApplicationWith400Response() throws Exception {
     doThrow(new LinkedInApiException(400 ,
-        TestingCommonConstants.HTTP_400_MESSAGE, TestingCommonConstants.HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
+        new HashMap<>(), TestingCommonConstants.HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString(), any());
     client.updateApplication(mockUpdateApplicationRequest);
   }
 

@@ -2,9 +2,11 @@ package com.linkedin.sdk.lts.internal.client;
 
 import com.linkedin.sdk.lts.api.client.ApplyConnectJobPostingClient;
 import com.linkedin.sdk.lts.api.exception.AuthenticationException;
+import com.linkedin.sdk.lts.api.exception.JsonDeserializationException;
 import com.linkedin.sdk.lts.api.exception.JsonSerializationException;
 import com.linkedin.sdk.lts.api.exception.LinkedInApiException;
 import com.linkedin.sdk.lts.api.model.request.applyconnect.jobApplicationNotification.JobApplicationNotificationRequest;
+import com.linkedin.sdk.lts.api.model.response.common.APIResponse;
 import com.linkedin.sdk.lts.api.model.response.common.HttpMethod;
 import com.linkedin.sdk.lts.api.model.response.common.HttpStatusCategory;
 import com.linkedin.sdk.lts.internal.auth.OAuth2Config;
@@ -49,10 +51,12 @@ public class ApplyConnectJobPostingClientImpl extends JobPostingClientImpl imple
    * @throws AuthenticationException if authentication fails
    * @throws LinkedInApiException if the API returns an error response
    * @throws IllegalArgumentException if the request fails validation
+   * @throws JsonSerializationException if there is an error serializing the request
+   * @throws JsonDeserializationException if there is an error deserializing the response
    */
   @Override
-  public void syncJobApplicationNotification(@NonNull JobApplicationNotificationRequest jobApplicationNotificationRequest)
-      throws AuthenticationException, LinkedInApiException, IllegalArgumentException {
+  public APIResponse<Void> syncJobApplicationNotification(@NonNull JobApplicationNotificationRequest jobApplicationNotificationRequest)
+      throws AuthenticationException, LinkedInApiException, IllegalArgumentException, JsonDeserializationException, JsonSerializationException {
     try {
       if (jobApplicationNotificationRequest == null) {
         throw new IllegalArgumentException("Job Posting Notification Request cannot be null");
@@ -63,16 +67,19 @@ public class ApplyConnectJobPostingClientImpl extends JobPostingClientImpl imple
       headers.put(X_REST_LI_METHOD, CREATE);
       headers.put(AUTHORIZATION, BEARER + SPACE_SEPARATOR + getAccessToken());
       headers.put(X_EXTERNAL_USER, oAuth2Config.getClientId());
-      httpClient.executeRequest(SYNC_JOB_APPLICATION_NOTIFICATIONS_URL, HttpMethod.POST, headers, requestBody);
+      return httpClient.executeRequest(SYNC_JOB_APPLICATION_NOTIFICATIONS_URL, HttpMethod.POST, headers, requestBody, null);
+    } catch (JsonDeserializationException e) {
+      String errorMessage = "Failed to parse LinkedIn API response: " + e.getMessage();
+      LOGGER.severe(LogRedactor.redact(errorMessage));
+      throw e;
     } catch (JsonSerializationException e) {
       String errorMessage = "Failed to serialize request: " + e.getMessage();
       LOGGER.severe(LogRedactor.redact(errorMessage));
-      throw new LinkedInApiException(HttpStatusCategory.CLIENT_ERROR.getDefaultCode(), "Invalid request format",
-          errorMessage);
+      throw e;
     } catch (IOException e) {
       String errorMessage = "Network error while communicating with LinkedIn API: " + e.getMessage();
       LOGGER.log(Level.SEVERE, LogRedactor.redact(errorMessage), e);
-      throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Network error",
+      throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), new HashMap<>(),
           errorMessage);
     }
   }

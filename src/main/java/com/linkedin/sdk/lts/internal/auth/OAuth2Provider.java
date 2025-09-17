@@ -1,5 +1,6 @@
 package com.linkedin.sdk.lts.internal.auth;
 
+import com.linkedin.sdk.lts.api.model.response.common.APIResponse;
 import com.linkedin.sdk.lts.internal.client.linkedinclient.HttpClient;
 import com.linkedin.sdk.lts.api.exception.AuthenticationException;
 import com.linkedin.sdk.lts.api.exception.JsonDeserializationException;
@@ -142,9 +143,8 @@ public class OAuth2Provider implements AuthenticationProvider {
           encodeURIComponent(config.getClientSecret())
       );
 
-      String response = httpClient.executeRequest(url, HttpMethod.POST, headers, formBody);
-      TokenInfo tokenInfo = ObjectMapperUtil.fromJson(response, TokenInfo.class);
-      currentToken = new OAuth2Token(tokenInfo.getAccessToken(), tokenInfo.getExpiresIn());
+      APIResponse<TokenInfo> response = httpClient.executeRequest(url, HttpMethod.POST, headers, formBody, TokenInfo.class);
+      currentToken = new OAuth2Token(response.getBody().getAccessToken(), response.getBody().getExpiresIn());
     } catch (IOException e) {
       String errorMessage = String.format(
           "Failed to authenticate with LinkedIn API. Client ID: %s, Error: %s", config.getClientId(), e.getMessage());

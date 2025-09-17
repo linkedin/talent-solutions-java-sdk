@@ -202,20 +202,20 @@ JobPostingRequest jobPostingRequest = JobPostingRequest.builder()
         .build();
 
 // Send JobPostingRequest using JobPostingClient.post().
-JobPostingResponse jobPostingResponse = jobPostingClient.post(jobPostingRequest);
+APIResponse<JobPostingResponse> jobPostingResponse = jobPostingClient.post(jobPostingRequest);
 
 ```
 
 #### Checking JobPosting Task Status
 
 ```java
-JobTaskStatusResponse jobTaskStatusResponse = jobPostingClient.getTaskStatus(Arrays.asList("linkedin task urn"));
+APIResponse<JobTaskStatusResponse> jobTaskStatusResponse = jobPostingClient.getTaskStatus(Arrays.asList("linkedin task urn"));
 ```
 
 #### Checking Job Status
 
 ```java
-JobPostingStatus jobPostingStatus = jobPostingClient.getJobPostingStatus(Arrays.asList("job posting id"));
+APIResponse<JobPostingStatus> jobPostingStatus = jobPostingClient.getJobPostingStatus(Arrays.asList("job posting id"));
 ```
 
 ### **P4P JobPosting**
@@ -254,7 +254,7 @@ JobPostingRequest jobPostingRequest = JobPostingRequest.builder()
         .build();
 
 // Send JobPostingRequest using JobPostingClient.post().
-JobPostingResponse jobPostingResponse = p4pJobPostingClient.post(jobPostingRequest);
+APIResponse<JobPostingResponse> jobPostingResponse = p4pJobPostingClient.post(jobPostingRequest);
 ```
 #### The taskStatus and jobPostingStatus handling for P4P Job Postings remains consistent with that of basic job postings. However, all related operations will be performed using the P4PJobPostingClient.
 
@@ -269,7 +269,7 @@ P4PJobReportsRequestByIds p4PJobReportsRequestByIds = P4PJobReportsRequestByIds
     .partnerContractId("enter partner contract id")
     .build();
 
-P4PReportResponseByIds p4PReportResponseByIds = p4pJobPostingClient.getP4PReportByIds(p4PJobReportsRequestByIds);
+APIResponse<P4PReportResponseByIds> p4PReportResponseByIds = p4pJobPostingClient.getP4PReportByIds(p4PJobReportsRequestByIds);
 ```
 
 ### Retrieve P4PJobPerformanceReports By Date
@@ -281,13 +281,13 @@ P4PJobReportsRequestByDate p4PJobReportsRequestByDate = P4PJobReportsRequestByDa
     .partnerContractId("enter partner contract id")
     .build();
 
-P4PReportResponseByDate p4PReportResponseByDate = p4pJobPostingClient.getP4PReportsByDate(p4PJobReportsRequestByDate);
+APIResponse<P4PReportResponseByDate> p4PReportResponseByDate = p4pJobPostingClient.getP4PReportsByDate(p4PJobReportsRequestByDate);
 ```
 
 ### Retrieve Budget Reports
 
 ```java
-P4PBudgetReportResponse p4PBudgetReportResponse= p4pJobPostingClient.getPartnerBudgetReports("enter partner contract id");
+APIResponse<P4PBudgetReportResponse> p4PBudgetReportResponse= p4pJobPostingClient.getPartnerBudgetReports("enter partner contract id");
 ```
 
 ### **ApplyConnect JobPosting**
@@ -327,7 +327,7 @@ JobPostingRequest jobPostingRequest = JobPostingRequest.builder()
         .build();
 
 // Send JobPostingRequest using JobPostingClient.post().
-JobPostingResponse jobPostingResponse = applyConnectJobPostingClient.post(jobPostingRequest);
+APIResponse<JobPostingResponse> jobPostingResponse = applyConnectJobPostingClient.post(jobPostingRequest);
 ```
 
 #### The taskStatus and jobPostingStatus handling for ApplyConnect Job Postings remains consistent with that of basic job postings. However, all related operations should be performed using the P4PJobPostingClient.

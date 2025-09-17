@@ -8,7 +8,9 @@ import com.linkedin.sdk.lts.api.exception.LinkedInApiException;
 import com.linkedin.sdk.lts.api.model.request.p4pjobposting.P4PJobReportsRequestByDate;
 import com.linkedin.sdk.lts.api.model.request.p4pjobposting.P4PJobReportsRequestByIds;
 import com.linkedin.sdk.lts.api.model.request.p4pjobposting.P4PProvisionCustomerHiringContractsRequest;
+import com.linkedin.sdk.lts.api.model.response.common.APIResponse;
 import com.linkedin.sdk.lts.api.model.response.common.HttpMethod;
+import com.linkedin.sdk.lts.api.model.response.jobpostingstatus.JobPostingStatusResponse;
 import com.linkedin.sdk.lts.api.model.response.p4pjobposting.P4PBudgetReportResponse;
 import com.linkedin.sdk.lts.api.model.response.p4pjobposting.P4PProvisionCustomerHiringContractsResponse;
 import com.linkedin.sdk.lts.api.model.response.p4pjobposting.P4PReportResponseByDate;
@@ -61,35 +63,34 @@ public class P4PJobPostingClientImpl extends JobPostingClientImpl implements P4P
    * @return the P4PProvisionCustomerHiringContractsResponse containing the result of the operation
    * @throws AuthenticationException if authentication fails
    * @throws IllegalArgumentException if any parameters are invalid
+   * @throws JsonSerializationException if the request serialization fails
+   * @throws JsonDeserializationException if the response deserialization fails
    * @throws LinkedInApiException if the API returns an error response
    */
-  public P4PProvisionCustomerHiringContractsResponse provisionCustomerHiringContracts(
+  public APIResponse<P4PProvisionCustomerHiringContractsResponse> provisionCustomerHiringContracts(
       @NonNull P4PProvisionCustomerHiringContractsRequest p4PProvisionCustomerHiringContractsRequest)
-      throws AuthenticationException, LinkedInApiException, IllegalArgumentException{
+      throws AuthenticationException, LinkedInApiException, IllegalArgumentException, JsonSerializationException, JsonDeserializationException{
     try {
       if(p4PProvisionCustomerHiringContractsRequest == null) {
         throw new IllegalArgumentException("P4PProvisionCustomerHiringContractsRequest cannot be null");
       }
 
       String requestBody = ObjectMapperUtil.toJson(p4PProvisionCustomerHiringContractsRequest);
-      String response = this.httpClient.executeRequest(PROVISIONING_HIRING_CONTRACT_URL,
-          HttpMethod.POST, getHeadersForAPI(), requestBody);
+      return this.httpClient.executeRequest(PROVISIONING_HIRING_CONTRACT_URL,
+          HttpMethod.POST, getHeadersForAPI(), requestBody, P4PProvisionCustomerHiringContractsResponse.class);
 
-      return ObjectMapperUtil.fromJson(response, P4PProvisionCustomerHiringContractsResponse.class);
     } catch (JsonDeserializationException e) {
       String errorMessage = "Failed to parse LinkedIn API response: " + e.getMessage();
       LOGGER.severe(LogRedactor.redact(errorMessage));
-      throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Response parsing error",
-          errorMessage);
-    } catch (IOException e) {
-      String errorMessage = "Network error while communicating with LinkedIn API: " + e.getMessage();
-      LOGGER.log(Level.SEVERE, LogRedactor.redact(errorMessage), e);
-      throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Network error",
-          errorMessage);
+      throw e;
     } catch (JsonSerializationException e) {
       String errorMessage = "Failed to serialize request: " + e.getMessage();
       LOGGER.severe(LogRedactor.redact(errorMessage));
-      throw new LinkedInApiException(HttpStatusCategory.CLIENT_ERROR.getDefaultCode(), "Invalid request format",
+      throw e;
+    } catch (IOException e) {
+      String errorMessage = "Network error while communicating with LinkedIn API: " + e.getMessage();
+      LOGGER.log(Level.SEVERE, LogRedactor.redact(errorMessage), e);
+      throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), new HashMap<>(),
           errorMessage);
     }
   }
@@ -101,10 +102,11 @@ public class P4PJobPostingClientImpl extends JobPostingClientImpl implements P4P
    * @return the P4PReportResponseByIds containing the performance metrics
    * @throws AuthenticationException if authentication fails
    * @throws IllegalArgumentException if any parameters are invalid
+   * @throws JsonDeserializationException if there is an error deserializing the response
    * @throws LinkedInApiException if the API returns an error response
    */
-  public P4PReportResponseByIds getP4PReportByIds(@NonNull P4PJobReportsRequestByIds p4PJobReportsRequestByIds)
-      throws AuthenticationException, LinkedInApiException, IllegalArgumentException {
+  public APIResponse<P4PReportResponseByIds> getP4PReportByIds(@NonNull P4PJobReportsRequestByIds p4PJobReportsRequestByIds)
+      throws AuthenticationException, LinkedInApiException, IllegalArgumentException, JsonDeserializationException {
     try {
       if(p4PJobReportsRequestByIds == null) {
         throw new IllegalArgumentException("P4PJobReportsRequestByIds cannot be null");
@@ -131,17 +133,16 @@ public class P4PJobPostingClientImpl extends JobPostingClientImpl implements P4P
       }
       String url = PARTNER_JOB_REPORTS_BASE_URL + QUERY_SEPARATOR + queryParams;
 
-      String response = this.httpClient.executeRequest(url, HttpMethod.GET, getHeadersForAPI(), null);
-      return ObjectMapperUtil.fromJson(response, P4PReportResponseByIds.class);
+      return this.httpClient.executeRequest(url, HttpMethod.GET, getHeadersForAPI(), null, P4PReportResponseByIds.class);
+
     } catch (JsonDeserializationException e) {
       String errorMessage = "Failed to parse LinkedIn API response: " + e.getMessage();
       LOGGER.severe(LogRedactor.redact(errorMessage));
-      throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Response parsing error",
-          errorMessage);
+      throw e;
     } catch (IOException e) {
       String errorMessage = "Network error while communicating with LinkedIn API: " + e.getMessage();
       LOGGER.log(Level.SEVERE, LogRedactor.redact(errorMessage), e);
-      throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Network error",
+      throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), new HashMap<>(),
           errorMessage);
     }
   }
@@ -153,11 +154,12 @@ public class P4PJobPostingClientImpl extends JobPostingClientImpl implements P4P
    * @return the P4PReportResponseByDate containing the performance metrics
    * @throws AuthenticationException if authentication fails
    * @throws IllegalArgumentException if any parameters are invalid
+   * @throws JsonDeserializationException if there is an error deserializing the response
    * @throws LinkedInApiException if the API returns an error response
    */
-  public P4PReportResponseByDate getP4PReportsByDate(
+  public APIResponse<P4PReportResponseByDate> getP4PReportsByDate(
       @NonNull P4PJobReportsRequestByDate p4PJobPostingRequestByDate)
-      throws AuthenticationException, LinkedInApiException, IllegalArgumentException {
+      throws AuthenticationException, LinkedInApiException, IllegalArgumentException, JsonDeserializationException {
     try {
       if(p4PJobPostingRequestByDate == null) {
         throw new IllegalArgumentException("P4PJobReportsRequestByDate cannot be null");
@@ -186,17 +188,16 @@ public class P4PJobPostingClientImpl extends JobPostingClientImpl implements P4P
 
       String url = PARTNER_JOB_REPORTS_BASE_URL + QUERY_SEPARATOR + queryParams;
 
-      String response = this.httpClient.executeRequest(url, HttpMethod.GET, getHeadersForAPI(), null);
-      return ObjectMapperUtil.fromJson(response, P4PReportResponseByDate.class);
+      return this.httpClient.executeRequest(url, HttpMethod.GET, getHeadersForAPI(), null, P4PReportResponseByDate.class);
+
     } catch (JsonDeserializationException e) {
       String errorMessage = "Failed to parse LinkedIn API response: " + e.getMessage();
       LOGGER.severe(LogRedactor.redact(errorMessage));
-      throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Response parsing error",
-          errorMessage);
+      throw e;
     } catch (IOException e) {
       String errorMessage = "Network error while communicating with LinkedIn API: " + e.getMessage();
       LOGGER.log(Level.SEVERE, LogRedactor.redact(errorMessage), e);
-      throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Network error",
+      throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), new HashMap<>(),
           errorMessage);
     }
   }
@@ -208,10 +209,11 @@ public class P4PJobPostingClientImpl extends JobPostingClientImpl implements P4P
    * @return the P4PBudgetReportResponse containing budget information
    * @throws AuthenticationException if authentication fails
    * @throws IllegalArgumentException if the partner contract ID is invalid
+   * @throws JsonDeserializationException if there is an error deserializing the response
    * @throws LinkedInApiException if the API returns an error response
    */
-  public P4PBudgetReportResponse getPartnerBudgetReports(@NonNull Long partnerContractId)
-      throws AuthenticationException, LinkedInApiException, IllegalArgumentException {
+  public APIResponse<P4PBudgetReportResponse> getPartnerBudgetReports(@NonNull Long partnerContractId)
+      throws AuthenticationException, LinkedInApiException, IllegalArgumentException, JsonDeserializationException {
     try {
       if (partnerContractId == null) {
         throw new IllegalArgumentException("Partner contract ID cannot be null");
@@ -220,17 +222,15 @@ public class P4PJobPostingClientImpl extends JobPostingClientImpl implements P4P
       String queryParams = PARTNER_CONTRACT_ID + EQUALS_SEPARATOR + partnerContractId;
       String url = PARTNER_BUDGET_REPORTS_BASE_URL + QUERY_SEPARATOR + queryParams;
 
-      String response = this.httpClient.executeRequest(url, HttpMethod.GET, getHeadersForAPI(), null);
-      return ObjectMapperUtil.fromJson(response, P4PBudgetReportResponse.class);
+      return this.httpClient.executeRequest(url, HttpMethod.GET, getHeadersForAPI(), null, P4PBudgetReportResponse.class);
     } catch (JsonDeserializationException e) {
       String errorMessage = "Failed to parse LinkedIn API response: " + e.getMessage();
       LOGGER.severe(LogRedactor.redact(errorMessage));
-      throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Response parsing error",
-          errorMessage);
+      throw e;
     } catch (IOException e) {
       String errorMessage = "Network error while communicating with LinkedIn API: " + e.getMessage();
       LOGGER.log(Level.SEVERE, LogRedactor.redact(errorMessage), e);
-      throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Network error",
+      throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), new HashMap<>(),
           errorMessage);
     }
 

@@ -1,5 +1,6 @@
 package com.linkedin.sdk.lts.internal.client;
 
+import com.linkedin.sdk.lts.api.model.response.common.APIResponse;
 import com.linkedin.sdk.lts.internal.auth.OAuth2Config;
 import com.linkedin.sdk.lts.internal.auth.OAuth2Provider;
 import com.linkedin.sdk.lts.internal.client.linkedinclient.HttpClient;
@@ -24,7 +25,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import lombok.extern.java.Log;
 
 import static com.linkedin.sdk.lts.internal.constants.HttpConstants.*;
 import static com.linkedin.sdk.lts.internal.constants.LinkedInApiConstants.*;
@@ -69,10 +69,12 @@ public class JobPostingClientImpl implements JobPostingClient {
    * @return the API response as a JSON string
    * @throws AuthenticationException if authentication fails
    * @throws IllegalArgumentException if the request fails validation
+   * @throws JsonSerializationException if there is an error serializing the request
+   * @throws JsonDeserializationException if there is an error deserializing the response
    * @throws LinkedInApiException if the API returns an error response
    */
-  public JobPostingResponse processJobPosting(JobPostingRequest jobPostingRequest)
-      throws AuthenticationException, LinkedInApiException, IllegalArgumentException {
+  public APIResponse<JobPostingResponse> processJobPosting(JobPostingRequest jobPostingRequest)
+      throws AuthenticationException, LinkedInApiException, IllegalArgumentException, JsonSerializationException, JsonDeserializationException {
     try {
       if (jobPostingRequest == null) {
         throw new IllegalArgumentException("Job Posting Request cannot be null");
@@ -82,23 +84,21 @@ public class JobPostingClientImpl implements JobPostingClient {
       Map<String, String> headers = getHeadersForAPI();
       headers.put(X_REST_LI_METHOD, BATCH_CREATE);
 
-      String response = httpClient.executeRequest(JOB_POSTING_BASE_URL, HttpMethod.POST, headers, requestBody);
+      return httpClient.executeRequest(JOB_POSTING_BASE_URL, HttpMethod.POST, headers, requestBody, JobPostingStatusResponse.class);
 
-      return ObjectMapperUtil.fromJson(response, JobPostingResponse.class);
+
     } catch (JsonSerializationException e) {
       String errorMessage = "Failed to serialize request: " + e.getMessage();
       LOGGER.severe(LogRedactor.redact(errorMessage));
-      throw new LinkedInApiException(HttpStatusCategory.CLIENT_ERROR.getDefaultCode(), "Invalid request format",
-          errorMessage);
+      throw e;
     } catch (JsonDeserializationException e) {
       String errorMessage = "Failed to parse LinkedIn API response: " + e.getMessage();
       LOGGER.severe(LogRedactor.redact(errorMessage));
-      throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Response parsing error",
-          errorMessage);
+      throw e;
     } catch (IOException e) {
       String errorMessage = "Network error while communicating with LinkedIn API: " + e.getMessage();
       LOGGER.log(Level.SEVERE, LogRedactor.redact(errorMessage), e);
-      throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Network error",
+      throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), new HashMap<>(),
           errorMessage);
     }
   }
@@ -110,10 +110,11 @@ public class JobPostingClientImpl implements JobPostingClient {
    * @return the JobTaskStatusResponse containing the task status information
    * @throws AuthenticationException if authentication fails
    * @throws IllegalArgumentException if the taskId is invalid
+   * @throws JsonDeserializationException if there is an error deserializing the response
    * @throws LinkedInApiException if the API returns an error response
    */
-  public JobTaskStatusResponse getTaskStatus(String taskId)
-      throws AuthenticationException, LinkedInApiException, IllegalArgumentException {
+  public APIResponse<JobTaskStatusResponse> getTaskStatus(String taskId)
+      throws AuthenticationException, LinkedInApiException, IllegalArgumentException, JsonDeserializationException {
     if (taskId == null || taskId.isEmpty()) {
       LOGGER.severe("Task ID cannot be null or empty");
       throw new IllegalArgumentException("Task ID cannot be null or empty");
@@ -129,10 +130,11 @@ public class JobPostingClientImpl implements JobPostingClient {
    * @return the JobTaskStatusResponse containing the tasks status information
    * @throws AuthenticationException if authentication fails
    * @throws IllegalArgumentException if the taskIds list is invalid
+   * @throws JsonDeserializationException if there is an error deserializing the response
    * @throws LinkedInApiException if the API returns an error response
    */
-  public JobTaskStatusResponse getTaskStatus(List<String> taskIds)
-      throws AuthenticationException, LinkedInApiException, IllegalArgumentException {
+  public APIResponse<JobTaskStatusResponse> getTaskStatus(List<String> taskIds)
+      throws AuthenticationException, LinkedInApiException, IllegalArgumentException, JsonDeserializationException {
     try {
       if (taskIds == null || taskIds.isEmpty()) {
         LOGGER.severe("Task IDs list cannot be null or empty");
@@ -143,17 +145,15 @@ public class JobPostingClientImpl implements JobPostingClient {
       String taskIdsParam = taskIds.stream().map(id -> "ids=" + id).collect(Collectors.joining(QUERY_PARAM_SEPARATOR));
       String url = JOB_TASK_STATUS_BASE_URL + QUERY_SEPARATOR + taskIdsParam;
 
-      String response = httpClient.executeRequest(url, HttpMethod.GET, getHeadersForAPI(), null);
-      return ObjectMapperUtil.fromJson(response, JobTaskStatusResponse.class);
+      return httpClient.executeRequest(url, HttpMethod.GET, getHeadersForAPI(), null, JobTaskStatusResponse.class);
     } catch (JsonDeserializationException e) {
       String errorMessage = "Failed to parse LinkedIn API response: " + e.getMessage();
       LOGGER.severe(LogRedactor.redact(errorMessage));
-      throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Response parsing error",
-          errorMessage);
+      throw e;
     } catch (IOException e) {
       String errorMessage = "Network error while communicating with LinkedIn API: " + e.getMessage();
       LOGGER.log(Level.SEVERE, LogRedactor.redact(errorMessage), e);
-      throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Network error",
+      throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), new HashMap<>(),
           errorMessage);
     }
   }
@@ -165,10 +165,11 @@ public class JobPostingClientImpl implements JobPostingClient {
    * @return the JobPostingStatusResponse containing the job posting status information
    * @throws AuthenticationException if authentication fails
    * @throws IllegalArgumentException if the jobPostingId is invalid
+   * @throws JsonDeserializationException if there is an error deserializing the response
    * @throws LinkedInApiException if the API returns an error response
    */
-  public JobPostingStatusResponse getJobPostingStatus(String jobPostingId)
-      throws AuthenticationException, LinkedInApiException, IllegalArgumentException{
+  public APIResponse<JobPostingStatusResponse> getJobPostingStatus(String jobPostingId)
+      throws AuthenticationException, LinkedInApiException, IllegalArgumentException, JsonDeserializationException{
     if (jobPostingId == null || jobPostingId.isEmpty()) {
       LOGGER.severe("Job Posting ID cannot be null or empty");
       throw new IllegalArgumentException("Job Posting ID cannot be null or empty");
@@ -183,10 +184,11 @@ public class JobPostingClientImpl implements JobPostingClient {
    * @return the JobPostingStatusResponse containing the job posting status information
    * @throws AuthenticationException if authentication fails
    * @throws IllegalArgumentException if the jobPostingIds list is invalid
+   * @throws JsonDeserializationException if there is an error deserializing the response
    * @throws LinkedInApiException if the API returns an error response
    */
-  public JobPostingStatusResponse getJobPostingStatus(List<String> jobPostingIds)
-      throws AuthenticationException, LinkedInApiException, IllegalArgumentException {
+  public APIResponse<JobPostingStatusResponse> getJobPostingStatus(List<String> jobPostingIds)
+      throws AuthenticationException, LinkedInApiException, IllegalArgumentException, JsonDeserializationException {
     try {
       if (jobPostingIds == null || jobPostingIds.isEmpty()) {
       LOGGER.severe("Job Posting IDs list cannot be null or empty");
@@ -197,16 +199,15 @@ public class JobPostingClientImpl implements JobPostingClient {
           jobPostingIds.stream().map(id -> "ids=" + id).collect(Collectors.joining(QUERY_PARAM_SEPARATOR));
       String url = JOB_STATUS_BASE_URL + QUERY_SEPARATOR + jobPostingIdsParams;
 
-      String response = httpClient.executeRequest(url, HttpMethod.GET, getHeadersForAPI(), null);
-      return ObjectMapperUtil.fromJson(response, JobPostingStatusResponse.class);
+      return httpClient.executeRequest(url, HttpMethod.GET, getHeadersForAPI(), null, JobPostingStatusResponse.class);
     } catch (JsonDeserializationException e) {
       String errorMessage = "Failed to parse LinkedIn API response: " + e.getMessage();
       LOGGER.severe(LogRedactor.redact(errorMessage));
-      throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Response parsing error", errorMessage);
+      throw e;
     } catch (IOException e) {
       String errorMessage = "Network error while communicating with LinkedIn API: " + e.getMessage();
       LOGGER.log(Level.SEVERE, LogRedactor.redact(errorMessage), e);
-      throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Network error", errorMessage);
+      throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), new HashMap<>(), errorMessage);
     }
   }
 

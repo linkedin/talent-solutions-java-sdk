@@ -8,6 +8,7 @@ import com.linkedin.sdk.lts.api.model.response.common.HttpMethod;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -84,7 +85,7 @@ public class OAuth2ProviderTest {
 
   @Test
   public void testGetAccessTokenShouldPerformsAuthenticationWhenNoTokenExists() throws Exception {
-    doReturn(TestingResourceUtility.getTokenSuccessResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
+    doReturn(TestingResourceUtility.getTokenSuccessResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString(), any());
     String accessToken = providerSpy.getAccessToken();
 
     assertEquals(TEST_ACCESS_TOKEN, accessToken, "Should return the correct access token");
@@ -94,9 +95,9 @@ public class OAuth2ProviderTest {
 
   @Test
   public void testGetAccessTokenShouldReusesTokenWhenValidTokenExists() throws Exception {
-    doReturn(TestingResourceUtility.getTokenSuccessResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
+    doReturn(TestingResourceUtility.getTokenSuccessResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString(), any());
     String firstToken = providerSpy.getAccessToken();
-    doReturn(TestingResourceUtility.getNewTokenSuccessResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
+    doReturn(TestingResourceUtility.getNewTokenSuccessResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString(), any());
     String secondToken = providerSpy.getAccessToken();
     assertEquals(firstToken, secondToken, "Should return the same token");
     assertEquals(TEST_ACCESS_TOKEN, firstToken, "Should return the correct access token");
@@ -105,25 +106,25 @@ public class OAuth2ProviderTest {
 
   @Test
   public void testGetAccessTokenShouldRefreshesTokenWhenTokenExpired() throws Exception {
-    doReturn(TestingResourceUtility.getTokenSuccessResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
+    doReturn(TestingResourceUtility.getTokenSuccessResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString(), any());
     providerSpy.getAccessToken();
     setExpiredToken(providerSpy);
     boolean isValid = providerSpy.isTokenValid();
     assertFalse(isValid, "Should return false when token is expired");
-    doReturn(TestingResourceUtility.getNewTokenSuccessResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
+    doReturn(TestingResourceUtility.getNewTokenSuccessResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString(), any());
     String refreshedToken = providerSpy.getAccessToken();
     assertEquals(TEST_ACCESS_NEW_TOKEN, refreshedToken, "Should return the new token");
   }
 
   @Test(expectedExceptions = AuthenticationException.class)
   public void testAuthenticateShouldThrowsExceptionWhenHttpErrorOccurs() throws Exception {
-    doThrow(new LinkedInApiException(400 ,HTTP_400_MESSAGE, HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
+    doThrow(new LinkedInApiException(400 , new HashMap<>(), HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString(), any());
     providerSpy.getAccessToken();
   }
 
   @Test(expectedExceptions = AuthenticationException.class)
   public void testAuthenticateShouldThrowsExceptionWhenIOExceptionOccurs() throws Exception {
-    doThrow(new IOException("Network error")).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
+    doThrow(new IOException("Network error")).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString(), any());
     providerSpy.getAccessToken();
   }
 
@@ -135,10 +136,10 @@ public class OAuth2ProviderTest {
 
   @Test
   public void testURLEncodingShouldHandlesSpecialCharacters() throws Exception {
-    doReturn(TestingResourceUtility.getTokenSuccessResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
+    doReturn(TestingResourceUtility.getTokenSuccessResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString(), any());
     specialCharProviderSpy.getAccessToken();
     Mockito.verify(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(),
-        eq("grant_type=client_credentials&client_id=test+new+client+id&client_secret=secret%40%21%23%24%25%5E%26%28%29"));
+        eq("grant_type=client_credentials&client_id=test+new+client+id&client_secret=secret%40%21%23%24%25%5E%26%28%29"), any());
   }
 
   private void setExpiredToken(OAuth2Provider provider) throws Exception {

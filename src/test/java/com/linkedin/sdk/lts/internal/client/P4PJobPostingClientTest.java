@@ -1,6 +1,9 @@
 package com.linkedin.sdk.lts.internal.client;
 
 import com.linkedin.sdk.lts.api.exception.AuthenticationException;
+import com.linkedin.sdk.lts.api.exception.JsonDeserializationException;
+import com.linkedin.sdk.lts.api.exception.JsonSerializationException;
+import com.linkedin.sdk.lts.api.model.response.common.APIResponse;
 import com.linkedin.sdk.lts.internal.auth.OAuth2Config;
 import com.linkedin.sdk.lts.internal.client.linkedinclient.LinkedInHttpClient;
 import com.linkedin.sdk.lts.api.exception.LinkedInApiException;
@@ -15,6 +18,7 @@ import com.linkedin.sdk.lts.api.model.response.p4pjobposting.P4PProvisionCustome
 import com.linkedin.sdk.lts.api.model.response.p4pjobposting.P4PReportResponseByDate;
 import com.linkedin.sdk.lts.api.model.response.p4pjobposting.P4PReportResponseByIds;
 
+import java.util.HashMap;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -81,56 +85,58 @@ public class P4PJobPostingClientTest {
 
   @Test
   public void provisionCustomerHiringContractsWithSuccessfulResponse() throws Exception {
-    doReturn(TestingResourceUtility.getSuccessP4ProvisionCustomerHiringContractsResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
-    P4PProvisionCustomerHiringContractsResponse response = client.provisionCustomerHiringContracts(p4PProvisionCustomerHiringContractsRequest);
+    doReturn(TestingResourceUtility.getSuccessP4ProvisionCustomerHiringContractsResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString(), any());
+    APIResponse<P4PProvisionCustomerHiringContractsResponse> response = client.provisionCustomerHiringContracts(p4PProvisionCustomerHiringContractsRequest);
 
-    assertNotNull(response);
-    assertNotNull(response.getValue().getContract());
-    assertNotNull(response.getValue().getKey());
+    assertNotNull(response.getBody());
+    assertNotNull(response.getBody().getValue().getContract());
+    assertNotNull(response.getBody().getValue().getKey());
   }
 
   @Test(expectedExceptions = LinkedInApiException.class)
   public void provisionCustomerHiringContractsWith400Response() throws Exception {
-    doThrow(new LinkedInApiException(400 ,HTTP_400_MESSAGE, HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString());
+    doThrow(new LinkedInApiException(400 , new HashMap<>(), HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.POST), anyMap(), anyString(), any());
     client.provisionCustomerHiringContracts(p4PProvisionCustomerHiringContractsRequest);
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void provisionCustomerHiringContractsWithNullP4PProvisionCustomerHiringContractsRequest()
-      throws AuthenticationException, LinkedInApiException {
+      throws AuthenticationException, LinkedInApiException, JsonDeserializationException, JsonSerializationException {
     client.provisionCustomerHiringContracts(null);
   }
 
   @Test
   public void testGetP4PPerformanceReportByIdsWithSuccessfulResponse() throws Exception {
-    doReturn(TestingResourceUtility.getSuccessP4PJobPerformanceReportsByIdsResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull());
-    P4PReportResponseByIds response = client.getP4PReportByIds(p4PJobReportsRequestByIds);
+    doReturn(TestingResourceUtility.getSuccessP4PJobPerformanceReportsByIdsResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull(), any());
+    APIResponse<P4PReportResponseByIds> response = client.getP4PReportByIds(p4PJobReportsRequestByIds);
 
-    assertNotNull(response);
-    assertEquals(1, response.getResults().size());
-    assertTrue(response.getResults().containsKey(TEST_EXTERNAL_JOB_POSTING_ID_1));
+    assertNotNull(response.getBody());
+    assertEquals(1, response.getBody().getResults().size());
+    assertTrue(response.getBody().getResults().containsKey(TEST_EXTERNAL_JOB_POSTING_ID_1));
   }
 
   @Test(expectedExceptions = LinkedInApiException.class)
   public void testGetP4PPerformanceReportByIdsWith400Response() throws Exception {
-    doThrow(new LinkedInApiException(400 ,HTTP_400_MESSAGE, HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull());
+    doThrow(new LinkedInApiException(400 ,new HashMap<>(), HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull(), any());
     client.getP4PReportByIds(p4PJobReportsRequestByIds);
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void testGetP4PPerformanceReportByIdsWithNullP4PJobReportsRequestByIds()
-      throws AuthenticationException, LinkedInApiException {
+      throws AuthenticationException, LinkedInApiException, JsonDeserializationException {
     client.getP4PReportByIds(null);
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
-  public void testGetP4PPerformanceReportByIdsWithNullIds() throws AuthenticationException, LinkedInApiException {
+  public void testGetP4PPerformanceReportByIdsWithNullIds()
+      throws AuthenticationException, LinkedInApiException, JsonDeserializationException {
     p4PJobReportsRequestByIds.setIds(null);
     client.getP4PReportByIds(p4PJobReportsRequestByIds);
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
-  public void testGetP4PPerformanceReportByIdsWithNullDateRange() throws AuthenticationException, LinkedInApiException {
+  public void testGetP4PPerformanceReportByIdsWithNullDateRange()
+      throws AuthenticationException, LinkedInApiException, JsonDeserializationException {
     p4PJobReportsRequestByIds.setDateRange(null);
     client.getP4PReportByIds(p4PJobReportsRequestByIds);
   }
@@ -138,51 +144,51 @@ public class P4PJobPostingClientTest {
 
   @Test
   public void testGetP4PPerformanceReportByDateWithSuccessfulResponse() throws Exception {
-    doReturn(TestingResourceUtility.getSuccessP4PJobPerformanceReportsByDateResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull());
-    P4PReportResponseByDate response = client.getP4PReportsByDate(p4PJobReportsRequestByDate);
+    doReturn(TestingResourceUtility.getSuccessP4PJobPerformanceReportsByDateResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull(), any());
+    APIResponse<P4PReportResponseByDate> response = client.getP4PReportsByDate(p4PJobReportsRequestByDate);
 
-    assertNotNull(response);
-    assertEquals(13, response.getElements().size());
+    assertNotNull(response.getBody());
+    assertEquals(13, response.getBody().getElements().size());
   }
 
   @Test(expectedExceptions = LinkedInApiException.class)
   public void testGetP4PPerformanceReportByDateWith400Response() throws Exception {
-    doThrow(new LinkedInApiException(400 ,HTTP_400_MESSAGE, HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull());
+    doThrow(new LinkedInApiException(400 ,new HashMap<>(), HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull(), any());
     client.getP4PReportsByDate(p4PJobReportsRequestByDate);
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void testGetP4PPerformanceReportByDateWithNullP4PJobReportsRequestByDate()
-      throws AuthenticationException, LinkedInApiException {
+      throws AuthenticationException, LinkedInApiException, JsonDeserializationException {
     client.getP4PReportsByDate(null);
   }
 
 
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void testGetP4PPerformanceReportByDateWithNullDateRange()
-      throws AuthenticationException, LinkedInApiException {
+      throws AuthenticationException, LinkedInApiException, JsonDeserializationException {
     p4PJobReportsRequestByDate.setDateRange(null);
     client.getP4PReportsByDate(p4PJobReportsRequestByDate);
   }
 
   @Test
   public void testGetP4PPartnerBudgetReportWithSuccessfulResponse() throws Exception {
-    doReturn(TestingResourceUtility.getSuccessP4PPartnerBudgetReportResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull());
-    P4PBudgetReportResponse response = client.getPartnerBudgetReports(TEST_PARTNER_CONTRACT_ID);
+    doReturn(TestingResourceUtility.getSuccessP4PPartnerBudgetReportResponse()).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull(), any());
+    APIResponse<P4PBudgetReportResponse> response = client.getPartnerBudgetReports(TEST_PARTNER_CONTRACT_ID);
 
-    assertNotNull(response);
-    assertFalse(response.getPartnerBudgetDetails().isEmpty());
+    assertNotNull(response.getBody());
+    assertFalse(response.getBody().getPartnerBudgetDetails().isEmpty());
   }
 
   @Test(expectedExceptions = LinkedInApiException.class)
   public void testGetP4PPartnerBudgetReportWith400Response() throws Exception {
-    doThrow(new LinkedInApiException(400 ,HTTP_400_MESSAGE, HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull());
+    doThrow(new LinkedInApiException(400 ,new HashMap<>(), HTTP_400_MESSAGE)).when(httpClient).executeRequest(anyString(), eq(HttpMethod.GET), anyMap(), isNull(), any());
     client.getPartnerBudgetReports(TEST_PARTNER_CONTRACT_ID);
   }
 
   @Test(expectedExceptions = IllegalArgumentException.class)
   public void testGetP4PPartnerBudgetReportWithNullPartnerContractId()
-      throws AuthenticationException, LinkedInApiException {
+      throws AuthenticationException, LinkedInApiException, JsonDeserializationException {
     client.getPartnerBudgetReports(null);
   }
 }

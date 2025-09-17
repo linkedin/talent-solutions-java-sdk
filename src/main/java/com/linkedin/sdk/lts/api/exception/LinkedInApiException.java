@@ -1,6 +1,8 @@
 package com.linkedin.sdk.lts.api.exception;
 
 import com.linkedin.sdk.lts.api.model.response.common.HttpStatusCategory;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -19,17 +21,20 @@ import com.linkedin.sdk.lts.api.model.response.common.HttpStatusCategory;
 
 public class LinkedInApiException extends Exception {
   private final int statusCode;
+  private final Map<String, List<String>> headers;
   private final String errorBody;
 
   /**
    * Constructs a new LinkedInApiException with the specified status code and error body.
    *
    * @param statusCode the HTTP status code returned by the LinkedIn API
+   * @param headers the HTTP headers returned by the LinkedIn API
    * @param errorBody the error body returned by the LinkedIn API, providing details about the error
    */
-  public LinkedInApiException(int statusCode, String errorBody, String message) {
-    super(message);
+  public LinkedInApiException(int statusCode, Map<String, List<String>> headers, String errorBody) {
+    super("LinkedIn API error: " + statusCode);
     this.statusCode = statusCode;
+    this.headers = headers;
     this.errorBody = errorBody;
   }
 
@@ -48,5 +53,9 @@ public class LinkedInApiException extends Exception {
 
   public String getErrorBody() {
     return errorBody;
+  }
+
+  public Map<String, List<String>> getHeaders() {
+    return headers;
   }
 }

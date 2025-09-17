@@ -1,8 +1,11 @@
 package com.linkedin.sdk.lts.api.client;
 
 import com.linkedin.sdk.lts.api.exception.AuthenticationException;
+import com.linkedin.sdk.lts.api.exception.JsonDeserializationException;
+import com.linkedin.sdk.lts.api.exception.JsonSerializationException;
 import com.linkedin.sdk.lts.api.exception.LinkedInApiException;
 import com.linkedin.sdk.lts.api.model.request.jobposting.JobPostingRequest;
+import com.linkedin.sdk.lts.api.model.response.common.APIResponse;
 import com.linkedin.sdk.lts.api.model.response.jobposting.JobPostingResponse;
 import com.linkedin.sdk.lts.api.model.response.jobpostingstatus.JobPostingStatusResponse;
 import com.linkedin.sdk.lts.api.model.response.jobtaskstatus.JobTaskStatusResponse;
@@ -25,10 +28,13 @@ public interface JobPostingClient {
    * @return the API response as a JSON string
    * @throws AuthenticationException if authentication fails
    * @throws IllegalArgumentException if the request fails validation
+   * @throws JsonSerializationException if there is an error serializing the request
+   * @throws JsonDeserializationException if there is an error deserializing the response
    * @throws LinkedInApiException if the API returns an error response
    */
-  JobPostingResponse processJobPosting(JobPostingRequest jobPostingRequest)
-      throws AuthenticationException, LinkedInApiException, IllegalArgumentException;
+  APIResponse<JobPostingResponse> processJobPosting(JobPostingRequest jobPostingRequest)
+      throws AuthenticationException, LinkedInApiException, IllegalArgumentException, JsonSerializationException,
+             JsonDeserializationException;
 
   /**
    * Get the status of a single job posting task.
@@ -37,10 +43,11 @@ public interface JobPostingClient {
    * @return the JobTaskStatusResponse containing the task status information
    * @throws AuthenticationException if authentication fails
    * @throws IllegalArgumentException if the taskId is invalid
+   * @throws JsonDeserializationException if there is an error deserializing the response
    * @throws LinkedInApiException if the API returns an error response
    */
-  JobTaskStatusResponse getTaskStatus(String taskId)
-      throws AuthenticationException, LinkedInApiException, IllegalArgumentException;
+  APIResponse<JobTaskStatusResponse> getTaskStatus(String taskId)
+      throws AuthenticationException, LinkedInApiException, IllegalArgumentException, JsonDeserializationException;
 
   /**
    * Get the status of multiple job posting tasks.
@@ -49,10 +56,11 @@ public interface JobPostingClient {
    * @return the JobTaskStatusResponse containing the tasks status information
    * @throws AuthenticationException if authentication fails
    * @throws IllegalArgumentException if the taskIds list is invalid
+   * @throws JsonDeserializationException if there is an error deserializing the response
    * @throws LinkedInApiException if the API returns an error response
    */
-  JobTaskStatusResponse getTaskStatus(List<String> taskIds)
-      throws AuthenticationException, LinkedInApiException, IllegalArgumentException;
+  APIResponse<JobTaskStatusResponse> getTaskStatus(List<String> taskIds)
+      throws AuthenticationException, LinkedInApiException, IllegalArgumentException, JsonDeserializationException;
 
   /**
    * Get the status of a single job posting.
@@ -61,10 +69,11 @@ public interface JobPostingClient {
    * @return the JobPostingStatusResponse containing the job posting status information
    * @throws AuthenticationException if authentication fails
    * @throws IllegalArgumentException if the jobPostingId is invalid
+   * @throws JsonDeserializationException if there is an error deserializing the response
    * @throws LinkedInApiException if the API returns an error response
    */
-  JobPostingStatusResponse getJobPostingStatus(String jobPostingId)
-      throws AuthenticationException, LinkedInApiException, IllegalArgumentException;
+  APIResponse<JobPostingStatusResponse> getJobPostingStatus(String jobPostingId)
+      throws AuthenticationException, LinkedInApiException, IllegalArgumentException, JsonDeserializationException;
 
   /**
    * Get the status of multiple job postings.
@@ -73,8 +82,9 @@ public interface JobPostingClient {
    * @return the JobPostingStatusResponse containing the job posting status information
    * @throws AuthenticationException if authentication fails
    * @throws IllegalArgumentException if the jobPostingIds list is invalid
+   * @throws JsonDeserializationException if there is an error deserializing the response
    * @throws LinkedInApiException if the API returns an error response
    */
-  JobPostingStatusResponse getJobPostingStatus(List<String> jobPostingIds)
-      throws AuthenticationException, LinkedInApiException, IllegalArgumentException;
+  APIResponse<JobPostingStatusResponse> getJobPostingStatus(List<String> jobPostingIds)
+      throws AuthenticationException, LinkedInApiException, IllegalArgumentException, JsonDeserializationException;
 }

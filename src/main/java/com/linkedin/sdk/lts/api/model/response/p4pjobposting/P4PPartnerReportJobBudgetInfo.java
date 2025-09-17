@@ -16,10 +16,10 @@ public class P4PPartnerReportJobBudgetInfo {
   /**
    * Accumulated monetary charges of the job.
    */
-  private MoneyAmount lifetimeBudgetSpent;
+  private MoneyAmount serviceTermBudgetSpent;
 
   /**
    * Total budget limit of the job.
    */
-  private MoneyAmount lifetimeBudgetLimit;
+  private MoneyAmount serviceTermBudgetLimit;
 }

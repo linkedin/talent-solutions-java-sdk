@@ -1,11 +1,16 @@
 package com.linkedin.sdk.lts.internal.client.linkedinclient;
 
+import com.linkedin.sdk.lts.api.exception.JsonDeserializationException;
 import com.linkedin.sdk.lts.api.exception.LinkedInApiException;
 import com.linkedin.sdk.lts.api.exception.TransientLinkedInApiException;
+import com.linkedin.sdk.lts.api.model.response.common.APIResponse;
 import com.linkedin.sdk.lts.api.model.response.common.HttpMethod;
 import com.linkedin.sdk.lts.api.model.response.common.HttpStatusCategory;
 
 import com.linkedin.sdk.lts.internal.util.LogRedactor;
+import com.linkedin.sdk.lts.internal.util.ObjectMapperUtil;
+import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.List;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
@@ -22,7 +27,7 @@ import static com.linkedin.sdk.lts.internal.constants.HttpConstants.*;
  * to LinkedIn's API endpoints. It supports various HTTP methods and manages headers,
  * request bodies, and response handling.
  */
-public class LinkedInHttpClient implements HttpClient {
+public class LinkedInHttpClient<T> implements HttpClient<T> {
   private static final Logger LOGGER = Logger.getLogger(LinkedInHttpClient.class.getName());
   private static final int DEFAULT_CONNECT_TIMEOUT = 30000;
   private static final int DEFAULT_READ_TIMEOUT = 30000;
@@ -40,19 +45,22 @@ public class LinkedInHttpClient implements HttpClient {
    * @param method  the HTTP method to use (e.g., GET, POST)
    * @param headers the HTTP headers to include in the request
    * @param body    the request body (optional, can be null for GET requests)
+   * @param responseType the class type to deserialize the response body into
    * @return the response body as a string
    * @throws IOException           if an I/O error occurs during the request
    * @throws LinkedInApiException if the API returns an error response
+   * @throws JsonDeserializationException if there is an error deserializing the response
    */
   @Override
-  public String executeRequest(@NonNull String url, @NonNull HttpMethod method, Map<String, String> headers, String body)
-      throws IOException, LinkedInApiException {
+  public APIResponse<T> executeRequest(@NonNull String url, @NonNull HttpMethod method,
+      Map<String, String> headers, String body, Class<T> responseType)
+      throws IOException, LinkedInApiException, JsonDeserializationException {
     long backoff = retryConfig.getInitialBackoffMillis();
     LinkedInApiException lastException = null;
 
     for (int attempt = 0; attempt <= retryConfig.getMaxRetries(); attempt++) {
       try {
-        return executeWithErrorHandling(url, method, headers, body);
+        return executeWithErrorHandling(url, method, headers, body, responseType);
       } catch (TransientLinkedInApiException e) {
         lastException = e;
 
@@ -88,13 +96,16 @@ public class LinkedInHttpClient implements HttpClient {
    * @param method  the HTTP method to use (e.g., GET, POST)
    * @param headers the HTTP headers to include in the request
    * @param body    the request body (optional, can be null for GET requests)
+   * @param responseType the class type to deserialize the response body into
    * @return the response body as a string
    * @throws IOException           if an I/O error occurs during the request
    * @throws LinkedInApiException if the API returns an error response
    * @throws TransientLinkedInApiException if a transient error occurs
+   * @throws JsonDeserializationException if there is an error deserializing the response
    */
-  private String executeWithErrorHandling(@NonNull String url, @NonNull HttpMethod method, Map<String, String> headers, String body)
-      throws LinkedInApiException {
+  private APIResponse<T> executeWithErrorHandling(@NonNull String url, @NonNull HttpMethod method,
+      Map<String, String> headers, String body, Class<T> responseType)
+      throws LinkedInApiException, JsonDeserializationException {
     try {
       LOGGER.info(LogRedactor.redact(String.format("Sending %s request to %s with body %s", method, url, body)));
 
@@ -105,9 +116,9 @@ public class LinkedInHttpClient implements HttpClient {
         writeRequestBody(connection, body);
       }
 
-      return getResponseBody(connection);
+      return getResponseBody(connection, responseType);
     } catch (IOException e) {
-      throw new TransientLinkedInApiException(500, "Network error occurred", e.getMessage());
+      throw new TransientLinkedInApiException(500, new HashMap<>(), e.getMessage());
     }
   }
 
@@ -164,11 +175,14 @@ public class LinkedInHttpClient implements HttpClient {
    * Reads the response body from the connection and handles errors if the response code indicates failure.
    *
    * @param connection the HttpsURLConnection to read the response from
+   * @param responseType the class type to deserialize the response body into
    * @return the response body as a string
    * @throws IOException           if an I/O error occurs while reading the response
    * @throws LinkedInApiException if the API returns an error response
+   * @throws JsonDeserializationException if there is an error deserializing the response
    */
-  private String getResponseBody(HttpsURLConnection connection) throws IOException, LinkedInApiException {
+  private APIResponse<T> getResponseBody(HttpsURLConnection connection, Class<T> responseType)
+      throws IOException, LinkedInApiException, JsonDeserializationException {
     int responseCode = connection.getResponseCode();
     InputStream inputStream = HttpStatusCategory.SUCCESS.matches(responseCode)
         ? connection.getInputStream()
@@ -181,14 +195,19 @@ public class LinkedInHttpClient implements HttpClient {
     if (LinkedInApiException.isTransient(responseCode)) {
       String errorMessage = "HTTP error " + responseCode;
       LOGGER.severe(errorMessage);
-      throw new TransientLinkedInApiException(responseCode, response, errorMessage);
+      throw new TransientLinkedInApiException(responseCode, headers, response);
     } else if(!HttpStatusCategory.SUCCESS.matches(responseCode)) {
       String errorMessage = "HTTP error " + responseCode + ": " + response;
       LOGGER.severe(errorMessage);
-      throw new LinkedInApiException(responseCode, response, errorMessage);
+      throw new LinkedInApiException(responseCode, headers, response);
     }
 
-    return response;
+    return APIResponse.<T>builder()
+        .body(responseType != null ? ObjectMapperUtil.fromJson(response, responseType) : null)
+        .httpStatusCode(responseCode)
+        .httpStatusCategory(HttpStatusCategory.fromCode(responseCode))
+        .responseHeaders(headers)
+        .build();
   }
 
   /**

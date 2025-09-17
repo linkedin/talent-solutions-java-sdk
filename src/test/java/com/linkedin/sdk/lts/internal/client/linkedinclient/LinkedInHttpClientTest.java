@@ -1,8 +1,12 @@
 package com.linkedin.sdk.lts.internal.client.linkedinclient;
 
+import com.linkedin.sdk.lts.api.exception.JsonDeserializationException;
+import com.linkedin.sdk.lts.api.model.response.common.APIResponse;
+import com.linkedin.sdk.lts.api.model.response.provisioning.CreateApplicationResponse;
 import com.linkedin.sdk.lts.internal.client.TestingCommonConstants;
 import com.linkedin.sdk.lts.api.exception.LinkedInApiException;
 import com.linkedin.sdk.lts.api.model.response.common.HttpMethod;
+import com.linkedin.sdk.lts.internal.util.ObjectMapperUtil;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -16,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.linkedin.sdk.lts.internal.client.TestingResourceUtility.*;
 import static com.linkedin.sdk.lts.internal.constants.HttpConstants.*;
 import static com.linkedin.sdk.lts.internal.constants.LinkedInApiConstants.*;
 
@@ -28,7 +33,7 @@ public class LinkedInHttpClientTest {
 
   private HttpsURLConnection mockConnection;
   private static final String TEST_URL = "https://api.linkedin.com/v2/test";
-  private static final String TEST_RESPONSE = "{\"status\":\"success\"}";
+  private static final String TEST_RESPONSE = readJsonFromFile("CreateApplicationSuccessResponse.json");
 
   @BeforeMethod
   public void setUp() throws Exception {
@@ -52,10 +57,10 @@ public class LinkedInHttpClientTest {
     doReturn(mockConnection).when(httpClient).createConnection(any(URL.class), eq(HttpMethod.GET));
 
     // Act
-    String response = httpClient.executeRequest(TEST_URL, HttpMethod.GET, headers, null);
+    APIResponse<CreateApplicationResponse> response = httpClient.executeRequest(TEST_URL, HttpMethod.GET, headers, null, CreateApplicationResponse.class);
 
     // Assert
-    assertEquals(TEST_RESPONSE, response);
+    assertEquals(ObjectMapperUtil.fromJson(TEST_RESPONSE, CreateApplicationResponse.class), response.getBody());
   }
 
   @Test
@@ -76,10 +81,10 @@ public class LinkedInHttpClientTest {
     doReturn(mockConnection).when(httpClient).createConnection(any(URL.class), eq(HttpMethod.POST));
 
     // Act
-    String response = httpClient.executeRequest(TEST_URL, HttpMethod.POST, headers, requestBody);
+    APIResponse<CreateApplicationResponse> response = httpClient.executeRequest(TEST_URL, HttpMethod.POST, headers, requestBody, CreateApplicationResponse.class);
 
     // Assert
-    assertEquals(TEST_RESPONSE, response);
+    assertEquals(ObjectMapperUtil.fromJson(TEST_RESPONSE, CreateApplicationResponse.class), response.getBody());
     assertEquals(requestBody, outputStream.toString(StandardCharsets.UTF_8.name()));
     verify(mockConnection).setRequestProperty(CONTENT_LENGTH,
         String.valueOf(requestBody.getBytes(StandardCharsets.UTF_8).length));
@@ -98,7 +103,7 @@ public class LinkedInHttpClientTest {
     doReturn(mockConnection).when(httpClient).createConnection(any(URL.class), eq(HttpMethod.GET));
 
     // Act
-    httpClient.executeRequest(TEST_URL, HttpMethod.GET, new HashMap<>(), null);
+    httpClient.executeRequest(TEST_URL, HttpMethod.GET, new HashMap<>(), null, CreateApplicationResponse.class);
   }
 
   @Test
@@ -115,7 +120,7 @@ public class LinkedInHttpClientTest {
 
     // Act & Assert
     try {
-      httpClient.executeRequest(TEST_URL, HttpMethod.GET, new HashMap<>(), null);
+      httpClient.executeRequest(TEST_URL, HttpMethod.GET, new HashMap<>(), null, CreateApplicationResponse.class);
       fail("Expected LinkedInApiException to be thrown");
     } catch (LinkedInApiException e) {
       // Verify createConnection was called 4 times (initial + 3 retries)
@@ -141,7 +146,7 @@ public class LinkedInHttpClientTest {
     doReturn(mockConnection).when(httpClient).createConnection(any(URL.class), eq(HttpMethod.GET));
 
     // Act
-    httpClient.executeRequest(TEST_URL, HttpMethod.GET, headers, null);
+    APIResponse<CreateApplicationResponse> response = httpClient.executeRequest(TEST_URL, HttpMethod.GET, headers, null, CreateApplicationResponse.class);
 
     // Assert
     verify(mockConnection).setRequestProperty(CONTENT_TYPE, APPLICATION_JSON);
@@ -149,7 +154,7 @@ public class LinkedInHttpClientTest {
     verify(mockConnection).setRequestProperty(LINKEDIN_VERSION, API_VERSION_2025_04);
   }
 
-  @Test
+  @Test(expectedExceptions = JsonDeserializationException.class)
   public void testExecuteGetRequestReturnsEmptyResponse() throws Exception {
     // Arrange
     ByteArrayInputStream inputStream = new ByteArrayInputStream(new byte[0]);
@@ -159,9 +164,6 @@ public class LinkedInHttpClientTest {
     doReturn(mockConnection).when(httpClient).createConnection(any(URL.class), eq(HttpMethod.GET));
 
     // Act
-    String response = httpClient.executeRequest(TEST_URL, HttpMethod.GET, new HashMap<>(), null);
-
-    // Assert
-    assertEquals("", response);
+    APIResponse<CreateApplicationResponse> response = httpClient.executeRequest(TEST_URL, HttpMethod.GET, new HashMap<>(), null, CreateApplicationResponse.class);
   }
 }

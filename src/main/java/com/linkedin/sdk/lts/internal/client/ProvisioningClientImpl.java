@@ -9,6 +9,7 @@ import com.linkedin.sdk.lts.api.model.request.provisioning.CreateApplicationRequ
 import com.linkedin.sdk.lts.api.model.request.provisioning.GetApplicationRequest;
 import com.linkedin.sdk.lts.api.model.request.provisioning.UpdateApplicationRequest;
 import com.linkedin.sdk.lts.api.model.request.provisioning.UpdateApplicationRequestInternal;
+import com.linkedin.sdk.lts.api.model.response.common.APIResponse;
 import com.linkedin.sdk.lts.api.model.response.common.HttpMethod;
 import com.linkedin.sdk.lts.api.model.response.common.HttpStatusCategory;
 import com.linkedin.sdk.lts.api.model.response.provisioning.CreateApplicationResponse;
@@ -56,46 +57,55 @@ public class ProvisioningClientImpl implements ProvisioningClient {
 
   /**
    * Creates a new child developer application using the provided request.
+   * returns the response containing application details
    *
+   * @throws AuthenticationException if authentication fails
+   * @throws LinkedInApiException if an error occurs while communicating with the LinkedIn API
+   * @throws IllegalArgumentException if the request is null or contains invalid parameters
+   * @throws JsonSerializationException if there is an error serializing the request
+   * @throws JsonDeserializationException if there is an error deserializing the response
    * @param createApplicationRequest the request containing application details
    */
-  public CreateApplicationResponse createApplication(CreateApplicationRequest createApplicationRequest)
-      throws AuthenticationException, LinkedInApiException, IllegalArgumentException{
+  public APIResponse<CreateApplicationResponse> createApplication(CreateApplicationRequest createApplicationRequest)
+      throws AuthenticationException, LinkedInApiException, IllegalArgumentException, JsonSerializationException,
+             JsonDeserializationException {
     try {
       if(createApplicationRequest == null) {
         throw new IllegalArgumentException("CreateApplicationRequest cannot be null");
       }
 
       String requestBody = ObjectMapperUtil.toJson(createApplicationRequest);
-      String response = this.httpClient.executeRequest(PROVISIONING_APPLICATION_BASE_URL,
-        HttpMethod.POST, getHeadersForAPI() , requestBody);
-
-      return ObjectMapperUtil.fromJson(response, CreateApplicationResponse.class);
+      return this.httpClient.executeRequest(PROVISIONING_APPLICATION_BASE_URL,
+        HttpMethod.POST, getHeadersForAPI() , requestBody, CreateApplicationResponse.class);
     } catch (JsonSerializationException e) {
       String errorMessage = "Failed to serialize request: " + e.getMessage();
       LOGGER.severe(LogRedactor.redact(errorMessage));
-      throw new LinkedInApiException(HttpStatusCategory.CLIENT_ERROR.getDefaultCode(), "Invalid request format",
-          errorMessage);
+      throw e;
     } catch (JsonDeserializationException e) {
       String errorMessage = "Failed to parse LinkedIn API response: " + e.getMessage();
       LOGGER.severe(LogRedactor.redact(errorMessage));
-      throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Response parsing error",
-        errorMessage);
+      throw e;
     } catch (IOException e) {
       String errorMessage = "Network error while communicating with LinkedIn API: " + e.getMessage();
       LOGGER.log(Level.SEVERE, LogRedactor.redact(errorMessage), e);
-      throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Network error",
+      throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), new HashMap<>(),
         errorMessage);
     }
   }
 
   /**
    * Updates an existing child developer application using the provided request.
+   * returns an empty response on success
    *
+   * @throws AuthenticationException if authentication fails
+   * @throws LinkedInApiException if an error occurs while communicating with the LinkedIn API
+   * @throws IllegalArgumentException if the request is null or contains invalid parameters
+   * @throws JsonSerializationException if there is an error serializing the request
+   * @throws JsonDeserializationException if there is an error deserializing the response
    * @param updateApplicationRequest the request containing updated application details
    */
-  public void updateApplication(UpdateApplicationRequest updateApplicationRequest)
-      throws AuthenticationException, LinkedInApiException, IllegalArgumentException{
+  public APIResponse<Void> updateApplication(UpdateApplicationRequest updateApplicationRequest)
+      throws AuthenticationException, LinkedInApiException, IllegalArgumentException, JsonSerializationException, JsonDeserializationException {
     try {
       if(updateApplicationRequest == null) {
         throw new IllegalArgumentException("CreateApplicationRequest cannot be null");
@@ -107,17 +117,20 @@ public class ProvisioningClientImpl implements ProvisioningClient {
 
       String url = PROVISIONING_APPLICATION_BASE_URL + updateApplicationRequest.getDeveloperApplicationUrn();
       String requestBody = ObjectMapperUtil.toJson(UpdateApplicationRequestInternal.fromUpdateRequest(updateApplicationRequest));
-      this.httpClient.executeRequest(url,
-          HttpMethod.POST, getHeadersForAPI() , requestBody);
+      return this.httpClient.executeRequest(url,
+          HttpMethod.POST, getHeadersForAPI() , requestBody, null);
     } catch (JsonSerializationException e) {
       String errorMessage = "Failed to serialize request: " + e.getMessage();
       LOGGER.severe(LogRedactor.redact(errorMessage));
-      throw new LinkedInApiException(HttpStatusCategory.CLIENT_ERROR.getDefaultCode(), "Invalid request format",
-          errorMessage);
+      throw e;
+    } catch (JsonDeserializationException e) {
+      String errorMessage = "Failed to parse LinkedIn API response: " + e.getMessage();
+      LOGGER.severe(LogRedactor.redact(errorMessage));
+      throw e;
     } catch (IOException e) {
       String errorMessage = "Network error while communicating with LinkedIn API: " + e.getMessage();
       LOGGER.log(Level.SEVERE, LogRedactor.redact(errorMessage), e);
-      throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Network error",
+      throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), new HashMap<>(),
           errorMessage);
     }
   }
@@ -130,9 +143,11 @@ public class ProvisioningClientImpl implements ProvisioningClient {
    * @throws AuthenticationException if authentication fails
    * @throws LinkedInApiException if an error occurs while communicating with the LinkedIn API
    * @throws IllegalArgumentException if the request is null or contains invalid parameters
+   * @throws JsonDeserializationException if there is an error deserializing the response
+   * @throws JsonSerializationException if there is an error serializing the request
    */
-  public GetApplicationResponse getApplication(GetApplicationRequest getApplicationRequest)
-      throws AuthenticationException, LinkedInApiException, IllegalArgumentException{
+  public APIResponse<GetApplicationResponse> getApplication(GetApplicationRequest getApplicationRequest)
+      throws AuthenticationException, LinkedInApiException, IllegalArgumentException, JsonDeserializationException {
     try {
       if(getApplicationRequest == null) {
         throw new IllegalArgumentException("GetApplicationRequest cannot be null");
@@ -144,18 +159,16 @@ public class ProvisioningClientImpl implements ProvisioningClient {
 
       String url = PROVISIONING_APPLICATION_BASE_URL + QUERY_SEPARATOR + QUERY + EQUALS_SEPARATOR + CREDENTIALS_BY_UNIQUE_FOREIGN_ID + QUERY_PARAM_SEPARATOR +
           UNIQUE_FOREIGN_ID + EQUALS_SEPARATOR + getApplicationRequest.getUniqueForeignId();
-      String response = this.httpClient.executeRequest(url, HttpMethod.GET, getHeadersForAPI(), null);
+      return this.httpClient.executeRequest(url, HttpMethod.GET, getHeadersForAPI(), null, GetApplicationResponse.class);
 
-      return ObjectMapperUtil.fromJson(response, GetApplicationResponse.class);
     } catch (JsonDeserializationException e) {
       String errorMessage = "Failed to parse LinkedIn API response: " + e.getMessage();
       LOGGER.severe(LogRedactor.redact(errorMessage));
-      throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Response parsing error",
-          errorMessage);
+      throw e;
     } catch (IOException e) {
       String errorMessage = "Network error while communicating with LinkedIn API: " + e.getMessage();
       LOGGER.log(Level.SEVERE, LogRedactor.redact(errorMessage), e);
-      throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), "Network error",
+      throw new LinkedInApiException(HttpStatusCategory.SERVER_ERROR.getDefaultCode(), new HashMap<>(),
           errorMessage);
     }
   }
