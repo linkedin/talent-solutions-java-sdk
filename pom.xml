@@ -6,7 +6,7 @@
 
   <groupId>com.linkedin</groupId>
   <artifactId>talent-solutions-java-sdk</artifactId>
-  <version>0.1.0-alpha</version>
+  <version>1.0.0-alpha</version>
 
   <properties>
     <maven.compiler.source>1.8</maven.compiler.source>
