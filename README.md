@@ -26,7 +26,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.linkedin:talent-solutions-java-sdk:0.1.0-alpha"
+    implementation "com.linkedin:talent-solutions-java-sdk:1.0.0-alpha"
 }
 ```
 
@@ -46,7 +46,7 @@ Add this dependency and repositories information to your project's POM.xml:
 <dependency>
     <groupId>com.linkedin</groupId>
     <artifactId>talent-solutions-java-sdk</artifactId>
-    <version>0.1.0-alpha</version>
+    <version>1.0.0-alpha</version>
 </dependency>
 ```
 
