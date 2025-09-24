@@ -147,18 +147,18 @@ JobPostingRequest jobPostingRequest = JobPostingRequest.builder()
     .build();
 
 // Send JobPostingRequest
-JobPostingResponse jobPostingResponse = jobPostingClient.post(jobPostingRequest);
+APIResponse<JobPostingResponse> jobPostingResponse = jobPostingClient.processJobPosting(jobPostingRequest);
 ```
 
 ##### Checking JobPosting Task Status
 ```java
-JobTaskStatusResponse jobTaskStatusResponse = jobPostingClient
+APIResponse<JobTaskStatusResponse> jobTaskStatusResponse = jobPostingClient
     .getTaskStatus(Arrays.asList("linkedin task urn"));
 ```
 
 ##### Checking Job Status
 ```java
-JobPostingStatus jobPostingStatus = jobPostingClient
+APIResponse<JobPostingStatus> jobPostingStatus = jobPostingClient
     .getJobPostingStatus(Arrays.asList("job posting id"));
 ```
 
@@ -201,7 +201,7 @@ JobPostingRequest jobPostingRequest = JobPostingRequest.builder()
     .build();
 
 // Send JobPostingRequest using P4PJobPostingClient
-JobPostingResponse jobPostingResponse = p4pJobPostingClient.post(jobPostingRequest);
+APIResponse<JobPostingResponse> jobPostingResponse = p4pJobPostingClient.processJobPosting(jobPostingRequest);
 ```
 
 > [!NOTE]
@@ -219,7 +219,7 @@ P4PJobReportsRequestByIds p4PJobReportsRequestByIds = P4PJobReportsRequestByIds
     .partnerContractId("enter partner contract id")
     .build();
 
-P4PReportResponseByIds p4PReportResponseByIds = p4pJobPostingClient
+APIResponse<P4PReportResponseByIds> p4PReportResponseByIds = p4pJobPostingClient
     .getP4PReportByIds(p4PJobReportsRequestByIds);
 ```
 
@@ -234,13 +234,13 @@ P4PJobReportsRequestByDate p4PJobReportsRequestByDate = P4PJobReportsRequestByDa
     .partnerContractId("enter partner contract id")
     .build();
 
-P4PReportResponseByDate p4PReportResponseByDate = p4pJobPostingClient
+APIResponse<P4PReportResponseByDate> p4PReportResponseByDate = p4pJobPostingClient
     .getP4PReportsByDate(p4PJobReportsRequestByDate);
 ```
 
 ##### Retrieve Budget Reports
 ```java
-P4PBudgetReportResponse p4PBudgetReportResponse = p4pJobPostingClient
+APIResponse<P4PBudgetReportResponse> p4PBudgetReportResponse = p4pJobPostingClient
     .getPartnerBudgetReports("enter partner contract id");
 ```
 
@@ -283,8 +283,8 @@ JobPostingRequest jobPostingRequest = JobPostingRequest.builder()
     .build();
 
 // Send JobPostingRequest using ApplyConnectJobPostingClient
-JobPostingResponse jobPostingResponse = applyConnectJobPostingClient
-    .post(jobPostingRequest);
+APIResponse<JobPostingResponse> jobPostingResponse = applyConnectJobPostingClient
+    .processJobPosting(jobPostingRequest);
 ```
 
 > [!NOTE]
